@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_funding_campaign_manager,funding_campaign_manager,model_funding_campaign,,1,1,1,1
+access_funding_source_manager,funding_campaign_source_manager,model_funding_source,,1,1,1,1
+access_funding_campaign_user,access_funding_campaign_user,model_funding_campaign,base.group_user,1,1,1,1
+access_funding_source_user,access_funding_source_user,model_funding_source,base.group_user,1,1,1,1

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_funding_campaign_tree" model="ir.ui.view">
+        <field name="name">view.funding.campaign.tree</field>
+        <field name="model">funding.campaign</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="is_permanent"/>
+                <field name="state"/>
+                <field name="global_objective"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="marketing_campaign_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_funding_campaign_form" model="ir.ui.view">
+        <field name="name">view.funding.campaign.form</field>
+        <field name="model">funding.campaign</field>
+        <field name="arch" type="xml">
+            <form string="Funding Campaign">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_start_campaign" type="object" string="Start Campaign"
+                            states="draft" class="btn-primary"/>
+                    <button name="action_finalize_campaign" type="object" string="Finalize Campaign"
+                            states="open" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group col="2">
+                            <field name="start_date"/>
+                        </group>
+                        <group col="2">
+                            <field name="end_date" attrs="{
+                                'invisible': [('is_permanent', '=', True)],
+                                'required': [('is_permanent', '=', False)]
+                            }"/>
+                        </group>
+                        <group col="2">
+                            <field name="is_permanent"/>
+                        </group>
+                    </group>
+                    <group name="global_data" string="Global Data">
+                        <group>
+                            <field name="global_objective"/>
+                            <field name="marketing_campaign_id"/>
+                        </group>
+                        <group>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="funding_source_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_funding_campaign_search" model="ir.ui.view">
+        <field name="name">view.funding.campaign.search</field>
+        <field name="model">funding.campaign</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="state"/>
+                <group expand="1" string="Group By">
+                    <filter string="State" name="group_by_state" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_funding_campaign_kanban" model="ir.ui.view">
+        <field name="name">funding.campaign.kanban</field>
+        <field name="model">funding.campaign</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <strong>
+                                <field name="name"/>
+                            </strong>
+                            <div>
+                                <span>Progress:</span>
+                                <div class="custom-progress-bar">
+                                    <div class="progress-bar-inner"></div>
+                                    <div class="progress_number"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <span>State:</span>
+                                <field name="state" widget="statusbar" statusbar_visible="draft,open,closed"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="view_funding_campaign_pivot" model="ir.ui.view">
+        <field name="name">funding.campaign.pivot</field>
+        <field name="model">funding.campaign</field>
+        <field name="arch" type="xml">
+            <pivot string="Funding Campaigns - Pivot">
+                <field name="state" type="row"/>
+                <field name="start_date" type="col"/>
+                <field name="global_objective" type="measure"/>
+                <field name="progress" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="action_funding_campaign" model="ir.actions.act_window">
+        <field name="name">Funding Campaigns</field>
+        <field name="res_model">funding.campaign</field>
+        <field name="view_mode">tree,form,kanban,pivot</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There are no funding campaigns. Create a new one.
+            </p>
+        </field>
+    </record>
+</odoo>

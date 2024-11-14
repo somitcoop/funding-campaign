@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_funding_source_tree" model="ir.ui.view">
+        <field name="name">view.funding.source.tree</field>
+        <field name="model">funding.source</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="objective"/>
+                <field name="raised_amount"/>
+                <field name="progress" widget="progressbar"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_funding_source_form" model="ir.ui.view">
+        <field name="name">view.funding.source.form</field>
+        <field name="model">funding.source</field>
+        <field name="arch" type="xml">
+            <form string="Funding Source">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="objective"/>
+                        <field name="raised_amount"/>
+                        <field name="progress" widget="progressbar"/>
+                        <field name="campaign_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_funding_source_search" model="ir.ui.view">
+        <field name="name">view.funding.source.search</field>
+        <field name="model">funding.source</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="group_by_name" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_funding_source" model="ir.actions.act_window">
+        <field name="name">Funding Sources</field>
+        <field name="res_model">funding.source</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_funding_source_tree"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There are no funding sources. Create a new one.
+            </p>
+        </field>
+    </record>
+</odoo>
