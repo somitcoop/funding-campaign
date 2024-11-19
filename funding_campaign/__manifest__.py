@@ -2,7 +2,7 @@
 {
     'name': 'Funding Campaign Base',
     'version': '1.0',
-    'summary': """ Funding-campaign Summary """,
+    'summary': """ Funding campaign Summary """,
     'author': '',
     'website': '',
     'category': '',
@@ -13,9 +13,9 @@
         'views/funding_source_views.xml',
         'views/funding_campaign_menus.xml',
     ],
-    
+
     'application': True,
     'installable': True,
     'auto_install': False,
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
 }

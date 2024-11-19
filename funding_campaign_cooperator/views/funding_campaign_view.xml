@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_funding_campaign_form_inherit" model="ir.ui.view">
+        <field name="name">funding.campaign.form.inherit</field>
+        <field name="model">funding.campaign</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_campaign_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <field name="has_subscription_source" invisible="1"/>
+                <button name="action_view_subscription_requests"
+                        type="object"
+                        class="oe_stat_button"
+                        attrs="{'invisible': [('has_subscription_source', '=', False)]}"
+                        icon="fa-euro">
+                    <field name="source_raised_amount" widget="statinfo" string="Subscriptions"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Subscription Requests" name="subscription_requests"
+                      attrs="{'invisible': [('has_subscription_source', '=', False)]}">
+
+                        <field name="subscription_request_ids" readonly="1" nolabel="1">
+                            <tree>
+                                <field name="partner_id"/>
+                                <field name="subscription_amount" sum="Total"/>
+                                <field name="state"/>
+                                <field name="date"/>
+                            </tree>
+                        </field>
+                    
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_campaign_subscription_requests" model="ir.actions.act_window">
+        <field name="name">Subscription Requests</field>
+        <field name="res_model">subscription.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('campaign_id', '=', active_id)]</field>
+        <field name="context">{'default_campaign_id': active_id}</field>
+    </record>
+</odoo>

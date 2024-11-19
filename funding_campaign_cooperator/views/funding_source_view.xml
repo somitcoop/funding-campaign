@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_funding_source_form_inherit" model="ir.ui.view">
+        <field name="name">funding.source.form.inherit</field>
+        <field name="model">funding.source</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_source_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='raised_amount']" position="attributes">
+                <attribute name="widget">monetary</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -30,6 +30,19 @@ class FundingCampaign(models.Model):
         "mailing.mailing", string="Marketing Campaign", ondelete="set null"
     )
     progress = fields.Float("Progress (%)", compute="_compute_progress", store=True)
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company
+    )
+
+    company_currency_id = fields.Many2one(
+        'res.currency',
+        related="company_id.currency_id",
+        store=True,
+        string="Company Currency"
+    )
 
     @api.depends("funding_source_ids.progress", "global_objective")
     def _compute_progress(self):

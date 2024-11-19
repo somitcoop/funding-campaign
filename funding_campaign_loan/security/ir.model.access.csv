@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_funding_loan_request_user,funding.loan.request.user,model_funding_loan_request,base.group_user,1,0,0,0
+access_funding_loan_request_manager,funding.loan.request.manager,model_funding_loan_request,base.group_system,1,1,1,1
+access_funding_loan_register_user,funding.loan.register.user,model_funding_loan_register,base.group_user,1,0,0,0
+access_funding_loan_register_manager,funding.loan.register.manager,model_funding_loan_register,base.group_system,1,1,1,1

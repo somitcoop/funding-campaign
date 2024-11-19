@@ -16,6 +16,14 @@ class FundingSource(models.Model):
     raised_amount = fields.Float("Raised Amount", compute="_compute_raised_amount")
     progress = fields.Float("Progress (%)", compute="_compute_progress")
     campaign_ids = fields.Many2many("funding.campaign", string="Campaigns")
+    source_type = fields.Selection(
+        selection=[
+            ('default', 'Default'),
+        ],
+        string='Source Type',
+        default='default',
+        required=True
+    )
 
     @api.depends("raised_amount", "objective")
     def _compute_progress(self):

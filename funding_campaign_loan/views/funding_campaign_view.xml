@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- views/funding_campaign_view.xml -->
+    <record id="view_funding_campaign_form_inherit_loan" model="ir.ui.view">
+        <field name="name">funding.campaign.form.inherit.loan</field>
+        <field name="model">funding.campaign</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_campaign_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <field name="has_loan_source" invisible="1"/>
+                <button name="action_view_loan_requests"
+                        type="object"
+                        class="oe_stat_button"
+                        attrs="{'invisible': [('has_loan_source', '=', False)]}"
+                        icon="fa-money">
+                    <field name="loan_raised_amount" widget="statinfo" string="Loans"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Loan Requests" name="loan_requests"
+                      attrs="{'invisible': [('has_loan_source', '=', False)]}">
+                    <field name="loan_request_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="loan_amount" sum="Total"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_campaign_loan_requests" model="ir.actions.act_window">
+        <field name="name">Loan Requests</field>
+        <field name="res_model">funding.loan.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('campaign_id', '=', active_id)]</field>
+        <field name="context">{'default_campaign_id': active_id}</field>
+    </record>
+</odoo>

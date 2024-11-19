@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_funding_source_cooperator_user,funding.source.cooperator.user,funding_campaign.model_funding_source,base.group_user,1,0,0,0
+access_funding_source_cooperator_manager,funding.source.cooperator.manager,funding_campaign.model_funding_source,base.group_system,1,1,1,1

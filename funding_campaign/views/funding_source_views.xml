@@ -28,6 +28,7 @@
                         <field name="objective"/>
                         <field name="raised_amount"/>
                         <field name="progress" widget="progressbar"/>
+                        <field name="source_type"/>
                         <field name="campaign_ids" widget="many2many_tags"/>
                     </group>
                 </sheet>

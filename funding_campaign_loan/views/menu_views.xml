@@ -1,0 +1,25 @@
+<!-- views/menu_views.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Loan Requests Menu -->
+    <menuitem id="menu_funding_loan_request"
+              name="Loan Requests"
+              parent="funding_campaign.menu_funding_campaign_root"
+              action="action_funding_loan_request"
+              sequence="20"/>
+
+    <!-- Loan Registers Menu -->
+    <menuitem id="menu_funding_loan_register"
+              name="Loan Registers"
+              parent="funding_campaign.menu_funding_campaign_root"
+              action="action_funding_loan_register"
+              sequence="30"/>
+
+    <!-- Action para Loan Requests -->
+    <record id="action_funding_loan_request" model="ir.actions.act_window">
+        <field name="name">Loan Requests</field>
+        <field name="res_model">funding.loan.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'default_source': 'manual'}</field>
+    </record>
+</odoo>
