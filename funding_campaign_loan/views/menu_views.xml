@@ -1,5 +1,3 @@
-<!-- views/menu_views.xml -->
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Loan Requests Menu -->
     <menuitem id="menu_funding_loan_request"
