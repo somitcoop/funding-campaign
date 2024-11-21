@@ -10,6 +10,7 @@ _logger = logging.getLogger(__name__)
 class FundingCampaign(models.Model):
     _name = "funding.campaign"
     _description = "Funding Campaign"
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char("Name", required=True)
     start_date = fields.Date("Start Date", required=True)
@@ -24,8 +25,35 @@ class FundingCampaign(models.Model):
         string="Status",
         default="draft",
     )
-    global_objective = fields.Float("Global Objective")
-    funding_source_ids = fields.Many2many("funding.source", string="Funding Sources")
+    global_objective = fields.Float("Global Objective", compute="_compute_global_objective", store=True)
+
+    @api.depends("funding_source_ids.objective")
+    def _compute_global_objective(self):
+        for campaign in self:
+            campaign.global_objective = sum(
+                source.objective for source in campaign.funding_source_ids
+            )
+    funding_source_ids = fields.Many2many(
+        "funding.source",
+        string="Sources",
+    )
+
+    @api.constrains('funding_source_ids')
+    def _check_funding_source_types(self):
+        for campaign in self:
+            if campaign.funding_source_ids:
+                # Agrupar las fuentes por tipo
+                sources_by_type = {}
+                for source in campaign.funding_source_ids:
+                    if source.source_type in sources_by_type:
+                        raise ValidationError(_(
+                            "You cannot add multiple funding sources of the same type. "
+                            "Type '{}' is duplicated.".format(
+                                dict(source._fields['source_type'].selection).get(source.source_type)
+                            )
+                        ))
+                    sources_by_type[source.source_type] = source
+
     marketing_campaign_id = fields.Many2one(
         "mailing.mailing", string="Marketing Campaign", ondelete="set null"
     )

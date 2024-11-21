@@ -26,8 +26,12 @@
                                 <field name="date"/>
                             </tree>
                         </field>
-                    
+
                 </page>
+            </xpath>
+            <xpath expr="//page[@name='funding_source']//group" position="inside">
+                <field name="share_product_id" attrs="{'invisible': [('has_subscription_source', '=', False)]}"/>
+                <field name="source_objective_subscription" attrs="{'invisible': [('has_subscription_source', '=', False)]}"/>
             </xpath>
         </field>
     </record>

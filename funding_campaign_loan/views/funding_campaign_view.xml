@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- views/funding_campaign_view.xml -->
     <record id="view_funding_campaign_form_inherit_loan" model="ir.ui.view">
@@ -29,9 +28,12 @@
                     </field>
                 </page>
             </xpath>
+            <xpath expr="//page[@name='funding_source']//group" position="inside">
+                <field name="template_id" attrs="{'invisible': [('has_loan_source', '=', False)]}"/>
+                <field name="source_objective_loan" attrs="{'invisible': [('has_loan_source', '=', False)]}"/>
+            </xpath>
         </field>
     </record>
-
     <record id="action_campaign_loan_requests" model="ir.actions.act_window">
         <field name="name">Loan Requests</field>
         <field name="res_model">funding.loan.request</field>

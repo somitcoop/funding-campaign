@@ -1,75 +1,163 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Tree View -->
-    <record id="funding_loan_register_tree_view" model="ir.ui.view">
-        <field name="name">funding.loan.register.tree</field>
-        <field name="model">funding.loan.register</field>
+    <record id="view_funding_loan_request_tree" model="ir.ui.view">
+        <field name="name">funding.loan.request.tree</field>
+        <field name="model">funding.loan.request</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-info="state == 'draft'"
+                  decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'approved'"
+                  decoration-warning="state == 'waiting'"
+                  decoration-danger="state == 'rejected'">
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="loan_request_id"/>
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="campaign_id"/>
+                <field name="template_id"/>
+                <field name="loan_amount" sum="Total"/>
+                <field name="state"/>
                 <field name="loan_id"/>
                 <field name="date"/>
-                <field name="amount"/>
-                <field name="company_id" groups="base.group_multi_company"/>
             </tree>
         </field>
     </record>
 
     <!-- Form View -->
-    <record id="funding_loan_register_form_view" model="ir.ui.view">
-        <field name="name">funding.loan.register.form</field>
-        <field name="model">funding.loan.register</field>
+    <record id="view_funding_loan_request_form" model="ir.ui.view">
+        <field name="name">funding.loan.request.form</field>
+        <field name="model">funding.loan.request</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_approve"
+                            string="Approve"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_waiting"
+                            string="Put on Waiting List"
+                            type="object"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_reject"
+                            string="Reject"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ['draft', 'waiting'])]}"/>
+                    <button name="action_cancel"
+                            string="Cancel"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ['draft', 'waiting'])]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="partner_id"/>
-                            <field name="loan_request_id"/>
+                        <group string="Personal Information">
+                            <field name="partner_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="firstname"/>
+                            <field name="lastname"/>
+                            <field name="email"/>
+                            <field name="phone"/>
                         </group>
-                        <group>
-                            <field name="loan_id"/>
+                        <group string="Address">
+                            <field name="address"/>
+                            <field name="city"/>
+                            <field name="zip_code"/>
+                            <field name="country_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Loan Information">
+                            <field name="campaign_id"/>
+                            <field name="template_id"/>
+                            <field name="loan_amount"/>
+                            <field name="source"/>
                             <field name="date"/>
-                            <field name="amount"/>
+                        </group>
+                        <group string="Other Information">
+                            <field name="loan_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="company_currency_id" invisible="1"/>
                         </group>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
 
     <!-- Search View -->
-    <record id="funding_loan_register_search_view" model="ir.ui.view">
-        <field name="name">funding.loan.register.search</field>
-        <field name="model">funding.loan.register</field>
+    <record id="view_funding_loan_request_search" model="ir.ui.view">
+        <field name="name">funding.loan.request.search</field>
+        <field name="model">funding.loan.request</field>
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
                 <field name="partner_id"/>
-                <field name="loan_request_id"/>
-                <field name="loan_id"/>
+                <field name="firstname"/>
+                <field name="lastname"/>
+                <field name="campaign_id"/>
+                <field name="template_id"/>
+                <field name="state"/>
                 <separator/>
+                <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                <filter string="Waiting" name="waiting" domain="[('state','=','waiting')]"/>
+                <filter string="Approved" name="approved" domain="[('state','=','approved')]"/>
+                <filter string="Rejected" name="rejected" domain="[('state','=','rejected')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state','=','cancelled')]"/>
                 <group expand="0" string="Group By">
-                    <filter string="Partner" name="group_partner"
-                            context="{'group_by': 'partner_id'}"/>
-                    <filter string="Loan Request" name="group_request"
-                            context="{'group_by': 'loan_request_id'}"/>
-                    <filter string="Date" name="group_date"
-                            context="{'group_by': 'date'}"/>
+                    <filter string="Partner" name="partner" context="{'group_by':'partner_id'}"/>
+                    <filter string="Campaign" name="campaign" context="{'group_by':'campaign_id'}"/>
+                    <filter string="Template" name="template" context="{'group_by':'template_id'}"/>
+                    <filter string="State" name="state" context="{'group_by':'state'}"/>
+                    <filter string="Date" name="date" context="{'group_by':'date'}"/>
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- Action -->
-    <record id="action_funding_loan_register" model="ir.actions.act_window">
-        <field name="name">Loan Registers</field>
-        <field name="res_model">funding.loan.register</field>
-        <field name="view_mode">tree,form</field>
+    <!-- Kanban View -->
+    <record id="view_funding_loan_request_kanban" model="ir.ui.view">
+        <field name="name">funding.loan.request.kanban</field>
+        <field name="model">funding.loan.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state">
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click {{kanban_get_record_class(record)}}">
+                            <div class="oe_kanban_details">
+                                <strong><field name="name"/></strong>
+                                <div><field name="partner_id"/></div>
+                                <div><field name="loan_amount" widget="monetary" options="{'currency_field': 'company_currency_id'}"/></div>
+                                <div><field name="state" widget="statusbar" options="{'clickable': False}"/></div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="action_funding_loan_request" model="ir.actions.act_window">
+        <field name="name">Loan Requests</field>
+        <field name="res_model">funding.loan.request</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_funding_loan_request_search"/>
+        <field name="view_id" ref="view_funding_loan_request_kanban"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first loan request!
+            </p>
+        </field>
     </record>
 </odoo>

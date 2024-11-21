@@ -8,12 +8,12 @@ _logger = logging.getLogger(__name__)
 
 
 class SubscriptionRequest(models.Model):
-    _inherit = 'subscription.request'
+    _inherit = "subscription.request"
 
     campaign_id = fields.Many2one(
-        'funding.campaign',
+        "funding.campaign",
         store=True,
-        string='Campaign',
+        string="Campaign",
         tracking=True,
-        help='Campaign associated with this subscription request'
+        help="Campaign associated with this subscription request",
     )

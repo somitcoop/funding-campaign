@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_funding_campaign_tree" model="ir.ui.view">
         <field name="name">view.funding.campaign.tree</field>
@@ -17,54 +16,48 @@
         </field>
     </record>
     <record id="view_funding_campaign_form" model="ir.ui.view">
-        <field name="name">view.funding.campaign.form</field>
+        <field name="name">funding.campaign.form</field>
         <field name="model">funding.campaign</field>
         <field name="arch" type="xml">
             <form string="Funding Campaign">
                 <header>
                     <field name="state" widget="statusbar"/>
-                    <button name="action_start_campaign" type="object" string="Start Campaign"
-                            states="draft" class="btn-primary"/>
-                    <button name="action_finalize_campaign" type="object" string="Finalize Campaign"
-                            states="open" class="btn-secondary"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        
+                        <!-- Botones inteligentes aquí -->
                     </div>
                     <div class="oe_title">
-                        <label for="name"/>
                         <h1>
-                            <field name="name" placeholder="Name..."/>
+                            <field name="name"/>
                         </h1>
                     </div>
                     <group>
-                        <group col="2">
+                        <group>
                             <field name="start_date"/>
-                        </group>
-                        <group col="2">
-                            <field name="end_date" attrs="{
-                                'invisible': [('is_permanent', '=', True)],
-                                'required': [('is_permanent', '=', False)]
-                            }"/>
-                        </group>
-                        <group col="2">
+                            <field name="end_date"/>
                             <field name="is_permanent"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_currency_id" invisible="1"/>
                         </group>
-                    </group>
-                    <group name="global_data" string="Global Data">
                         <group>
                             <field name="global_objective"/>
-                            <field name="marketing_campaign_id"/>
-                        </group>
-                        <group>
                             <field name="progress" widget="progressbar"/>
-                            <field name="funding_source_ids" widget="many2many_tags"/>
+                            <field name="marketing_campaign_id"/>
                         </group>
                     </group>
                     <notebook>
+                        <page string="Funding Sources" name="funding_source">
+                            <group>
+                                <field name="funding_source_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
             </form>
         </field>
     </record>

@@ -2,16 +2,9 @@
     <!-- Loan Requests Menu -->
     <menuitem id="menu_funding_loan_request"
               name="Loan Requests"
-              parent="funding_campaign.menu_funding_campaign_root"
+              parent="account_loan.loan_menu"
               action="action_funding_loan_request"
               sequence="20"/>
-
-    <!-- Loan Registers Menu -->
-    <menuitem id="menu_funding_loan_register"
-              name="Loan Registers"
-              parent="funding_campaign.menu_funding_campaign_root"
-              action="action_funding_loan_register"
-              sequence="30"/>
 
     <!-- Action para Loan Requests -->
     <record id="action_funding_loan_request" model="ir.actions.act_window">

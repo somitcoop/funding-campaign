@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_funding_source_tree" model="ir.ui.view">
         <field name="name">view.funding.source.tree</field>
@@ -30,6 +29,7 @@
                         <field name="progress" widget="progressbar"/>
                         <field name="source_type"/>
                         <field name="campaign_ids" widget="many2many_tags"/>
+                        <field name="company_id"/>
                     </group>
                 </sheet>
             </form>

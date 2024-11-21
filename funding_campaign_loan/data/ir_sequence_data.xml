@@ -1,0 +1,12 @@
+<!-- data/ir_sequence_data.xml -->
+<odoo>
+    <data noupdate="1">
+        <record id="seq_funding_loan_request" model="ir.sequence">
+            <field name="name">Funding Loan Request</field>
+            <field name="code">funding.loan.request</field>
+            <field name="prefix">LR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+    </data>
+</odoo>
