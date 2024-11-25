@@ -51,6 +51,9 @@
                             <group>
                                 <field name="funding_source_ids" widget="many2many_tags"/>
                             </group>
+                            <group col="2" name="source_objective">
+
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

@@ -32,7 +32,7 @@ class FundingCampaign(models.Model):
     share_product_id = fields.Many2one(
         "product.product",
         string="Share type",
-        domain="[('is_share', '=', True), ('company_id', 'in', (company_id, False))]",
+        domain="[('is_share', '=', True)]",
     )
 
     source_objective_subscription = fields.Float(

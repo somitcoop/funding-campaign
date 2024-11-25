@@ -17,21 +17,21 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Subscription Requests" name="subscription_requests"
                       attrs="{'invisible': [('has_subscription_source', '=', False)]}">
-
-                        <field name="subscription_request_ids" readonly="1" nolabel="1">
-                            <tree>
-                                <field name="partner_id"/>
-                                <field name="subscription_amount" sum="Total"/>
-                                <field name="state"/>
-                                <field name="date"/>
-                            </tree>
-                        </field>
-
+                    <field name="subscription_request_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="partner_id"/>
+                            <field name="subscription_amount" sum="Total"/>
+                            <field name="state"/>
+                            <field name="date"/>
+                        </tree>
+                    </field>
                 </page>
             </xpath>
-            <xpath expr="//page[@name='funding_source']//group" position="inside">
-                <field name="share_product_id" attrs="{'invisible': [('has_subscription_source', '=', False)]}"/>
-                <field name="source_objective_subscription" attrs="{'invisible': [('has_subscription_source', '=', False)]}"/>
+            <xpath expr="//group[@name='source_objective']" position="inside">
+                <group name="subscription_objective" string="Subscription Objective" attrs="{'invisible': [('has_subscription_source', '=', False)]}">
+                    <field name="source_objective_subscription"/>
+                    <field name="share_product_id" />
+                </group>
             </xpath>
         </field>
     </record>
