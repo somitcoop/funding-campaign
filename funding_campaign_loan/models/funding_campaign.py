@@ -60,3 +60,13 @@ class FundingCampaign(models.Model):
             "domain": [("campaign_id", "=", self.id)],
             "context": {"default_campaign_id": self.id},
         }
+
+    @api.depends('source_objective_loan')
+    def _compute_global_objective(self):
+        return super()._compute_global_objective()
+
+    def _get_objective_amounts(self):
+        amounts = super()._get_objective_amounts()
+        if hasattr(self, 'source_objective_loan'):
+            amounts.append(self.source_objective_loan or 0.0)
+        return amounts

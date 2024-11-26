@@ -25,14 +25,21 @@ class FundingCampaign(models.Model):
         string="Status",
         default="draft",
     )
-    global_objective = fields.Float("Global Objective", compute="_compute_global_objective", store=True)
+    global_objective = fields.Float(
+        string="Global Objective Amount",
+        compute="_compute_global_objective",
+        store=True,
+    )
 
-    @api.depends("funding_source_ids.objective")
+    @api.depends()
     def _compute_global_objective(self):
         for campaign in self:
-            campaign.global_objective = sum(
-                source.objective for source in campaign.funding_source_ids
-            )
+            campaign.global_objective = sum(campaign._get_objective_amounts())
+
+    def _get_objective_amounts(self):
+        self.ensure_one()
+        return []
+
     funding_source_ids = fields.Many2many(
         "funding.source",
         string="Sources",
