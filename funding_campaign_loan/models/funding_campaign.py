@@ -91,3 +91,12 @@ class FundingCampaign(models.Model):
         if hasattr(self, 'loan_raised_amount'):
             amounts.append(self.loan_raised_amount or 0.0)
         return amounts
+
+    @api.depends(
+        "funding_source_ids",
+        "funding_source_ids.progress",
+        "global_objective",
+        "loan_raised_amount",
+    )
+    def _compute_progress(self):
+        return super()._compute_progress()

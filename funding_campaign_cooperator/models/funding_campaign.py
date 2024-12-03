@@ -46,17 +46,22 @@ class FundingCampaign(models.Model):
         group_operator="avg",
     )
 
-    @api.depends('source_raised_amount', 'source_objective_subscription')
+    @api.depends("source_raised_amount", "source_objective_subscription")
     def _compute_progress_subscription(self):
         for campaign in self:
             if campaign.source_objective_subscription:
                 campaign.progress_subscription = (
-                    campaign.source_raised_amount / campaign.source_objective_subscription
+                    campaign.source_raised_amount
+                    / campaign.source_objective_subscription
                 ) * 100
             else:
                 campaign.progress_subscription = 0.0
 
-    @api.depends("subscription_request_ids", "subscription_request_ids.state", "subscription_request_ids.subscription_amount")
+    @api.depends(
+        "subscription_request_ids",
+        "subscription_request_ids.state",
+        "subscription_request_ids.subscription_amount",
+    )
     def _compute_source_raised_amount(self):
         for campaign in self:
             campaign.source_raised_amount = sum(
@@ -84,19 +89,28 @@ class FundingCampaign(models.Model):
             "context": {"default_campaign_id": self.id},
         }
 
-    @api.depends('source_objective_subscription')
+    @api.depends("source_objective_subscription")
     def _compute_global_objective(self):
         return super()._compute_global_objective()
 
     def _get_objective_amounts(self):
         amounts = super()._get_objective_amounts()
-        if hasattr(self, 'source_objective_subscription'):
+        if hasattr(self, "source_objective_subscription"):
             amounts.append(self.source_objective_subscription or 0.0)
         return amounts
 
     @api.depends("funding_source_ids", "global_objective")
     def _get_raised_amounts(self):
         amounts = super()._get_raised_amounts()
-        if hasattr(self, 'source_raised_amount'):
+        if hasattr(self, "source_raised_amount"):
             amounts.append(self.source_raised_amount or 0.0)
         return amounts
+
+    @api.depends(
+        "funding_source_ids",
+        "funding_source_ids.progress",
+        "global_objective",
+        "source_raised_amount",
+    )
+    def _compute_progress(self):
+        return super()._compute_progress()
