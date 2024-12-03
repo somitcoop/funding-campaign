@@ -46,6 +46,19 @@ class LoanRequestApi(http.Controller):
                     "status": "error",
                 }
 
+            campaign = request.env['funding.campaign'].browse(kw.get('campaign_id'))
+            if not campaign.exists():
+                _logger.warning(f"Campaign not found: {kw.get('campaign_id')}")
+                return {'error': 'Campaign not found', 'status': 'error'}
+
+            if campaign.state != 'open':
+                _logger.warning(f"Campaign {campaign.name} is not open (current state: {campaign.state})")
+                return {
+                    'error': 'Campaign is not active',
+                    'status': 'error',
+                    'details': 'Loan requests can only be created for active campaigns'
+                }
+
             _logger.info(f"User found: {user.name}")
 
             try:

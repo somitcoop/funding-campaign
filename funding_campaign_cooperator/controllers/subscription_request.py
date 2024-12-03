@@ -75,6 +75,19 @@ class CooperatorVoluntaryApi(http.Controller):
 
             data = {field: kw[field] for field in required_fields}
 
+            campaign = request.env['funding.campaign'].browse(data.get('campaign_id'))
+            if not campaign.exists():
+                _logger.warning(f"Campaign not found: {data.get('campaign_id')}")
+                return {'error': 'Campaign not found', 'status': 'error'}
+
+            if campaign.state != 'open':
+                _logger.warning(f"Campaign {campaign.name} is not open (current state: {campaign.state})")
+                return {
+                    'error': 'Campaign is not active',
+                    'status': 'error',
+                    'details': 'Subscriptions can only be created for active campaigns'
+                }
+
             subscription = request.env['subscription.request'].create(data)
 
             _logger.info(f"Subscription created with ID: {subscription.id}")
