@@ -30,8 +30,9 @@
             </xpath>
             <xpath expr="//group[@name='source_objective']" position="inside">
                 <group name="loan_objective" string="Loan Objective" attrs="{'invisible': [('has_loan_source', '=', False)]}">
-                    <field name="source_objective_loan" />
-                    <field name="template_id" />
+                    <field name="source_objective_loan" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="progress_loan" widget="progressbar"/>
+                    <field name="template_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                 </group>
             </xpath>
         </field>

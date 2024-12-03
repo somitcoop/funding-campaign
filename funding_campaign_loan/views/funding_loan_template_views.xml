@@ -11,14 +11,12 @@
                         <field name="loan_type"/>
                         <field name="is_permanent"/>
                         <field name="rate"/>
-                        <field name="min_amount"/>
-                        <field name="max_amount"/>
-                        <field name="min_periods"/>
+                        <field name="min_periods" attrs="{'invisible': [('is_permanent', '=', False)]}"/>
                         <field name="method_period"/>
                         <field name="journal_id"/>
                         <field name="interest_expenses_account_id"/>
                         <field name="short_term_loan_account_id"/>
-                        <field name="company_id"/>
+                        <field name="company_id" invisible="1"/>
                     </group>
                 </sheet>
             </form>

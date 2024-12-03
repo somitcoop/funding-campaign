@@ -22,7 +22,6 @@
             </tree>
         </field>
     </record>
-
     <!-- Form View -->
     <record id="view_funding_loan_request_form" model="ir.ui.view">
         <field name="name">funding.loan.request.form</field>
@@ -80,7 +79,7 @@
                         </group>
                         <group string="Other Information">
                             <field name="loan_id"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id" invisible="1"/>
                             <field name="company_currency_id" invisible="1"/>
                         </group>
                     </group>
@@ -93,7 +92,6 @@
             </form>
         </field>
     </record>
-
     <!-- Search View -->
     <record id="view_funding_loan_request_search" model="ir.ui.view">
         <field name="name">funding.loan.request.search</field>
@@ -123,7 +121,6 @@
             </search>
         </field>
     </record>
-
     <!-- Kanban View -->
     <record id="view_funding_loan_request_kanban" model="ir.ui.view">
         <field name="name">funding.loan.request.kanban</field>
@@ -135,10 +132,18 @@
                     <t t-name="kanban-box">
                         <div t-attf-class="oe_kanban_card oe_kanban_global_click {{kanban_get_record_class(record)}}">
                             <div class="oe_kanban_details">
-                                <strong><field name="name"/></strong>
-                                <div><field name="partner_id"/></div>
-                                <div><field name="loan_amount" widget="monetary" options="{'currency_field': 'company_currency_id'}"/></div>
-                                <div><field name="state" widget="statusbar" options="{'clickable': False}"/></div>
+                                <strong>
+                                    <field name="name"/>
+                                </strong>
+                                <div>
+                                    <field name="partner_id"/>
+                                </div>
+                                <div>
+                                    <field name="loan_amount" widget="monetary" options="{'currency_field': 'company_currency_id'}"/>
+                                </div>
+                                <div>
+                                    <field name="state" widget="statusbar" options="{'clickable': False}"/>
+                                </div>
                             </div>
                         </div>
                     </t>
@@ -146,7 +151,6 @@
             </kanban>
         </field>
     </record>
-
     <!-- Action Window -->
     <record id="action_funding_loan_request" model="ir.actions.act_window">
         <field name="name">Loan Requests</field>

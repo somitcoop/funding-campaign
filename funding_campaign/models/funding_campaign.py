@@ -79,16 +79,18 @@ class FundingCampaign(models.Model):
         string="Company Currency"
     )
 
-    @api.depends("funding_source_ids.progress", "global_objective")
+    @api.depends("funding_source_ids", "funding_source_ids.progress", "global_objective")
     def _compute_progress(self):
         for campaign in self:
-            total_raised = sum(
-                source.raised_amount for source in campaign.funding_source_ids
-            )
+            total_raised = sum(campaign._get_raised_amounts())
             if campaign.global_objective:
                 campaign.progress = (total_raised / campaign.global_objective) * 100
             else:
                 campaign.progress = 0.0
+
+    def _get_raised_amounts(self):
+        self.ensure_one()
+        return []
 
     def action_start_campaign(self):
         for campaign in self:

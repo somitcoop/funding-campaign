@@ -29,8 +29,9 @@
             </xpath>
             <xpath expr="//group[@name='source_objective']" position="inside">
                 <group name="subscription_objective" string="Subscription Objective" attrs="{'invisible': [('has_subscription_source', '=', False)]}">
-                    <field name="source_objective_subscription"/>
-                    <field name="share_product_id" />
+                    <field name="source_objective_subscription" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="progress_subscription" widget="progressbar"/>
+                    <field name="share_product_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                 </group>
             </xpath>
         </field>

@@ -24,10 +24,22 @@ class FundingCampaign(models.Model):
         currency_field="company_currency_id",
         store=True,
     )
+    progress_loan = fields.Float(
+        "Progress", compute="_compute_progress_loan", store=True, group_operator="avg"
+    )
+
+    @api.depends("loan_raised_amount", "source_objective_loan")
+    def _compute_progress_loan(self):
+        for campaign in self:
+            if campaign.source_objective_loan:
+                campaign.progress_loan = (
+                    campaign.loan_raised_amount / campaign.source_objective_loan
+                ) * 100
+            else:
+                campaign.progress_loan = 0.0
 
     template_id = fields.Many2one(
         "funding.loan.template",
-        readonly=True,
     )
 
     source_objective_loan = fields.Float(string="Loan Objective Amount", store=True)
@@ -38,6 +50,8 @@ class FundingCampaign(models.Model):
             campaign.has_loan_source = any(
                 source.source_type == "loan" for source in campaign.funding_source_ids
             )
+
+
 
     @api.depends(
         "loan_request_ids", "loan_request_ids.loan_amount", "loan_request_ids.state"
@@ -69,4 +83,11 @@ class FundingCampaign(models.Model):
         amounts = super()._get_objective_amounts()
         if hasattr(self, 'source_objective_loan'):
             amounts.append(self.source_objective_loan or 0.0)
+        return amounts
+
+    @api.depends("funding_source_ids", "global_objective")
+    def _get_raised_amounts(self):
+        amounts = super()._get_raised_amounts()
+        if hasattr(self, 'loan_raised_amount'):
+            amounts.append(self.loan_raised_amount or 0.0)
         return amounts

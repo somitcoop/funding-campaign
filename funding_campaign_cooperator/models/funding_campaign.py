@@ -39,11 +39,30 @@ class FundingCampaign(models.Model):
         string="Subscription Objective Amount", store=True
     )
 
-    @api.depends("funding_source_ids.raised_amount")
+    progress_subscription = fields.Float(
+        "Progress",
+        compute="_compute_progress_subscription",
+        store=True,
+        group_operator="avg",
+    )
+
+    @api.depends('source_raised_amount', 'source_objective_subscription')
+    def _compute_progress_subscription(self):
+        for campaign in self:
+            if campaign.source_objective_subscription:
+                campaign.progress_subscription = (
+                    campaign.source_raised_amount / campaign.source_objective_subscription
+                ) * 100
+            else:
+                campaign.progress_subscription = 0.0
+
+    @api.depends("subscription_request_ids", "subscription_request_ids.state", "subscription_request_ids.subscription_amount")
     def _compute_source_raised_amount(self):
         for campaign in self:
             campaign.source_raised_amount = sum(
-                source.raised_amount for source in campaign.funding_source_ids
+                request.subscription_amount
+                for request in campaign.subscription_request_ids
+                if request.state == "done"
             )
 
     @api.depends("funding_source_ids.source_type")
@@ -73,4 +92,11 @@ class FundingCampaign(models.Model):
         amounts = super()._get_objective_amounts()
         if hasattr(self, 'source_objective_subscription'):
             amounts.append(self.source_objective_subscription or 0.0)
+        return amounts
+
+    @api.depends("funding_source_ids", "global_objective")
+    def _get_raised_amounts(self):
+        amounts = super()._get_raised_amounts()
+        if hasattr(self, 'source_raised_amount'):
+            amounts.append(self.source_raised_amount or 0.0)
         return amounts

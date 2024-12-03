@@ -22,6 +22,10 @@
             <form string="Funding Campaign">
                 <header>
                     <field name="state" widget="statusbar"/>
+                    <button name="action_start_campaign" type="object" string="Start Campaign"
+                            states="draft" class="btn-primary"/>
+                    <button name="action_finalize_campaign" type="object" string="Finalize Campaign"
+                            states="open" class="btn-secondary"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -37,7 +41,7 @@
                             <field name="start_date"/>
                             <field name="end_date"/>
                             <field name="is_permanent"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id" invisible="1"/>
                             <field name="company_currency_id" invisible="1"/>
                         </group>
                         <group>
@@ -49,7 +53,7 @@
                     <notebook>
                         <page string="Funding Sources" name="funding_source">
                             <group>
-                                <field name="funding_source_ids" widget="many2many_tags"/>
+                                <field name="funding_source_ids" widget="many2many_tags" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </group>
                             <group col="2" name="source_objective">
 

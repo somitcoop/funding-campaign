@@ -21,6 +21,7 @@ class FundingLoanRequest(models.Model):
         readonly=True,
         default=lambda self: self._get_default_name(),
         copy=False,
+        store=True
     )
     partner_id = fields.Many2one(
         "res.partner",
@@ -35,6 +36,9 @@ class FundingLoanRequest(models.Model):
         "funding.loan.template",
         states={"draft": [("readonly", False)]},
     )
+    #TODO: Aqui copiar valor de la capaña
+
+
     loan_amount = fields.Monetary(
         currency_field="company_currency_id",
         required=True,
@@ -113,12 +117,6 @@ class FundingLoanRequest(models.Model):
         states={"draft": [("readonly", False)]},
     )
 
-    @api.model
-    def create(self, vals):
-        if not vals.get("name") or vals["name"] == "/":
-            vals["name"] = self._get_default_name()
-        return super().create(vals)
-
     @api.depends("firstname", "lastname")
     def _compute_name(self):
         for request in self:
@@ -143,9 +141,12 @@ class FundingLoanRequest(models.Model):
         self.ensure_one()
         if self.state != "draft":
             raise UserError(_("Only draft requests can be approved"))
+        if self.loan_amount <= 0:
+            raise UserError(_("Loan amount must be greater than 0"))
+        if not self.template_id:
+            raise UserError(_("Loan template is required"))
 
         loan_vals = {
-            "name": self.name,
             "partner_id": self.partner_id.id,
             "loan_type": self.template_id.loan_type,
             "is_permanent": self.template_id.is_permanent,
@@ -194,3 +195,9 @@ class FundingLoanRequest(models.Model):
             if request.state not in ["draft", "waiting"]:
                 raise UserError(_("Only draft or waiting requests can be rejected"))
             request.write({"state": "rejected"})
+
+    @api.model
+    def create(self, vals):
+        if not vals.get('name') or vals['name'] == '/':
+            vals['name'] = self.env['ir.sequence'].next_by_code('funding.loan.request') or '/'
+        return super(FundingLoanRequest, self).create(vals)

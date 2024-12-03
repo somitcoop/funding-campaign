@@ -39,14 +39,6 @@ class FundingLoanTemplate(models.Model):
         "Interest Rate (%)",
         required=True,
     )
-    min_amount = fields.Monetary(
-        "Minimum Amount",
-        currency_field="company_currency_id",
-    )
-    max_amount = fields.Monetary(
-        "Maximum Amount",
-        currency_field="company_currency_id",
-    )
     min_periods = fields.Integer(
         "Minimum Periods",
         default=60,
@@ -87,15 +79,6 @@ class FundingLoanTemplate(models.Model):
     description = fields.Text(
         "Description",
     )
-
-    @api.constrains("min_amount", "max_amount")
-    def _check_amounts(self):
-        for template in self:
-            if template.min_amount and template.max_amount:
-                if template.min_amount > template.max_amount:
-                    raise ValidationError(
-                        _("Minimum amount cannot be greater than maximum amount")
-                    )
 
     @api.constrains("rate")
     def _check_rate(self):
