@@ -7,6 +7,7 @@
     'depends': [
         'funding_campaign',
         'cooperator',
+        'swagger_docs'
     ],
     'data': [
         'views/funding_campaign_view.xml',

@@ -3,6 +3,7 @@ from odoo.http import request
 from odoo.exceptions import AccessDenied
 import logging
 import traceback
+from odoo.addons.swagger_docs.controllers.swagger_controller import spec
 
 _logger = logging.getLogger(__name__)
 
@@ -46,17 +47,19 @@ class LoanRequestApi(http.Controller):
                     "status": "error",
                 }
 
-            campaign = request.env['funding.campaign'].browse(kw.get('campaign_id'))
+            campaign = request.env["funding.campaign"].browse(kw.get("campaign_id"))
             if not campaign.exists():
                 _logger.warning(f"Campaign not found: {kw.get('campaign_id')}")
-                return {'error': 'Campaign not found', 'status': 'error'}
+                return {"error": "Campaign not found", "status": "error"}
 
-            if campaign.state != 'open':
-                _logger.warning(f"Campaign {campaign.name} is not open (current state: {campaign.state})")
+            if campaign.state != "open":
+                _logger.warning(
+                    f"Campaign {campaign.name} is not open (current state: {campaign.state})"
+                )
                 return {
-                    'error': 'Campaign is not active',
-                    'status': 'error',
-                    'details': 'Loan requests can only be created for active campaigns'
+                    "error": "Campaign is not active",
+                    "status": "error",
+                    "details": "Loan requests can only be created for active campaigns",
                 }
 
             _logger.info(f"User found: {user.name}")
@@ -146,3 +149,174 @@ class LoanRequestApi(http.Controller):
                 "id": None,
                 "error": {"code": 200, "message": str(e), "data": {"status": "error"}},
             }
+
+
+spec.path(
+    path="/api/loan/campaign/create",
+    operations={
+        "post": {
+            "tags": ["Loans"],
+            "summary": "Create a new loan request",
+            "description": "Create a new loan request with the provided partner and campaign information",
+            "parameters": [
+                {
+                    "in": "header",
+                    "name": "X-Odoo-Db",
+                    "required": True,
+                    "schema": {"type": "string"},
+                    "description": "Odoo database name",
+                },
+                {
+                    "in": "header",
+                    "name": "X-Odoo-Username",
+                    "required": True,
+                    "schema": {"type": "string"},
+                    "description": "Username for authentication",
+                },
+                {
+                    "in": "header",
+                    "name": "X-Odoo-Api-Key",
+                    "required": True,
+                    "schema": {"type": "string"},
+                    "description": "API key for authentication",
+                },
+            ],
+            "requestBody": {
+                "required": True,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "required": [
+                                "partner_id",
+                                "loan_amount",
+                                "loan_type_id",
+                                "campaign_id",
+                                "country_id",
+                                "firstname",
+                                "lastname",
+                                "email",
+                                "address",
+                                "city",
+                                "zip_code",
+                                "phone",
+                                "lang",
+                            ],
+                            "properties": {
+                                "partner_id": {
+                                    "type": "integer",
+                                    "description": "ID of the partner requesting the loan",
+                                },
+                                "loan_amount": {
+                                    "type": "number",
+                                    "format": "float",
+                                    "description": "Amount requested for the loan",
+                                },
+                                "loan_type_id": {
+                                    "type": "integer",
+                                    "description": "ID of the loan type",
+                                },
+                                "campaign_id": {
+                                    "type": "integer",
+                                    "description": "ID of the funding campaign",
+                                },
+                                "country_id": {
+                                    "type": "integer",
+                                    "description": "ID of the country",
+                                },
+                                "firstname": {
+                                    "type": "string",
+                                    "description": "First name of the loan requester",
+                                },
+                                "lastname": {
+                                    "type": "string",
+                                    "description": "Last name of the loan requester",
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "format": "email",
+                                    "description": "Email address",
+                                },
+                                "address": {
+                                    "type": "string",
+                                    "description": "Street address",
+                                },
+                                "city": {"type": "string", "description": "City name"},
+                                "zip_code": {
+                                    "type": "string",
+                                    "description": "Postal code",
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "Phone number",
+                                },
+                                "lang": {
+                                    "type": "string",
+                                    "description": "Language code",
+                                },
+                            },
+                        }
+                    }
+                },
+            },
+            "responses": {
+                "200": {
+                    "description": "Successful response",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "jsonrpc": {"type": "string", "example": "2.0"},
+                                    "result": {
+                                        "type": "object",
+                                        "properties": {
+                                            "status": {
+                                                "type": "string",
+                                                "example": "success",
+                                            },
+                                            "data": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "ID of created loan request",
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "description": "Name of loan request",
+                                                    },
+                                                    "state": {
+                                                        "type": "string",
+                                                        "description": "State of loan request",
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    },
+                },
+                "400": {
+                    "description": "Error response",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "error": {
+                                        "type": "string",
+                                        "description": "Error message",
+                                    },
+                                    "status": {"type": "string", "example": "error"},
+                                },
+                            }
+                        }
+                    },
+                },
+            },
+        }
+    },
+)
