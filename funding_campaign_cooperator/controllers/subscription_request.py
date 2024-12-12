@@ -217,8 +217,8 @@ spec.path(
     path="/api/subscription/campaign/create",
     operations={
         "post": {
-            "tags": ["Subscriptions"],
-            "summary": "Create a new subscription request",
+            "tags": ["Campaign Subscriptions"],
+            "summary": "Create a new campaign subscription request",
             "description": "Create a new subscription request with the provided partner and campaign information",
             "parameters": [
                 {

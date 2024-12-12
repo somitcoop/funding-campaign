@@ -155,8 +155,8 @@ spec.path(
     path="/api/loan/campaign/create",
     operations={
         "post": {
-            "tags": ["Loans"],
-            "summary": "Create a new loan request",
+            "tags": ["Campaign Loans"],
+            "summary": "Create a new campaign loan request",
             "description": "Create a new loan request with the provided partner and campaign information",
             "parameters": [
                 {
