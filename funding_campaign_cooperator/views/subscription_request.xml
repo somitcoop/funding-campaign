@@ -4,6 +4,13 @@
         <field name="model">subscription.request</field>
         <field name="inherit_id" ref="cooperator.subscription_request_tree"/>
         <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-info">state == 'draft'</attribute>
+                <attribute name="decoration-muted">state == 'cancelled'</attribute>
+                <attribute name="decoration-success">state == 'done'</attribute>
+                <attribute name="decoration-warning">state == 'waiting'</attribute>
+                <attribute name="decoration-danger">state == 'blocked'</attribute>
+            </xpath>
             <field name="source" position="after">
                 <field name="campaign_id"/>
             </field>

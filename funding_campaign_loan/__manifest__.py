@@ -6,7 +6,12 @@
     "author": "",
     "website": "",
     "category": "",
-    "depends": ["funding_campaign", "account_loan_permanent"],
+    "depends": [
+        "funding_campaign",
+        "account_loan_permanent",
+        "cooperator_share_increase_loan",
+        "swagger_docs",
+    ],
     "data": [
         "data/ir_sequence_data.xml",
         "security/ir.model.access.csv",
