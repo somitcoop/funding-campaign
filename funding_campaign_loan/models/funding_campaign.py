@@ -28,6 +28,12 @@ class FundingCampaign(models.Model):
         "Progress", compute="_compute_progress_loan", store=True, group_operator="avg"
     )
 
+    loan_request_count = fields.Integer(
+        string="Number of Loan Requests",
+        compute='_compute_loan_request_count',
+        store=True
+    )
+
     @api.depends("loan_raised_amount", "source_objective_loan")
     def _compute_progress_loan(self):
         for campaign in self:
@@ -63,6 +69,11 @@ class FundingCampaign(models.Model):
                 for request in campaign.loan_request_ids
                 if request.state == "approved"
             )
+
+    @api.depends('loan_request_ids')
+    def _compute_loan_request_count(self):
+        for campaign in self:
+            campaign.loan_request_count = len(campaign.loan_request_ids)
 
     def action_view_loan_requests(self):
         self.ensure_one()

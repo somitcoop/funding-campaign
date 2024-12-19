@@ -12,7 +12,14 @@
                         class="oe_stat_button"
                         attrs="{'invisible': [('has_loan_source', '=', False)]}"
                         icon="fa-money">
-                    <field name="loan_raised_amount" widget="statinfo" string="Loans"/>
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="loan_raised_amount" widget="monetary"/>
+                        </span>
+                        <span class="o_stat_text">
+                             <field name="loan_request_count" nolabel="1"/> (Loans requests)
+                        </span>
+                    </div>
                 </button>
             </xpath>
             <xpath expr="//notebook" position="inside">

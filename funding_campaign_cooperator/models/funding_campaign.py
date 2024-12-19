@@ -46,6 +46,12 @@ class FundingCampaign(models.Model):
         group_operator="avg",
     )
 
+    subscription_request_count = fields.Integer(
+        string="Number of Subscription Requests",
+        compute='_compute_subscription_request_count',
+        store=True
+    )
+
     @api.depends("source_raised_amount", "source_objective_subscription")
     def _compute_progress_subscription(self):
         for campaign in self:
@@ -77,6 +83,11 @@ class FundingCampaign(models.Model):
                 source.source_type == "subscription"
                 for source in campaign.funding_source_ids
             )
+
+    @api.depends('subscription_request_ids')
+    def _compute_subscription_request_count(self):
+        for campaign in self:
+            campaign.subscription_request_count = len(campaign.subscription_request_ids)
 
     def action_view_subscription_requests(self):
         self.ensure_one()
