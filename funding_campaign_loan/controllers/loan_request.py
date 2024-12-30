@@ -10,12 +10,13 @@ _logger = logging.getLogger(__name__)
 
 class LoanRequestApi(http.Controller):
     @http.route(
-        "/api/loan/campaign/create",
+        f"/api/campaign/<int:campaign_id>/loan_request",
         type="json",
         auth="none",
         csrf=False,
+        methods=["POST"],
     )
-    def create_loan_request(self, **kw):
+    def create_loan_request(self, campaign_id, **kw):
         try:
             db = request.httprequest.headers.get("X-Odoo-Db")
             username = request.httprequest.headers.get("X-Odoo-Username")
@@ -47,9 +48,9 @@ class LoanRequestApi(http.Controller):
                     "status": "error",
                 }
 
-            campaign = request.env["funding.campaign"].browse(kw.get("campaign_id"))
+            campaign = request.env["funding.campaign"].browse(campaign_id)
             if not campaign.exists():
-                _logger.warning(f"Campaign not found: {kw.get('campaign_id')}")
+                _logger.warning(f"Campaign not found: {campaign_id}")
                 return {"error": "Campaign not found", "status": "error"}
 
             if campaign.state != "open":
@@ -75,9 +76,7 @@ class LoanRequestApi(http.Controller):
             request.env = temp_env
 
             required_fields = [
-                "partner_id",
-                "campaign_id",
-                "template_id",
+                "vat",
                 "loan_amount",
                 "firstname",
                 "lastname",
@@ -86,6 +85,7 @@ class LoanRequestApi(http.Controller):
                 "city",
                 "zip_code",
                 "country_id",
+                "lang",
             ]
 
             for field in required_fields:
@@ -96,35 +96,51 @@ class LoanRequestApi(http.Controller):
                         "status": "error",
                     }
 
-            template = request.env["funding.loan.template"].browse(kw["template_id"])
-            if template.min_amount and kw["loan_amount"] < template.min_amount:
+            # Asegurarnos de que el campaign_id del payload coincide con la ruta
+            if "campaign_id" in kw and kw["campaign_id"] != campaign_id:
                 return {
-                    "error": f"Loan amount cannot be less than {template.min_amount}",
-                    "status": "error",
-                }
-            if template.max_amount and kw["loan_amount"] > template.max_amount:
-                return {
-                    "error": f"Loan amount cannot be greater than {template.max_amount}",
+                    "error": "Campaign ID mismatch between URL and payload",
                     "status": "error",
                 }
 
-            loan_request = request.env["funding.loan.request"].create(
-                {
-                    "partner_id": kw["partner_id"],
-                    "campaign_id": kw["campaign_id"],
-                    "template_id": kw["template_id"],
-                    "loan_amount": kw["loan_amount"],
-                    "firstname": kw["firstname"],
-                    "lastname": kw["lastname"],
-                    "email": kw["email"],
-                    "address": kw["address"],
-                    "city": kw["city"],
-                    "zip_code": kw["zip_code"],
-                    "country_id": kw["country_id"],
-                    "source": kw.get("source", "api"),
-                    "state": "draft",
-                }
-            )
+            # Buscar partner por VAT si existe
+            partner_id = False
+            if kw.get("vat"):
+                partner = (
+                    request.env["res.partner"]
+                    .sudo()
+                    .search([("vat", "=", kw["vat"])], limit=1)
+                )
+                if partner:
+                    partner_id = partner.id
+                    _logger.info(f"Found existing partner with VAT {kw['vat']}")
+
+            loan_request_data = {
+                "vat": kw["vat"],
+                "campaign_id": campaign_id,
+                "template_id": request.env["funding.campaign"]
+                .sudo()
+                .browse(campaign_id)
+                .template_id.id,
+                "loan_amount": kw["loan_amount"],
+                "firstname": kw["firstname"],
+                "lastname": kw["lastname"],
+                "email": kw["email"],
+                "address": kw["address"],
+                "city": kw["city"],
+                "zip_code": kw["zip_code"],
+                "country_id": kw["country_id"],
+                "phone": kw["phone"],
+                "source": "website",
+                "state": "draft",
+                "lang": kw["lang"],
+            }
+
+            # Añadir partner_id solo si existe
+            if partner_id:
+                loan_request_data["partner_id"] = partner_id
+
+            loan_request = request.env["funding.loan.request"].create(loan_request_data)
 
             _logger.info(f"Loan request created with ID: {loan_request.id}")
 
@@ -152,7 +168,7 @@ class LoanRequestApi(http.Controller):
 
 
 spec.path(
-    path="/api/loan/campaign/create",
+    path="/api/loan/{campaign_id}/create",
     operations={
         "post": {
             "tags": ["Campaign Loans"],

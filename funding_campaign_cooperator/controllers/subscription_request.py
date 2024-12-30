@@ -11,12 +11,13 @@ _logger = logging.getLogger(__name__)
 
 class CooperatorVoluntaryApi(http.Controller):
     @http.route(
-        "/api/subscription/campaign/create",
+        f"/api/campaign/<int:campaign_id>/subscription_request",
         type="json",
         auth="none",
         csrf=False,
+        methods=["POST"],
     )
-    def create_subscription(self, **kw):
+    def create_subscription(self, campaign_id, **kw):
         """
         Creates a new subscription request with the provided data.
         tags:
@@ -145,13 +146,10 @@ class CooperatorVoluntaryApi(http.Controller):
             request.env = temp_env
 
             required_fields = [
-                "partner_id",
+                "vat",
                 "ordered_parts",
-                "share_product_id",
-                "source",
-                "type",
-                "campaign_id",
-                "country_id",
+                "type",  # Aqui documentar los dos tipos de increase y rechazar new_cooperator
+                "country_id",  # Documentar los paises disponibles en swagger
                 "firstname",
                 "lastname",
                 "email",
@@ -159,7 +157,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 "city",
                 "zip_code",
                 "phone",
-                "lang",
+                "lang",  # Documentar idiomas disponibles en swagger
             ]
 
             for field in required_fields:
@@ -172,10 +170,20 @@ class CooperatorVoluntaryApi(http.Controller):
 
             data = {field: kw[field] for field in required_fields}
 
-            campaign = request.env["funding.campaign"].browse(data.get("campaign_id"))
+            campaign = request.env["funding.campaign"].browse(campaign_id)
             if not campaign.exists():
-                _logger.warning(f"Campaign not found: {data.get('campaign_id')}")
+                _logger.warning(f"Campaign not found: {campaign_id}")
                 return {"error": "Campaign not found", "status": "error"}
+
+            # Asegurarnos de que el campaign_id del payload coincide con la ruta
+            if "campaign_id" in kw and kw["campaign_id"] != campaign_id:
+                return {
+                    "error": "Campaign ID mismatch between URL and payload",
+                    "status": "error",
+                }
+
+            # Forzar el campaign_id de la ruta en los datos de suscripción
+            subscription_data["campaign_id"] = campaign_id
 
             if campaign.state != "open":
                 _logger.warning(
@@ -187,7 +195,46 @@ class CooperatorVoluntaryApi(http.Controller):
                     "details": "Subscriptions can only be created for active campaigns",
                 }
 
-            subscription = request.env["subscription.request"].create(data)
+            # Buscar partner por VAT si existe
+            partner_id = False
+            if kw.get("vat"):
+                partner = (
+                    request.env["res.partner"]
+                    .sudo()
+                    .search([("vat", "=", kw["vat"])], limit=1)
+                )
+                if partner:
+                    partner_id = partner.id
+                    _logger.info(f"Found existing partner with VAT {kw['vat']}")
+
+            subscription_data = {
+                "vat": kw["vat"],
+                "campaign_id": campaign_id,
+                "share_product_id": request.env["funding.campaign"]
+                .sudo()
+                .browse(campaign_id)
+                .share_product_id.id,
+                "ordered_parts": kw["ordered_parts"],
+                "type": kw[
+                    "type"
+                ],  # Aqui documentar los dos tipos de increase y rechazar new_cooperator
+                "firstname": kw["firstname"],
+                "lastname": kw["lastname"],
+                "email": kw["email"],
+                "address": kw["address"],
+                "city": kw["city"],
+                "zip_code": kw["zip_code"],
+                "country_id": kw["country_id"],
+                "phone": kw["phone"],
+                "source": "website",
+                "lang": kw["lang"],  # Documentar idiomas disponibles en swagger
+            }
+
+            # Añadir partner_id solo si existe
+            if partner_id:
+                subscription_data["partner_id"] = partner_id
+
+            subscription = request.env["subscription.request"].create(subscription_data)
 
             _logger.info(f"Subscription created with ID: {subscription.id}")
 
@@ -214,7 +261,8 @@ class CooperatorVoluntaryApi(http.Controller):
 
 
 spec.path(
-    path="/api/subscription/campaign/create",
+    # ADD campaign_id to the path
+    path="/api/subscription/{campaign_id}/create",
     operations={
         "post": {
             "tags": ["Campaign Subscriptions"],

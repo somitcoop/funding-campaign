@@ -13,6 +13,11 @@ class FundingLoanRequest(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _check_company_auto = True
 
+    @api.model
+    def _lang_get(self):
+        languages = self.env["res.lang"].search([])
+        return [(language.code, language.name) for language in languages]
+
     def _get_default_name(self):
         return self.env["ir.sequence"].next_by_code("funding.loan.request") or "/"
 
@@ -21,13 +26,13 @@ class FundingLoanRequest(models.Model):
         readonly=True,
         default=lambda self: self._get_default_name(),
         copy=False,
-        store=True
+        store=True,
     )
     partner_id = fields.Many2one(
         "res.partner",
-        required=True,
         readonly=True,
         states={"draft": [("readonly", False)]},
+        required=False,
     )
     campaign_id = fields.Many2one(
         "funding.campaign", readonly=True, states={"draft": [("readonly", False)]}
@@ -36,8 +41,18 @@ class FundingLoanRequest(models.Model):
         "funding.loan.template",
         states={"draft": [("readonly", False)]},
     )
-    #TODO: Aqui copiar valor de la capaña
 
+    @api.onchange("campaign_id")
+    def _onchange_campaign(self):
+        if self.campaign_id and self.campaign_id.template_id:
+            self.template_id = self.campaign_id.template_id
+
+    vat = fields.Char(
+        string="VAT",
+        required=True,
+        readonly=True,
+        states={"draft": [("readonly", False)]},
+    )
 
     loan_amount = fields.Monetary(
         currency_field="company_currency_id",
@@ -116,6 +131,13 @@ class FundingLoanRequest(models.Model):
         readonly=True,
         states={"draft": [("readonly", False)]},
     )
+    lang = fields.Selection(
+        _lang_get,
+        string="Language",
+        required=True,
+        states={"draft": [("readonly", False)]},
+        default=lambda self: self.env.company.default_lang_id.code,
+    )
 
     @api.depends("firstname", "lastname")
     def _compute_name(self):
@@ -137,6 +159,34 @@ class FundingLoanRequest(models.Model):
             self.zip_code = partner.zip
             self.country_id = partner.country_id
 
+    def _create_or_get_partner(self):
+        """Create or get partner based on VAT"""
+        self.ensure_one()
+        ResPartner = self.env["res.partner"]
+
+        partner = ResPartner.search([("vat", "=", self.vat)], limit=1)
+
+        if not partner:
+            # Create new partner
+            partner = ResPartner.create(
+                {
+                    "vat": self.vat,
+                    "name": f"{self.firstname} {self.lastname}",
+                    "email": self.email,
+                    "street": self.address,
+                    "city": self.city,
+                    "zip": self.zip_code,
+                    "country_id": self.country_id.id,
+                    "is_company": False,
+                    "lang": self.lang,
+                }
+            )
+            _logger.info(f"Created new partner with VAT {self.vat}")
+        else:
+            _logger.info(f"Found existing partner with VAT {self.vat}")
+
+        return partner
+
     def action_approve(self):
         self.ensure_one()
         if self.state != "draft":
@@ -145,6 +195,9 @@ class FundingLoanRequest(models.Model):
             raise UserError(_("Loan amount must be greater than 0"))
         if not self.template_id:
             raise UserError(_("Loan template is required"))
+        if not self.partner_id:
+            partner = self._create_or_get_partner()
+            self.partner_id = partner.id
 
         loan_vals = {
             "partner_id": self.partner_id.id,
@@ -198,6 +251,8 @@ class FundingLoanRequest(models.Model):
 
     @api.model
     def create(self, vals):
-        if not vals.get('name') or vals['name'] == '/':
-            vals['name'] = self.env['ir.sequence'].next_by_code('funding.loan.request') or '/'
+        if not vals.get("name") or vals["name"] == "/":
+            vals["name"] = (
+                self.env["ir.sequence"].next_by_code("funding.loan.request") or "/"
+            )
         return super(FundingLoanRequest, self).create(vals)

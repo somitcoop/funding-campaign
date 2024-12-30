@@ -67,6 +67,7 @@
                             <field name="city"/>
                             <field name="zip_code"/>
                             <field name="country_id"/>
+                            <field name="lang" />
                         </group>
                     </group>
                     <group>

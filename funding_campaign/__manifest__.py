@@ -6,7 +6,7 @@
     'author': '',
     'website': '',
     'category': '',
-    'depends': ['base', 'mass_mailing'],
+    'depends': ['base', 'mass_mailing', 'swagger_docs'],
     'data': [
         'security/ir.model.access.csv',
         'views/funding_campaign_views.xml',
