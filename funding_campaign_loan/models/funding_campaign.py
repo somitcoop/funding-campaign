@@ -30,8 +30,8 @@ class FundingCampaign(models.Model):
 
     loan_request_count = fields.Integer(
         string="Number of Loan Requests",
-        compute='_compute_loan_request_count',
-        store=True
+        compute="_compute_loan_request_count",
+        store=True,
     )
 
     @api.depends("loan_raised_amount", "source_objective_loan")
@@ -57,8 +57,6 @@ class FundingCampaign(models.Model):
                 source.source_type == "loan" for source in campaign.funding_source_ids
             )
 
-
-
     @api.depends(
         "loan_request_ids", "loan_request_ids.loan_amount", "loan_request_ids.state"
     )
@@ -70,7 +68,7 @@ class FundingCampaign(models.Model):
                 if request.state == "approved"
             )
 
-    @api.depends('loan_request_ids')
+    @api.depends("loan_request_ids")
     def _compute_loan_request_count(self):
         for campaign in self:
             campaign.loan_request_count = len(campaign.loan_request_ids)
@@ -86,20 +84,20 @@ class FundingCampaign(models.Model):
             "context": {"default_campaign_id": self.id},
         }
 
-    @api.depends('source_objective_loan')
+    @api.depends("source_objective_loan")
     def _compute_global_objective(self):
         return super()._compute_global_objective()
 
     def _get_objective_amounts(self):
         amounts = super()._get_objective_amounts()
-        if hasattr(self, 'source_objective_loan'):
+        if hasattr(self, "source_objective_loan"):
             amounts.append(self.source_objective_loan or 0.0)
         return amounts
 
     @api.depends("funding_source_ids", "global_objective")
     def _get_raised_amounts(self):
         amounts = super()._get_raised_amounts()
-        if hasattr(self, 'loan_raised_amount'):
+        if hasattr(self, "loan_raised_amount"):
             amounts.append(self.loan_raised_amount or 0.0)
         return amounts
 

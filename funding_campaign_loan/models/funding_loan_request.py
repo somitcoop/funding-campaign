@@ -167,7 +167,6 @@ class FundingLoanRequest(models.Model):
         partner = ResPartner.search([("vat", "=", self.vat)], limit=1)
 
         if not partner:
-            # Create new partner
             partner = ResPartner.create(
                 {
                     "vat": self.vat,

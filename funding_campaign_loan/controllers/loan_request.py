@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class LoanRequestApi(http.Controller):
     @http.route(
-        f"/api/campaign/<int:campaign_id>/loan_request",
+        "/api/campaign/<int:campaign_id>/loan_request",
         type="json",
         auth="none",
         csrf=False,
@@ -84,7 +84,7 @@ class LoanRequestApi(http.Controller):
                 "address",
                 "city",
                 "zip_code",
-                "country_id",
+                "country_code",
                 "lang",
             ]
 
@@ -96,14 +96,12 @@ class LoanRequestApi(http.Controller):
                         "status": "error",
                     }
 
-            # Asegurarnos de que el campaign_id del payload coincide con la ruta
             if "campaign_id" in kw and kw["campaign_id"] != campaign_id:
                 return {
                     "error": "Campaign ID mismatch between URL and payload",
                     "status": "error",
                 }
 
-            # Buscar partner por VAT si existe
             partner_id = False
             if kw.get("vat"):
                 partner = (
@@ -114,6 +112,22 @@ class LoanRequestApi(http.Controller):
                 if partner:
                     partner_id = partner.id
                     _logger.info(f"Found existing partner with VAT {kw['vat']}")
+
+            country = request.env["res.country"].search(
+                [("code", "=", kw["country_code"].upper())], limit=1
+            )
+            if not country:
+                return {
+                    "error": f"Invalid country code: {kw['country_code']}",
+                    "status": "error",
+                }
+
+            lang = request.env["res.lang"].search([("code", "=", kw["lang"])], limit=1)
+            if not lang:
+                return {
+                    "error": f"Invalid language code: {kw['lang']}",
+                    "status": "error",
+                }
 
             loan_request_data = {
                 "vat": kw["vat"],
@@ -129,14 +143,13 @@ class LoanRequestApi(http.Controller):
                 "address": kw["address"],
                 "city": kw["city"],
                 "zip_code": kw["zip_code"],
-                "country_id": kw["country_id"],
+                "country_id": country.id,
                 "phone": kw["phone"],
                 "source": "website",
                 "state": "draft",
-                "lang": kw["lang"],
+                "lang": lang.code,
             }
 
-            # Añadir partner_id solo si existe
             if partner_id:
                 loan_request_data["partner_id"] = partner_id
 
@@ -236,9 +249,11 @@ spec.path(
                                     "type": "integer",
                                     "description": "ID of the funding campaign",
                                 },
-                                "country_id": {
-                                    "type": "integer",
-                                    "description": "ID of the country",
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE)",
+                                    "minLength": 2,
+                                    "maxLength": 2,
                                 },
                                 "firstname": {
                                     "type": "string",
@@ -268,7 +283,9 @@ spec.path(
                                 },
                                 "lang": {
                                     "type": "string",
-                                    "description": "Language code",
+                                    "description": "Language code (ISO 639-1) with optional country code (e.g. en_US, es_ES, fr_FR)",
+                                    "example": "en_US",
+                                    "pattern": "^[a-z]{2,3}(_[A-Z]{2})?$",
                                 },
                             },
                         }

@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class FundingCampaign(models.Model):
     _name = "funding.campaign"
     _description = "Funding Campaign"
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char("Name", required=True)
     start_date = fields.Date("Start Date", required=True)
@@ -45,20 +45,23 @@ class FundingCampaign(models.Model):
         string="Sources",
     )
 
-    @api.constrains('funding_source_ids')
+    @api.constrains("funding_source_ids")
     def _check_funding_source_types(self):
         for campaign in self:
             if campaign.funding_source_ids:
-                # Agrupar las fuentes por tipo
                 sources_by_type = {}
                 for source in campaign.funding_source_ids:
                     if source.source_type in sources_by_type:
-                        raise ValidationError(_(
-                            "You cannot add multiple funding sources of the same type. "
-                            "Type '{}' is duplicated.".format(
-                                dict(source._fields['source_type'].selection).get(source.source_type)
+                        raise ValidationError(
+                            _(
+                                "You cannot add multiple funding sources of the same type. "
+                                "Type '{}' is duplicated.".format(
+                                    dict(source._fields["source_type"].selection).get(
+                                        source.source_type
+                                    )
+                                )
                             )
-                        ))
+                        )
                     sources_by_type[source.source_type] = source
 
     marketing_campaign_id = fields.Many2one(
@@ -66,20 +69,22 @@ class FundingCampaign(models.Model):
     )
     progress = fields.Float("Progress (%)", compute="_compute_progress", store=True)
     company_id = fields.Many2one(
-        'res.company',
-        string='Company',
+        "res.company",
+        string="Company",
         required=True,
-        default=lambda self: self.env.company
+        default=lambda self: self.env.company,
     )
 
     company_currency_id = fields.Many2one(
-        'res.currency',
+        "res.currency",
         related="company_id.currency_id",
         store=True,
-        string="Company Currency"
+        string="Company Currency",
     )
 
-    @api.depends("funding_source_ids", "funding_source_ids.progress", "global_objective")
+    @api.depends(
+        "funding_source_ids", "funding_source_ids.progress", "global_objective"
+    )
     def _compute_progress(self):
         for campaign in self:
             total_raised = sum(campaign._get_raised_amounts())

@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class CooperatorVoluntaryApi(http.Controller):
     @http.route(
-        f"/api/campaign/<int:campaign_id>/subscription_request",
+        "/api/campaign/<int:campaign_id>/subscription_request",
         type="json",
         auth="none",
         csrf=False,
@@ -148,8 +148,8 @@ class CooperatorVoluntaryApi(http.Controller):
             required_fields = [
                 "vat",
                 "ordered_parts",
-                "type",  # Aqui documentar los dos tipos de increase y rechazar new_cooperator
-                "country_id",  # Documentar los paises disponibles en swagger
+                "type",
+                "country_code",
                 "firstname",
                 "lastname",
                 "email",
@@ -157,7 +157,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 "city",
                 "zip_code",
                 "phone",
-                "lang",  # Documentar idiomas disponibles en swagger
+                "lang",
             ]
 
             for field in required_fields:
@@ -175,14 +175,12 @@ class CooperatorVoluntaryApi(http.Controller):
                 _logger.warning(f"Campaign not found: {campaign_id}")
                 return {"error": "Campaign not found", "status": "error"}
 
-            # Asegurarnos de que el campaign_id del payload coincide con la ruta
             if "campaign_id" in kw and kw["campaign_id"] != campaign_id:
                 return {
                     "error": "Campaign ID mismatch between URL and payload",
                     "status": "error",
                 }
 
-            # Forzar el campaign_id de la ruta en los datos de suscripción
             subscription_data["campaign_id"] = campaign_id
 
             if campaign.state != "open":
@@ -195,7 +193,6 @@ class CooperatorVoluntaryApi(http.Controller):
                     "details": "Subscriptions can only be created for active campaigns",
                 }
 
-            # Buscar partner por VAT si existe
             partner_id = False
             if kw.get("vat"):
                 partner = (
@@ -207,6 +204,29 @@ class CooperatorVoluntaryApi(http.Controller):
                     partner_id = partner.id
                     _logger.info(f"Found existing partner with VAT {kw['vat']}")
 
+            country = request.env["res.country"].search(
+                [("code", "=", kw["country_code"].upper())], limit=1
+            )
+            if not country:
+                return {
+                    "error": f"Invalid country code: {kw['country_code']}",
+                    "status": "error",
+                }
+
+            VALID_TYPES = ["increase", "increase_remunerated"]
+            if kw["type"] not in VALID_TYPES:
+                return {
+                    "error": f"Invalid subscription type. Must be one of: {', '.join(VALID_TYPES)}",
+                    "status": "error",
+                }
+
+            lang = request.env["res.lang"].search([("code", "=", kw["lang"])], limit=1)
+            if not lang:
+                return {
+                    "error": f"Invalid language code: {kw['lang']}",
+                    "status": "error",
+                }
+
             subscription_data = {
                 "vat": kw["vat"],
                 "campaign_id": campaign_id,
@@ -215,22 +235,19 @@ class CooperatorVoluntaryApi(http.Controller):
                 .browse(campaign_id)
                 .share_product_id.id,
                 "ordered_parts": kw["ordered_parts"],
-                "type": kw[
-                    "type"
-                ],  # Aqui documentar los dos tipos de increase y rechazar new_cooperator
+                "type": kw["type"],
                 "firstname": kw["firstname"],
                 "lastname": kw["lastname"],
                 "email": kw["email"],
                 "address": kw["address"],
                 "city": kw["city"],
                 "zip_code": kw["zip_code"],
-                "country_id": kw["country_id"],
+                "country_id": country.id,
                 "phone": kw["phone"],
                 "source": "website",
-                "lang": kw["lang"],  # Documentar idiomas disponibles en swagger
+                "lang": lang.id,
             }
 
-            # Añadir partner_id solo si existe
             if partner_id:
                 subscription_data["partner_id"] = partner_id
 
@@ -261,7 +278,6 @@ class CooperatorVoluntaryApi(http.Controller):
 
 
 spec.path(
-    # ADD campaign_id to the path
     path="/api/subscription/{campaign_id}/create",
     operations={
         "post": {
@@ -304,7 +320,7 @@ spec.path(
                                 "source",
                                 "type",
                                 "campaign_id",
-                                "country_id",
+                                "country_code",
                                 "firstname",
                                 "lastname",
                                 "email",
@@ -333,15 +349,19 @@ spec.path(
                                 },
                                 "type": {
                                     "type": "string",
-                                    "description": "Type of subscription",
+                                    "description": "Type of subscription request. 'increase' for increasing existing shares, 'increase_remunerated' for increasing remunerated shares.",
+                                    "enum": ["increase", "increase_remunerated"],
+                                    "example": "increase",
                                 },
                                 "campaign_id": {
                                     "type": "integer",
                                     "description": "ID of the funding campaign",
                                 },
-                                "country_id": {
-                                    "type": "integer",
-                                    "description": "ID of the country",
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE)",
+                                    "minLength": 2,
+                                    "maxLength": 2,
                                 },
                                 "firstname": {
                                     "type": "string",
@@ -371,7 +391,9 @@ spec.path(
                                 },
                                 "lang": {
                                     "type": "string",
-                                    "description": "Language code",
+                                    "description": "Language code (ISO 639-1) with optional country code (e.g. en_US, es_ES, fr_FR)",
+                                    "example": "en_US",
+                                    "pattern": "^[a-z]{2,3}(_[A-Z]{2})?$",
                                 },
                             },
                         }

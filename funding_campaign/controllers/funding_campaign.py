@@ -84,7 +84,7 @@ class FundingCampaignApi(http.Controller):
 
     @http.route(
         "/api/campaign/<int:campaign_id>",
-        type="http",  # Cambiado de 'json' a 'http'
+        type="http",
         auth="none",
         methods=["GET"],
         csrf=False,
@@ -101,14 +101,34 @@ class FundingCampaignApi(http.Controller):
             data = {
                 "id": campaign.id,
                 "name": campaign.name,
-                # Añade aquí más campos según necesites
+                "description": campaign.description or "",
+                "start_date": (
+                    campaign.start_date.strftime("%Y-%m-%d")
+                    if campaign.start_date
+                    else ""
+                ),
+                "end_date": (
+                    campaign.end_date.strftime("%Y-%m-%d") if campaign.end_date else ""
+                ),
+                "is_permanent": campaign.is_permanent,
+                "state": campaign.state,
+                "global_objective": float(campaign.global_objective),
+                "progress": float(campaign.progress),
+                "progress_percentage": (
+                    round(
+                        (float(campaign.current_amount) / float(campaign.target_amount))
+                        * 100,
+                        2,
+                    )
+                    if campaign.target_amount
+                    else 0
+                ),
             }
             return json.dumps(data)
         except Exception as e:
             return json.dumps({"error": str(e)}), 500
 
 
-# Documentación Swagger
 spec.path(
     path="/api/campaign",
     operations={

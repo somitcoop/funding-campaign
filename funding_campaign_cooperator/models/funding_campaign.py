@@ -48,8 +48,8 @@ class FundingCampaign(models.Model):
 
     subscription_request_count = fields.Integer(
         string="Number of Subscription Requests",
-        compute='_compute_subscription_request_count',
-        store=True
+        compute="_compute_subscription_request_count",
+        store=True,
     )
 
     @api.depends("source_raised_amount", "source_objective_subscription")
@@ -84,7 +84,7 @@ class FundingCampaign(models.Model):
                 for source in campaign.funding_source_ids
             )
 
-    @api.depends('subscription_request_ids')
+    @api.depends("subscription_request_ids")
     def _compute_subscription_request_count(self):
         for campaign in self:
             campaign.subscription_request_count = len(campaign.subscription_request_ids)

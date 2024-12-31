@@ -17,7 +17,7 @@
                             <field name="loan_raised_amount" widget="monetary"/>
                         </span>
                         <span class="o_stat_text">
-                             <field name="loan_request_count" nolabel="1"/> (Loans requests)
+                            <field name="loan_request_count" nolabel="1"/> (Loans requests)
                         </span>
                     </div>
                 </button>
