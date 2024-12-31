@@ -168,7 +168,6 @@ class CooperatorVoluntaryApi(http.Controller):
                         "status": "error",
                     }
 
-            data = {field: kw[field] for field in required_fields}
 
             campaign = request.env["funding.campaign"].browse(campaign_id)
             if not campaign.exists():
@@ -180,8 +179,6 @@ class CooperatorVoluntaryApi(http.Controller):
                     "error": "Campaign ID mismatch between URL and payload",
                     "status": "error",
                 }
-
-            subscription_data["campaign_id"] = campaign_id
 
             if campaign.state != "open":
                 _logger.warning(
@@ -245,7 +242,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 "country_id": country.id,
                 "phone": kw["phone"],
                 "source": "website",
-                "lang": lang.id,
+                "lang": lang.code,
             }
 
             if partner_id:
@@ -278,7 +275,7 @@ class CooperatorVoluntaryApi(http.Controller):
 
 
 spec.path(
-    path="/api/subscription/{campaign_id}/create",
+    path="/api/campaign/{campaign_id}/subscription_request",
     operations={
         "post": {
             "tags": ["Campaign Subscriptions"],

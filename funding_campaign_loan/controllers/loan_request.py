@@ -181,7 +181,7 @@ class LoanRequestApi(http.Controller):
 
 
 spec.path(
-    path="/api/loan/{campaign_id}/create",
+    path="/api/campaign/{campaign_id}/loan_request",
     operations={
         "post": {
             "tags": ["Campaign Loans"],
