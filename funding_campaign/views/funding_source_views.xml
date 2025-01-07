@@ -5,9 +5,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="objective"/>
-                <field name="raised_amount"/>
-                <field name="progress" widget="progressbar"/>
+                <field name="source_type"/>
             </tree>
         </field>
     </record>
@@ -24,12 +22,12 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="objective"/>
-                        <field name="raised_amount"/>
-                        <field name="progress" widget="progressbar"/>
+                        <field name="objective" invisible="1"/>
+                        <field name="raised_amount" invisible="1"/>
+                        <field name="progress" widget="progressbar" invisible="1"/>
                         <field name="source_type"/>
                         <field name="campaign_ids" widget="many2many_tags"/>
-                        <field name="company_id"/>
+                        <field name="company_id" invisible="1"/>
                     </group>
                 </sheet>
             </form>
