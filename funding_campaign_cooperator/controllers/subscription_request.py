@@ -413,6 +413,7 @@ spec.path(
                                     "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE). Used with zip_code to find the corresponding location data.",
                                     "minLength": 2,
                                     "maxLength": 2,
+                                    "required": False,
                                 },
                             },
                         }

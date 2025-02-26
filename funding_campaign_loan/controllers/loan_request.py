@@ -170,7 +170,6 @@ class LoanRequestApi(http.Controller):
                 "lastname": kw["lastname"],
                 "email": kw["email"],
                 "address": kw["address"],
-                "city": kw["city"],
                 "zip_code": kw["zip_code"],
                 "country_id": country.id,
                 "phone": kw["phone"],
@@ -312,11 +311,6 @@ spec.path(
                                 "phone": {
                                     "type": "string",
                                     "description": "Phone number",
-                                    "required": False,
-                                },
-                                "city": {
-                                    "type": "string",
-                                    "description": "City name",
                                     "required": False,
                                 },
                                 "country_code": {
