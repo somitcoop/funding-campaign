@@ -82,9 +82,7 @@ class LoanRequestApi(http.Controller):
                 "lastname",
                 "email",
                 "address",
-                "city",
                 "zip_code",
-                "country_code",
                 "lang",
             ]
 
@@ -129,6 +127,37 @@ class LoanRequestApi(http.Controller):
                     "status": "error",
                 }
 
+            # Buscar el registro de zip en base_location usando el zip_code y country_id
+            zip_record = False
+            if kw.get("zip_code") and country:
+                zip_record = request.env["res.city.zip"].sudo().search(
+                    [
+                        ("name", "=", kw["zip_code"]),
+                        ("city_id.country_id", "=", country.id),
+                    ],
+                    limit=1,
+                )
+
+                # Si también tenemos la ciudad, refinamos la búsqueda
+                if not zip_record and kw.get("city"):
+                    # Buscar primero por ciudad y país
+                    city = request.env["res.city"].sudo().search(
+                        [
+                            ("name", "=", kw["city"]),
+                            ("country_id", "=", country.id),
+                        ],
+                        limit=1,
+                    )
+
+                    if city:
+                        zip_record = request.env["res.city.zip"].sudo().search(
+                            [
+                                ("name", "=", kw["zip_code"]),
+                                ("city_id", "=", city.id),
+                            ],
+                            limit=1,
+                        )
+
             loan_request_data = {
                 "vat": kw["vat"],
                 "campaign_id": campaign_id,
@@ -149,6 +178,16 @@ class LoanRequestApi(http.Controller):
                 "state": "draft",
                 "lang": lang.code,
             }
+
+            # Añadir zip_id si se encontró un registro válido
+            if zip_record:
+                loan_request_data["zip_id"] = zip_record.id
+                # Si el registro de zip tiene ciudad, usamos esa información
+                if zip_record.city_id:
+                    loan_request_data["city"] = zip_record.city_id.name
+                    # Si la ciudad tiene estado/provincia, lo usamos también
+                    if zip_record.city_id.state_id:
+                        loan_request_data["state_id"] = zip_record.city_id.state_id.id
 
             if partner_id:
                 loan_request_data["partner_id"] = partner_id
@@ -186,7 +225,7 @@ spec.path(
         "post": {
             "tags": ["Campaign Loans"],
             "summary": "Create a new campaign loan request",
-            "description": "Create a new loan request with the provided partner and campaign information",
+            "description": "Create a new loan request with the provided partner and campaign information. The API integrates with the OCA base_location module to automatically find and set the zip_id based on the provided zip_code and country_code.",
             "parameters": [
                 {
                     "in": "header",
@@ -209,6 +248,13 @@ spec.path(
                     "schema": {"type": "string"},
                     "description": "API key for authentication",
                 },
+                {
+                    "in": "path",
+                    "name": "campaign_id",
+                    "required": True,
+                    "schema": {"type": "integer"},
+                    "description": "ID of the funding campaign",
+                },
             ],
             "requestBody": {
                 "required": True,
@@ -217,43 +263,24 @@ spec.path(
                         "schema": {
                             "type": "object",
                             "required": [
-                                "partner_id",
+                                "vat",
                                 "loan_amount",
-                                "loan_type_id",
-                                "campaign_id",
-                                "country_id",
                                 "firstname",
                                 "lastname",
                                 "email",
                                 "address",
-                                "city",
                                 "zip_code",
-                                "phone",
                                 "lang",
                             ],
                             "properties": {
-                                "partner_id": {
-                                    "type": "integer",
-                                    "description": "ID of the partner requesting the loan",
+                                "vat": {
+                                    "type": "string",
+                                    "description": "VAT number of the loan requester",
                                 },
                                 "loan_amount": {
                                     "type": "number",
                                     "format": "float",
                                     "description": "Amount requested for the loan",
-                                },
-                                "loan_type_id": {
-                                    "type": "integer",
-                                    "description": "ID of the loan type",
-                                },
-                                "campaign_id": {
-                                    "type": "integer",
-                                    "description": "ID of the funding campaign",
-                                },
-                                "country_code": {
-                                    "type": "string",
-                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE)",
-                                    "minLength": 2,
-                                    "maxLength": 2,
                                 },
                                 "firstname": {
                                     "type": "string",
@@ -272,20 +299,32 @@ spec.path(
                                     "type": "string",
                                     "description": "Street address",
                                 },
-                                "city": {"type": "string", "description": "City name"},
                                 "zip_code": {
                                     "type": "string",
-                                    "description": "Postal code",
-                                },
-                                "phone": {
-                                    "type": "string",
-                                    "description": "Phone number",
+                                    "description": "Postal code. Used to find the corresponding zip_id from the base_location module.",
                                 },
                                 "lang": {
                                     "type": "string",
                                     "description": "Language code (ISO 639-1) with optional country code (e.g. en_US, es_ES, fr_FR)",
                                     "example": "en_US",
                                     "pattern": "^[a-z]{2,3}(_[A-Z]{2})?$",
+                                },
+                                "phone": {
+                                    "type": "string",
+                                    "description": "Phone number",
+                                    "required": False,
+                                },
+                                "city": {
+                                    "type": "string",
+                                    "description": "City name",
+                                    "required": False,
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE). Used with zip_code to find the corresponding location data.",
+                                    "minLength": 2,
+                                    "maxLength": 2,
+                                    "required": False,
                                 },
                             },
                         }
@@ -301,6 +340,7 @@ spec.path(
                                 "type": "object",
                                 "properties": {
                                     "jsonrpc": {"type": "string", "example": "2.0"},
+                                    "id": {"type": "null"},
                                     "result": {
                                         "type": "object",
                                         "properties": {
@@ -323,6 +363,11 @@ spec.path(
                                                         "type": "string",
                                                         "description": "State of loan request",
                                                     },
+                                                    "loan_amount": {
+                                                        "type": "number",
+                                                        "format": "float",
+                                                        "description": "Amount of the loan",
+                                                    },
                                                 },
                                             },
                                         },
@@ -339,11 +384,21 @@ spec.path(
                             "schema": {
                                 "type": "object",
                                 "properties": {
+                                    "jsonrpc": {"type": "string", "example": "2.0"},
+                                    "id": {"type": "null"},
                                     "error": {
-                                        "type": "string",
-                                        "description": "Error message",
+                                        "type": "object",
+                                        "properties": {
+                                            "code": {"type": "integer"},
+                                            "message": {"type": "string"},
+                                            "data": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {"type": "string", "example": "error"},
+                                                },
+                                            },
+                                        },
                                     },
-                                    "status": {"type": "string", "example": "error"},
                                 },
                             }
                         }

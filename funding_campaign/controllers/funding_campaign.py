@@ -91,25 +91,43 @@ class FundingCampaignApi(http.Controller):
         cors="*",
     )
     def get_campaign(self, campaign_id, **kwargs):
-        if not isinstance(campaign_id, int) or campaign_id <= 0:
-            return json.dumps({"error": "Invalid campaign ID"}), 400
-        try:
-            campaign = request.env["funding.campaign"].sudo().browse(campaign_id)
-            if not campaign.exists():
-                return json.dumps({"error": "Campaign not found"}), 404
+        def json_serial(obj):
+            if isinstance(obj, (datetime, date)):
+                return obj.isoformat()
+            return str(obj)
 
-            data = {
+        try:
+            if not isinstance(campaign_id, int) or campaign_id <= 0:
+                return Response(
+                    json.dumps({"status": "error", "message": "Invalid campaign ID"}),
+                    status=400,
+                    mimetype="application/json",
+                )
+
+            env, error = self._check_auth(request.httprequest.headers)
+            if error:
+                return Response(
+                    json.dumps(error),
+                    status=401,
+                    mimetype="application/json",
+                )
+
+            request.env = env
+            campaign = request.env["funding.campaign"].browse(campaign_id)
+
+            if not campaign.exists():
+                return Response(
+                    json.dumps({"status": "error", "message": "Campaign not found"}),
+                    status=404,
+                    mimetype="application/json",
+                )
+
+            campaign_data = {
                 "id": campaign.id,
                 "name": campaign.name,
                 "description": campaign.description or "",
-                "start_date": (
-                    campaign.start_date.strftime("%Y-%m-%d")
-                    if campaign.start_date
-                    else ""
-                ),
-                "end_date": (
-                    campaign.end_date.strftime("%Y-%m-%d") if campaign.end_date else ""
-                ),
+                "start_date": campaign.start_date,
+                "end_date": campaign.end_date,
                 "is_permanent": campaign.is_permanent,
                 "state": campaign.state,
                 "global_objective": float(campaign.global_objective),
@@ -124,9 +142,36 @@ class FundingCampaignApi(http.Controller):
                     else 0
                 ),
             }
-            return json.dumps(data)
+
+            # Añadir fuentes de financiación si están disponibles
+            if hasattr(campaign, 'source_ids'):
+                sources = []
+                for source in campaign.source_ids:
+                    sources.append({
+                        "id": source.id,
+                        "name": source.name,
+                        "source_type": source.source_type if hasattr(source, 'source_type') else "",
+                        "objective": float(source.objective) if hasattr(source, 'objective') else 0.0,
+                        "raised_amount": float(source.raised_amount) if hasattr(source, 'raised_amount') else 0.0,
+                        "progress": float(source.progress) if hasattr(source, 'progress') else 0.0,
+                    })
+                campaign_data["sources"] = sources
+
+            return Response(
+                json.dumps(
+                    {"status": "success", "data": campaign_data},
+                    default=json_serial
+                ),
+                mimetype="application/json",
+            )
+
         except Exception as e:
-            return json.dumps({"error": str(e)}), 500
+            _logger.error("Unexpected error: %s", traceback.format_exc())
+            return Response(
+                json.dumps({"status": "error", "message": str(e)}),
+                status=500,
+                mimetype="application/json",
+            )
 
 
 spec.path(
@@ -142,18 +187,21 @@ spec.path(
                     "name": "X-Odoo-Db",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "Odoo database name",
                 },
                 {
                     "in": "header",
                     "name": "X-Odoo-Username",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "Username for authentication",
                 },
                 {
                     "in": "header",
                     "name": "X-Odoo-Api-Key",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "API key for authentication",
                 },
             ],
             "responses": {
@@ -174,11 +222,11 @@ spec.path(
                                                 "name": {"type": "string"},
                                                 "start_date": {
                                                     "type": "string",
-                                                    "format": "date",
+                                                    "format": "date-time",
                                                 },
                                                 "end_date": {
                                                     "type": "string",
-                                                    "format": "date",
+                                                    "format": "date-time",
                                                 },
                                                 "is_permanent": {"type": "boolean"},
                                                 "state": {"type": "string"},
@@ -191,7 +239,35 @@ spec.path(
                             }
                         }
                     },
-                }
+                },
+                "401": {
+                    "description": "Authentication failed",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "error": {"type": "string"},
+                                    "status": {"type": "string", "example": "error"},
+                                },
+                            }
+                        }
+                    },
+                },
+                "500": {
+                    "description": "Server error",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "error"},
+                                    "message": {"type": "string"},
+                                },
+                            }
+                        }
+                    },
+                },
             },
         }
     },
@@ -210,24 +286,28 @@ spec.path(
                     "name": "campaign_id",
                     "required": True,
                     "schema": {"type": "integer"},
+                    "description": "ID of the campaign to retrieve",
                 },
                 {
                     "in": "header",
                     "name": "X-Odoo-Db",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "Odoo database name",
                 },
                 {
                     "in": "header",
                     "name": "X-Odoo-Username",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "Username for authentication",
                 },
                 {
                     "in": "header",
                     "name": "X-Odoo-Api-Key",
                     "required": True,
                     "schema": {"type": "string"},
+                    "description": "API key for authentication",
                 },
             ],
             "responses": {
@@ -244,18 +324,20 @@ spec.path(
                                         "properties": {
                                             "id": {"type": "integer"},
                                             "name": {"type": "string"},
+                                            "description": {"type": "string"},
                                             "start_date": {
                                                 "type": "string",
-                                                "format": "date",
+                                                "format": "date-time",
                                             },
                                             "end_date": {
                                                 "type": "string",
-                                                "format": "date",
+                                                "format": "date-time",
                                             },
                                             "is_permanent": {"type": "boolean"},
                                             "state": {"type": "string"},
                                             "global_objective": {"type": "number"},
                                             "progress": {"type": "number"},
+                                            "progress_percentage": {"type": "number"},
                                             "sources": {
                                                 "type": "array",
                                                 "items": {
@@ -280,7 +362,63 @@ spec.path(
                             }
                         }
                     },
-                }
+                },
+                "400": {
+                    "description": "Bad request",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "error"},
+                                    "message": {"type": "string"},
+                                },
+                            }
+                        }
+                    },
+                },
+                "401": {
+                    "description": "Authentication failed",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "error": {"type": "string"},
+                                    "status": {"type": "string", "example": "error"},
+                                },
+                            }
+                        }
+                    },
+                },
+                "404": {
+                    "description": "Campaign not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "error"},
+                                    "message": {"type": "string"},
+                                },
+                            }
+                        }
+                    },
+                },
+                "500": {
+                    "description": "Server error",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "error"},
+                                    "message": {"type": "string"},
+                                },
+                            }
+                        }
+                    },
+                },
             },
         }
     },

@@ -149,7 +149,6 @@ class CooperatorVoluntaryApi(http.Controller):
                 "vat",
                 "ordered_parts",
                 "type",
-                "country_code",
                 "firstname",
                 "lastname",
                 "email",
@@ -224,6 +223,37 @@ class CooperatorVoluntaryApi(http.Controller):
                     "status": "error",
                 }
 
+            # Buscar el registro de zip en base_location usando el zip_code y country_id
+            zip_record = False
+            if kw.get("zip_code") and country:
+                zip_record = request.env["res.city.zip"].sudo().search(
+                    [
+                        ("name", "=", kw["zip_code"]),
+                        ("city_id.country_id", "=", country.id),
+                    ],
+                    limit=1,
+                )
+
+                # Si también tenemos la ciudad, refinamos la búsqueda
+                if not zip_record and kw.get("city"):
+                    # Buscar primero por ciudad y país
+                    city = request.env["res.city"].sudo().search(
+                        [
+                            ("name", "=", kw["city"]),
+                            ("country_id", "=", country.id),
+                        ],
+                        limit=1,
+                    )
+
+                    if city:
+                        zip_record = request.env["res.city.zip"].sudo().search(
+                            [
+                                ("name", "=", kw["zip_code"]),
+                                ("city_id", "=", city.id),
+                            ],
+                            limit=1,
+                        )
+
             subscription_data = {
                 "vat": kw["vat"],
                 "campaign_id": campaign_id,
@@ -244,6 +274,16 @@ class CooperatorVoluntaryApi(http.Controller):
                 "source": "website",
                 "lang": lang.code,
             }
+
+            # Añadir zip_id si se encontró un registro válido
+            if zip_record:
+                subscription_data["zip_id"] = zip_record.id
+                # Si el registro de zip tiene ciudad, usamos esa información
+                if zip_record.city_id:
+                    subscription_data["city"] = zip_record.city_id.name
+                    # Si la ciudad tiene estado/provincia, lo usamos también
+                    if zip_record.city_id.state_id:
+                        subscription_data["state_id"] = zip_record.city_id.state_id.id
 
             if partner_id:
                 subscription_data["partner_id"] = partner_id
@@ -280,7 +320,7 @@ spec.path(
         "post": {
             "tags": ["Campaign Subscriptions"],
             "summary": "Create a new campaign subscription request",
-            "description": "Create a new subscription request with the provided partner and campaign information",
+            "description": "Create a new subscription request with the provided partner and campaign information. The API integrates with the OCA base_location module to automatically find and set the zip_id based on the provided zip_code and country_code.",
             "parameters": [
                 {
                     "in": "header",
@@ -311,13 +351,9 @@ spec.path(
                         "schema": {
                             "type": "object",
                             "required": [
-                                "partner_id",
+                                "vat",
                                 "ordered_parts",
-                                "share_product_id",
-                                "source",
                                 "type",
-                                "campaign_id",
-                                "country_code",
                                 "firstname",
                                 "lastname",
                                 "email",
@@ -326,39 +362,22 @@ spec.path(
                                 "zip_code",
                                 "phone",
                                 "lang",
+                                "country_code",
                             ],
                             "properties": {
-                                "partner_id": {
-                                    "type": "integer",
-                                    "description": "ID of the partner",
+                                "vat": {
+                                    "type": "string",
+                                    "description": "VAT number of the subscriber",
                                 },
                                 "ordered_parts": {
                                     "type": "integer",
                                     "description": "Number of parts ordered",
-                                },
-                                "share_product_id": {
-                                    "type": "integer",
-                                    "description": "ID of the share product",
-                                },
-                                "source": {
-                                    "type": "string",
-                                    "description": "Source of the subscription",
                                 },
                                 "type": {
                                     "type": "string",
                                     "description": "Type of subscription request. 'increase' for increasing existing shares, 'increase_remunerated' for increasing remunerated shares.",
                                     "enum": ["increase", "increase_remunerated"],
                                     "example": "increase",
-                                },
-                                "campaign_id": {
-                                    "type": "integer",
-                                    "description": "ID of the funding campaign",
-                                },
-                                "country_code": {
-                                    "type": "string",
-                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE)",
-                                    "minLength": 2,
-                                    "maxLength": 2,
                                 },
                                 "firstname": {
                                     "type": "string",
@@ -380,7 +399,7 @@ spec.path(
                                 "city": {"type": "string", "description": "City name"},
                                 "zip_code": {
                                     "type": "string",
-                                    "description": "Postal code",
+                                    "description": "Postal code. Used to find the corresponding zip_id from the base_location module.",
                                 },
                                 "phone": {
                                     "type": "string",
@@ -391,6 +410,12 @@ spec.path(
                                     "description": "Language code (ISO 639-1) with optional country code (e.g. en_US, es_ES, fr_FR)",
                                     "example": "en_US",
                                     "pattern": "^[a-z]{2,3}(_[A-Z]{2})?$",
+                                },
+                                "country_code": {
+                                    "type": "string",
+                                    "description": "ISO 3166-1 alpha-2 country code (e.g. ES, FR, BE). Used with zip_code to find the corresponding location data.",
+                                    "minLength": 2,
+                                    "maxLength": 2,
                                 },
                             },
                         }
@@ -406,6 +431,7 @@ spec.path(
                                 "type": "object",
                                 "properties": {
                                     "jsonrpc": {"type": "string", "example": "2.0"},
+                                    "id": {"type": "null"},
                                     "result": {
                                         "type": "object",
                                         "properties": {
@@ -444,11 +470,21 @@ spec.path(
                             "schema": {
                                 "type": "object",
                                 "properties": {
+                                    "jsonrpc": {"type": "string", "example": "2.0"},
+                                    "id": {"type": "null"},
                                     "error": {
-                                        "type": "string",
-                                        "description": "Error message",
+                                        "type": "object",
+                                        "properties": {
+                                            "code": {"type": "integer"},
+                                            "message": {"type": "string"},
+                                            "data": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "status": {"type": "string", "example": "error"},
+                                                },
+                                            },
+                                        },
                                     },
-                                    "status": {"type": "string", "example": "error"},
                                 },
                             }
                         }
