@@ -267,7 +267,6 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lastname": kw["lastname"],
                 "email": kw["email"],
                 "address": kw["address"],
-                "city": kw["city"],
                 "zip_code": kw["zip_code"],
                 "country_id": country.id,
                 "phone": kw["phone"],
@@ -358,7 +357,6 @@ spec.path(
                                 "lastname",
                                 "email",
                                 "address",
-                                "city",
                                 "zip_code",
                                 "phone",
                                 "lang",
@@ -396,7 +394,6 @@ spec.path(
                                     "type": "string",
                                     "description": "Street address",
                                 },
-                                "city": {"type": "string", "description": "City name"},
                                 "zip_code": {
                                     "type": "string",
                                     "description": "Postal code. Used to find the corresponding zip_id from the base_location module.",
