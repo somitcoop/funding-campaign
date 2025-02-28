@@ -48,36 +48,55 @@ class FundingCampaignApi(http.Controller):
         try:
             env, error = self._check_auth(request.httprequest.headers)
             if error:
-                return error
+                return Response(
+                    json.dumps(error),
+                    status=401,
+                    mimetype="application/json",
+                )
 
             request.env = env
-            campaigns = request.env["funding.campaign"].search([])
+            try:
+                campaigns = request.env["funding.campaign"].search([])
+                campaign_data = [
+                    {
+                        "id": campaign.id,
+                        "name": campaign.name,
+                        "start_date": campaign.start_date,
+                        "end_date": campaign.end_date,
+                        "is_permanent": campaign.is_permanent,
+                        "state": campaign.state,
+                        "global_objective": float(campaign.global_objective),
+                        "progress": float(campaign.progress),
+                    }
+                    for campaign in campaigns
+                ]
 
-            campaign_data = [
-                {
-                    "id": campaign.id,
-                    "name": campaign.name,
-                    "start_date": campaign.start_date,
-                    "end_date": campaign.end_date,
-                    "is_permanent": campaign.is_permanent,
-                    "state": campaign.state,
-                    "global_objective": float(campaign.global_objective),
-                    "progress": float(campaign.progress),
-                }
-                for campaign in campaigns
-            ]
-
-            return Response(
-                json.dumps(
-                    {"status": "success", "data": campaign_data}, default=json_serial
-                ),
-                mimetype="application/json",
-            )
+                return Response(
+                    json.dumps(
+                        {"status": "success", "data": campaign_data}, default=json_serial
+                    ),
+                    mimetype="application/json",
+                )
+            except Exception as model_error:
+                _logger.error("Error accessing campaigns: %s", traceback.format_exc())
+                return Response(
+                    json.dumps({
+                        "status": "error",
+                        "message": "Error accessing campaigns",
+                        "details": str(model_error)
+                    }),
+                    status=500,
+                    mimetype="application/json",
+                )
 
         except Exception as e:
             _logger.error("Unexpected error: %s", traceback.format_exc())
             return Response(
-                json.dumps({"status": "error", "message": str(e)}),
+                json.dumps({
+                    "status": "error",
+                    "message": "Unexpected error in API",
+                    "details": str(e)
+                }),
                 status=500,
                 mimetype="application/json",
             )
@@ -169,6 +188,38 @@ class FundingCampaignApi(http.Controller):
             _logger.error("Unexpected error: %s", traceback.format_exc())
             return Response(
                 json.dumps({"status": "error", "message": str(e)}),
+                status=500,
+                mimetype="application/json",
+            )
+
+    @http.route("/api/dbinfo", type="http", auth="none", csrf=False, methods=["GET"])
+    def get_db_info(self, **kw):
+        """Endpoint to get the current database name and version information."""
+        try:
+            # Get current database name
+            db_name = http.request.db
+
+            # Get Odoo version
+            version_info = request.env['ir.module.module']._get_module_version('base')
+
+            return Response(
+                json.dumps({
+                    "status": "success",
+                    "data": {
+                        "database_name": db_name,
+                        "odoo_version": version_info
+                    }
+                }),
+                mimetype="application/json",
+            )
+        except Exception as e:
+            _logger.error("Error getting database info: %s", traceback.format_exc())
+            return Response(
+                json.dumps({
+                    "status": "error",
+                    "message": "Could not retrieve database information",
+                    "details": str(e)
+                }),
                 status=500,
                 mimetype="application/json",
             )
@@ -414,6 +465,54 @@ spec.path(
                                 "properties": {
                                     "status": {"type": "string", "example": "error"},
                                     "message": {"type": "string"},
+                                },
+                            }
+                        }
+                    },
+                },
+            },
+        }
+    },
+)
+
+spec.path(
+    path="/api/dbinfo",
+    operations={
+        "get": {
+            "tags": ["System"],
+            "summary": "Get database information",
+            "description": "Returns the current database name and Odoo version information",
+            "responses": {
+                "200": {
+                    "description": "Database information",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "success"},
+                                    "data": {
+                                        "type": "object",
+                                        "properties": {
+                                            "database_name": {"type": "string"},
+                                            "odoo_version": {"type": "string"},
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    },
+                },
+                "500": {
+                    "description": "Server error",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status": {"type": "string", "example": "error"},
+                                    "message": {"type": "string"},
+                                    "details": {"type": "string"},
                                 },
                             }
                         }
