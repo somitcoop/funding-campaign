@@ -199,16 +199,31 @@ class FundingCampaignApi(http.Controller):
             # Get current database name
             db_name = http.request.db
 
-            # Get Odoo version
-            version_info = request.env['ir.module.module']._get_module_version('base')
+            # Get Odoo version using release info
+            import odoo
+            version_info = odoo.release.version
+
+            # Get additional information about the instance
+            server_info = {
+                "database_name": db_name,
+                "odoo_version": version_info
+            }
+
+            # Try to get more detailed database info if possible
+            try:
+                if request.env and hasattr(request.env, 'cr'):
+                    server_info["server_timezone"] = request.env.context.get('tz', 'UTC')
+                    base_lang = request.env['ir.module.module'].sudo().search([('name', '=', 'base')], limit=1)
+                    if base_lang:
+                        server_info["base_module_state"] = base_lang.state
+            except Exception:
+                # If we can't get additional info, just continue
+                pass
 
             return Response(
                 json.dumps({
                     "status": "success",
-                    "data": {
-                        "database_name": db_name,
-                        "odoo_version": version_info
-                    }
+                    "data": server_info
                 }),
                 mimetype="application/json",
             )
