@@ -110,7 +110,6 @@ class FundingCampaign(models.Model):
             amounts.append(self.source_objective_subscription or 0.0)
         return amounts
 
-    @api.depends("funding_source_ids", "global_objective")
     def _get_raised_amounts(self):
         amounts = super()._get_raised_amounts()
         if hasattr(self, "source_raised_amount"):

@@ -9,7 +9,7 @@
                 <button name="action_view_subscription_requests"
                         type="object"
                         class="oe_stat_button"
-                        attrs="{'invisible': [('has_subscription_source', '=', False)]}"
+                        invisible="has_subscription_source == False"
                         icon="fa-euro">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
@@ -23,7 +23,7 @@
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Subscription Requests" name="subscription_requests"
-                      attrs="{'invisible': [('has_subscription_source', '=', False)]}">
+                      invisible="has_subscription_source == False">
                     <field name="subscription_request_ids" readonly="1" nolabel="1">
                         <tree>
                             <field name="partner_id"/>
@@ -35,10 +35,10 @@
                 </page>
             </xpath>
             <xpath expr="//group[@name='source_objective']" position="inside">
-                <group name="subscription_objective" string="Subscription Objective" attrs="{'invisible': [('has_subscription_source', '=', False)]}">
-                    <field name="source_objective_subscription" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <group name="subscription_objective" string="Subscription Objective" invisible="has_subscription_source == False">
+                    <field name="source_objective_subscription" readonly="state != 'draft'"/>
                     <field name="progress_subscription" widget="progressbar"/>
-                    <field name="share_product_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="share_product_id" readonly="state != 'draft'"/>
                 </group>
             </xpath>
         </field>

@@ -11,7 +11,7 @@
                         <field name="loan_type"/>
                         <field name="is_permanent"/>
                         <field name="rate"/>
-                        <field name="min_periods" attrs="{'invisible': [('is_permanent', '=', False)]}"/>
+                        <field name="min_periods" invisible="is_permanent == False"/>
                         <field name="method_period"/>
                         <field name="journal_id"/>
                         <field name="interest_expenses_account_id"/>

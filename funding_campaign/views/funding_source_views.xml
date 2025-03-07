@@ -22,12 +22,12 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="objective" invisible="1"/>
-                        <field name="raised_amount" invisible="1"/>
-                        <field name="progress" widget="progressbar" invisible="1"/>
+                        <field name="objective" invisible="True"/>
+                        <field name="raised_amount" invisible="True"/>
+                        <field name="progress" widget="progressbar" invisible="True"/>
                         <field name="source_type"/>
                         <field name="campaign_ids" widget="many2many_tags"/>
-                        <field name="company_id" invisible="1"/>
+                        <field name="company_id" invisible="True"/>
                     </group>
                 </sheet>
             </form>

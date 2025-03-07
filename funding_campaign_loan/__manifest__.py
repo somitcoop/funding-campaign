@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Funding_campaign_loan",
-    "version": "",
-    "summary": """ Funding_campaign_loan Summary """,
-    "author": "",
-    "website": "",
-    "category": "",
+    "version": "17.0.1.0.0",
+    "summary": "Funding_campaign_loan Summary",
+    "author": "Som IT Cooperatiu SCCL",
+    "website": "https://somit.coop",
+    "category": "Marketing/Fundraising",
     "depends": [
         "funding_campaign",
         "account_loan_permanent",
@@ -23,5 +23,6 @@
     "application": True,
     "installable": True,
     "auto_install": False,
-    "license": "LGPL-3",
+    "license": "AGPL-3",
+    "maintainers": ["nicolasramos"],
 }

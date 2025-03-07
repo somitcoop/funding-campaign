@@ -10,7 +10,7 @@
                 <button name="action_view_loan_requests"
                         type="object"
                         class="oe_stat_button"
-                        attrs="{'invisible': [('has_loan_source', '=', False)]}"
+                        invisible="has_loan_source == False"
                         icon="fa-money">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">
@@ -24,7 +24,7 @@
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Loan Requests" name="loan_requests"
-                      attrs="{'invisible': [('has_loan_source', '=', False)]}">
+                      invisible="has_loan_source == False">
                     <field name="loan_request_ids" readonly="1" nolabel="1">
                         <tree>
                             <field name="name"/>
@@ -36,10 +36,10 @@
                 </page>
             </xpath>
             <xpath expr="//group[@name='source_objective']" position="inside">
-                <group name="loan_objective" string="Loan Objective" attrs="{'invisible': [('has_loan_source', '=', False)]}">
-                    <field name="source_objective_loan" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <group name="loan_objective" string="Loan Objective" invisible="has_loan_source == False">
+                    <field name="source_objective_loan" readonly="state != 'draft'"/>
                     <field name="progress_loan" widget="progressbar"/>
-                    <field name="template_id" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                    <field name="template_id" readonly="state != 'draft'"/>
                 </group>
             </xpath>
         </field>
@@ -48,7 +48,7 @@
         <field name="name">Loan Requests</field>
         <field name="res_model">funding.loan.request</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('campaign_id', '=', active_id)]</field>
-        <field name="context">{'default_campaign_id': active_id}</field>
+        <field name="domain">[('campaign_id', '=', id)]</field>
+        <field name="context">{'default_campaign_id': id}</field>
     </record>
 </odoo>
