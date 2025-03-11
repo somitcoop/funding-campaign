@@ -57,26 +57,26 @@
                     <group>
                         <group string="Personal Information">
                             <field name="partner_id" readonly="state != 'draft'"/>
-                            <field name="firstname"/>
-                            <field name="lastname"/>
-                            <field name="email"/>
-                            <field name="phone"/>
+                            <field name="firstname" readonly="state != 'draft'"/>
+                            <field name="lastname" readonly="state != 'draft'"/>
+                            <field name="email" readonly="state != 'draft'"/>
+                            <field name="phone" readonly="state != 'draft'"/>
                         </group>
                         <group string="Address">
-                            <field name="address"/>
-                            <field name="city"/>
-                            <field name="zip_code"/>
-                            <field name="country_id"/>
-                            <field name="lang" />
+                            <field name="address" readonly="state != 'draft'"/>
+                            <field name="city" readonly="state != 'draft'"/>
+                            <field name="zip_code" readonly="state != 'draft'"/>
+                            <field name="country_id" readonly="state != 'draft'"/>
+                            <field name="lang" readonly="state != 'draft'"/>
                         </group>
                     </group>
                     <group>
                         <group string="Loan Information">
-                            <field name="campaign_id"/>
-                            <field name="template_id"/>
-                            <field name="loan_amount"/>
-                            <field name="source"/>
-                            <field name="date"/>
+                            <field name="campaign_id" readonly="state != 'draft'"/>
+                            <field name="template_id" readonly="state != 'draft'"/>
+                            <field name="loan_amount" readonly="state != 'draft'"/>
+                            <field name="source" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
                         </group>
                         <group string="Other Information">
                             <field name="loan_id"/>

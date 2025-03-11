@@ -31,15 +31,13 @@ class FundingLoanRequest(models.Model):
     partner_id = fields.Many2one(
         "res.partner",
         readonly=True,
-        states={"draft": [("readonly", False)]},
         required=False,
     )
     campaign_id = fields.Many2one(
-        "funding.campaign", readonly=True, states={"draft": [("readonly", False)]}
+        "funding.campaign", readonly=True
     )
     template_id = fields.Many2one(
         "funding.loan.template",
-        states={"draft": [("readonly", False)]},
     )
 
     @api.onchange("campaign_id")
@@ -51,14 +49,12 @@ class FundingLoanRequest(models.Model):
         string="VAT",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
 
     loan_amount = fields.Monetary(
         currency_field="company_currency_id",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
     state = fields.Selection(
         [
@@ -86,26 +82,24 @@ class FundingLoanRequest(models.Model):
         string="First name",
         readonly=True,
         required=True,
-        states={"draft": [("readonly", False)]},
     )
     lastname = fields.Char(
         string="Last name",
         readonly=True,
         required=True,
-        states={"draft": [("readonly", False)]},
     )
     email = fields.Char(
-        required=True, readonly=True, states={"draft": [("readonly", False)]}
+        required=True, readonly=True,
     )
-    phone = fields.Char(readonly=True, states={"draft": [("readonly", False)]})
+    phone = fields.Char(readonly=True)
     address = fields.Char(
-        required=True, readonly=True, states={"draft": [("readonly", False)]}
+        required=True,
     )
     city = fields.Char(
-        required=True, readonly=True, states={"draft": [("readonly", False)]}
+        required=True,
     )
     zip_code = fields.Char(
-        required=True, readonly=True, states={"draft": [("readonly", False)]}
+        required=True,
     )
     country_id = fields.Many2one(
         "res.country",
@@ -113,13 +107,11 @@ class FundingLoanRequest(models.Model):
         ondelete="restrict",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
     date = fields.Date(
         string="Request Date",
         required=True,
         readonly=True,
-        states={"draft": [("readonly", False)]},
         default=lambda self: fields.Date.today(),
     )
     source = fields.Selection(
@@ -129,13 +121,11 @@ class FundingLoanRequest(models.Model):
         ],
         default="manual",
         readonly=True,
-        states={"draft": [("readonly", False)]},
     )
     lang = fields.Selection(
         _lang_get,
         string="Language",
         required=True,
-        states={"draft": [("readonly", False)]},
         default=lambda self: self.env.company.default_lang_id.code,
     )
 
