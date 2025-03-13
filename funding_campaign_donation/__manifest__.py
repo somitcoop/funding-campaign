@@ -12,7 +12,10 @@
         'donation',
     ],
     "data": [
+        "security/ir.model.access.csv",
+        "data/ir_sequence_data.xml",
         "views/donation_campaign_views.xml",
+        "views/donation_request_views.xml",
         "views/funding_campaign_view.xml",
         "views/funding_source_view.xml"
     ],

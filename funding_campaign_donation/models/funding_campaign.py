@@ -52,6 +52,16 @@ class FundingCampaign(models.Model):
         store=True,
     )
 
+    donation_request_ids = fields.One2many(
+        'donation.request', 'campaign_id', string='Donation Requests'
+    )
+
+    donation_request_count = fields.Integer(
+        string='Donation Request Count',
+        compute='_compute_donation_request_count',
+        store=True,
+    )
+
     @api.depends("donation_raised_amount", "source_objective_donation")
     def _compute_progress_donation(self):
         for campaign in self:
@@ -122,3 +132,8 @@ class FundingCampaign(models.Model):
     )
     def _compute_progress(self):
         return super()._compute_progress()
+
+    @api.depends('donation_request_ids')
+    def _compute_donation_request_count(self):
+        for campaign in self:
+            campaign.donation_request_count = len(campaign.donation_request_ids)
