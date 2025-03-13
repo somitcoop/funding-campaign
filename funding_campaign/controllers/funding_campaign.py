@@ -61,6 +61,7 @@ class FundingCampaignApi(http.Controller):
                     {
                         "id": campaign.id,
                         "name": campaign.name,
+                        "description": campaign.description or "",
                         "start_date": campaign.start_date,
                         "end_date": campaign.end_date,
                         "is_permanent": campaign.is_permanent,
@@ -286,6 +287,7 @@ spec.path(
                                             "properties": {
                                                 "id": {"type": "integer"},
                                                 "name": {"type": "string"},
+                                                "description": {"type": "string"},
                                                 "start_date": {
                                                     "type": "string",
                                                     "format": "date-time",

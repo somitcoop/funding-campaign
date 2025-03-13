@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extender la vista de formulario de fuente de financiación para mostrar información específica de donaciones -->
+    <record id="funding_source_form_view_donation" model="ir.ui.view">
+        <field name="name">funding.source.form.donation</field>
+        <field name="model">funding.source</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_source_form"/>
+        <field name="arch" type="xml">
+            <!-- Mostrar información adicional cuando el tipo de fuente es 'donation' -->
+            <field name="source_type" position="after">
+                <field name="objective"
+                       invisible="source_type != 'donation'"
+                       readonly="False"
+                       widget="monetary"
+                       options="{'currency_field': 'company_currency_id'}"/>
+                <field name="raised_amount"
+                       invisible="source_type != 'donation'"
+                       widget="monetary"
+                       options="{'currency_field': 'company_currency_id'}"
+                       readonly="True"/>
+                <field name="progress"
+                       invisible="source_type != 'donation'"
+                       widget="progressbar"
+                       readonly="True"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extender la vista de árbol para mostrar información específica de donaciones -->
+    <record id="funding_source_tree_view_donation" model="ir.ui.view">
+        <field name="name">funding.source.tree.donation</field>
+        <field name="model">funding.source</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_source_tree"/>
+        <field name="arch" type="xml">
+            <field name="source_type" position="after">
+                <field name="objective" optional="show"/>
+                <field name="raised_amount" optional="show"/>
+                <field name="progress" widget="progressbar" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Hide donation campaigns menu -->
+    <record id="donation.donation_campaign_menu" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+
+    <!-- Redirect donation campaign action to funding.campaign -->
+    <record id="donation.donation_campaign_action" model="ir.actions.act_window">
+        <field name="res_model">funding.campaign</field>
+        <field name="name">Funding Campaigns</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Extend donation.campaign form view -->
+    <record id="view_donation_campaign_form" model="ir.ui.view">
+        <field name="name">view.donation.campaign.form</field>
+        <field name="model">donation.campaign</field>
+        <field name="inherit_id" ref="donation.donation_campaign_form"/>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="string">Legacy Donation Campaign</attribute>
+            </form>
+            <sheet position="before">
+                <header>
+                    <div class="alert alert-warning" role="alert">
+                        This model has been replaced by Funding Campaign. Please use the new model.
+                    </div>
+                </header>
+            </sheet>
+        </field>
+    </record>
+
+    <!-- Extend donation.campaign tree view -->
+    <record id="view_donation_campaign_tree" model="ir.ui.view">
+        <field name="name">view.donation.campaign.tree</field>
+        <field name="model">donation.campaign</field>
+        <field name="inherit_id" ref="donation.donation_campaign_tree"/>
+        <field name="arch" type="xml">
+            <tree position="attributes">
+                <attribute name="string">Legacy Donation Campaigns</attribute>
+                <attribute name="decoration-danger">1==1</attribute>
+            </tree>
+            <field name="name" position="after">
+                <field name="id" invisible="1"/>
+                <button name="action_open_funding_campaign"
+                        type="object"
+                        string="View Funding Campaign"
+                        class="btn-primary"
+                        invisible="not funding_campaign_id"/>
+                <field name="funding_campaign_id" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Add new menu for Funding Campaigns under Donation menu -->
+    <menuitem
+        id="funding_campaign_menu"
+        action="funding_campaign.action_funding_campaign"
+        parent="donation.donation_config_menu"
+        sequence="40"
+        name="Funding Campaigns"
+    />
+</odoo>

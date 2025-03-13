@@ -31,6 +31,8 @@ class FundingCampaign(models.Model):
         store=True,
     )
 
+    description = fields.Html("Description")
+
     @api.depends()
     def _compute_global_objective(self):
         for campaign in self:

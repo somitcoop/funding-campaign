@@ -40,6 +40,8 @@
                     <field name="source_objective_loan" readonly="state != 'draft'"/>
                     <field name="progress_loan" widget="progressbar"/>
                     <field name="template_id" readonly="state != 'draft'"/>
+                    <field name="minimal_loan_amount" readonly="state != 'draft'"/>
+                    <field name="maximal_loan_amount" readonly="state != 'draft'"/>
                 </group>
             </xpath>
         </field>

@@ -39,6 +39,8 @@
                     <field name="source_objective_subscription" readonly="state != 'draft'"/>
                     <field name="progress_subscription" widget="progressbar"/>
                     <field name="share_product_id" readonly="state != 'draft'"/>
+                    <field name="minimal_subscription_amount" readonly="state != 'draft'"/>
+                    <field name="maximal_subscription_amount" readonly="state != 'draft'"/>
                 </group>
             </xpath>
         </field>

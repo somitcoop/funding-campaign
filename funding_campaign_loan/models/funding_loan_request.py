@@ -239,9 +239,14 @@ class FundingLoanRequest(models.Model):
             request.write({"state": "rejected"})
 
     @api.model
-    def create(self, vals):
-        if not vals.get("name") or vals["name"] == "/":
-            vals["name"] = (
-                self.env["ir.sequence"].next_by_code("funding.loan.request") or "/"
-            )
-        return super(FundingLoanRequest, self).create(vals)
+    def create(self, vals_list):
+        if not isinstance(vals_list, list):
+            vals_list = [vals_list]
+
+        for vals in vals_list:
+            if not vals.get("name") or vals["name"] == "/":
+                vals["name"] = (
+                    self.env["ir.sequence"].next_by_code("funding.loan.request") or "/"
+                )
+
+        return super(FundingLoanRequest, self).create(vals_list)

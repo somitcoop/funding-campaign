@@ -52,6 +52,16 @@ class FundingCampaign(models.Model):
         store=True,
     )
 
+    minimal_subscription_amount = fields.Float(
+        string="Minimal Subscription Amount",
+        store=True,
+    )
+
+    maximal_subscription_amount = fields.Float(
+        string="Maximal Subscription Amount",
+        store=True,
+    )
+
     @api.depends("source_raised_amount", "source_objective_subscription")
     def _compute_progress_subscription(self):
         for campaign in self:

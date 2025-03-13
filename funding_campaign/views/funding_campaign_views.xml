@@ -51,6 +51,9 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Description" name="description">
+                            <field name="description" widget="html"/>
+                        </page>
                         <page string="Funding Sources" name="funding_source">
                             <group>
                                 <field name="funding_source_ids" widget="many2many_tags" readonly="state != 'draft'"/>

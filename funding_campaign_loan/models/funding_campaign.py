@@ -34,6 +34,16 @@ class FundingCampaign(models.Model):
         store=True,
     )
 
+    minimal_loan_amount = fields.Float(
+        string="Minimal Loan Amount",
+        store=True,
+    )
+
+    maximal_loan_amount = fields.Float(
+        string="Maximal Loan Amount",
+        store=True,
+    )
+
     @api.depends("loan_raised_amount", "source_objective_loan")
     def _compute_progress_loan(self):
         for campaign in self:

@@ -53,36 +53,36 @@ class CooperatorVoluntaryApi(http.Controller):
                             - zip_code
                             - phone
                             - lang
-                            partner_id:
-                                description: ID of the partner
-                            ordered_parts:
-                                description: Number of parts ordered
-                            share_product_id:
-                                description: ID of the share product
-                            source:
-                                description: Source of the subscription
-                            type:
-                                description: Type of subscription
-                            campaign_id:
-                                description: ID of the funding campaign
-                            country_id:
-                                description: ID of the country
-                            firstname:
-                                description: First name of the subscriber
-                            lastname:
-                                description: Last name of the subscriber
-                            email:
-                                description: Email address
-                            address:
-                                description: Street address
-                            city:
-                                description: City name
-                            zip_code:
-                                description: Postal code
-                            phone:
-                                description: Phone number
-                            lang:
-                                description: Language code
+                partner_id:
+                    description: ID of the partner
+                ordered_parts:
+                    description: Number of parts ordered
+                share_product_id:
+                    description: ID of the share product
+                source:
+                    description: Source of the subscription
+                type:
+                    description: Type of subscription
+                campaign_id:
+                    description: ID of the funding campaign
+                country_id:
+                    description: ID of the country
+                firstname:
+                    description: First name of the subscriber
+                lastname:
+                    description: Last name of the subscriber
+                email:
+                    description: Email address
+                address:
+                    description: Street address
+                city:
+                    description: City name
+                zip_code:
+                    description: Postal code
+                phone:
+                    description: Phone number
+                lang:
+                    description: Language code
                 description: Successful response
                                 jsonrpc:
                                     example: "2.0"
@@ -189,6 +189,24 @@ class CooperatorVoluntaryApi(http.Controller):
                     "details": "Subscriptions can only be created for active campaigns",
                 }
 
+            # Validar límites de suscripción
+            ordered_amount = float(kw["ordered_parts"]) * campaign.share_product_id.list_price
+            if hasattr(campaign, 'minimal_subscription_amount') and campaign.minimal_subscription_amount > 0:
+                if ordered_amount < campaign.minimal_subscription_amount:
+                    return {
+                        "error": "Subscription amount below minimum",
+                        "status": "error",
+                        "details": f"The minimum subscription amount is {campaign.minimal_subscription_amount}",
+                    }
+
+            if hasattr(campaign, 'maximal_subscription_amount') and campaign.maximal_subscription_amount > 0:
+                if ordered_amount > campaign.maximal_subscription_amount:
+                    return {
+                        "error": "Subscription amount above maximum",
+                        "status": "error",
+                        "details": f"The maximum subscription amount is {campaign.maximal_subscription_amount}",
+                    }
+
             partner_id = False
             if kw.get("vat"):
                 partner = (
@@ -291,6 +309,22 @@ class CooperatorVoluntaryApi(http.Controller):
 
             _logger.info(f"Subscription created with ID: {subscription.id}")
 
+            # Incluir información adicional de la campaña en la respuesta
+            campaign_info = {
+                "id": campaign.id,
+                "name": campaign.name,
+                "state": campaign.state,
+                "description": campaign.description or "",
+                "global_objective": float(campaign.global_objective) if hasattr(campaign, 'global_objective') else 0.0,
+                "progress": float(campaign.progress) if hasattr(campaign, 'progress') else 0.0,
+            }
+
+            # Añadir los nuevos campos si existen
+            if hasattr(campaign, 'minimal_subscription_amount'):
+                campaign_info["minimal_subscription_amount"] = float(campaign.minimal_subscription_amount)
+            if hasattr(campaign, 'maximal_subscription_amount'):
+                campaign_info["maximal_subscription_amount"] = float(campaign.maximal_subscription_amount)
+
             return {
                 "jsonrpc": "2.0",
                 "id": None,
@@ -300,6 +334,7 @@ class CooperatorVoluntaryApi(http.Controller):
                         "id": subscription.id,
                         "name": subscription.name,
                         "state": subscription.state,
+                        "campaign": campaign_info,
                     },
                 },
             }
@@ -451,6 +486,43 @@ spec.path(
                                                     "state": {
                                                         "type": "string",
                                                         "description": "State of subscription",
+                                                    },
+                                                    "campaign": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "description": "ID of the campaign",
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "Name of the campaign",
+                                                            },
+                                                            "state": {
+                                                                "type": "string",
+                                                                "description": "State of the campaign",
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "description": "Description of the campaign",
+                                                            },
+                                                            "global_objective": {
+                                                                "type": "number",
+                                                                "description": "Global objective of the campaign",
+                                                            },
+                                                            "progress": {
+                                                                "type": "number",
+                                                                "description": "Progress of the campaign",
+                                                            },
+                                                            "minimal_subscription_amount": {
+                                                                "type": "number",
+                                                                "description": "Minimum subscription amount for the campaign",
+                                                            },
+                                                            "maximal_subscription_amount": {
+                                                                "type": "number",
+                                                                "description": "Maximum subscription amount for the campaign",
+                                                            },
+                                                        },
                                                     },
                                                 },
                                             },

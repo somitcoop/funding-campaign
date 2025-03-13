@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extender la vista de formulario de campaña para mostrar información de donaciones -->
+    <record id="funding_campaign_form_view_donation" model="ir.ui.view">
+        <field name="name">funding.campaign.form.donation</field>
+        <field name="model">funding.campaign</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_campaign_form"/>
+        <field name="arch" type="xml">
+            <!-- Agregar botón para ver donaciones -->
+
+            <div name="button_box" position="inside">
+                <button name="action_view_donations"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="has_donation_source == False"
+                        groups="donation.group_donation_user">
+                        <div class="o_field_widget o_stat_info">
+                         <span class="o_stat_value">
+                                <field name="donation_raised_amount" widget="monetary"/>
+                            </span>
+                            <span class="o_stat_text">
+                                <field name="donation_count" nolabel="1"/> (Donations)
+                            </span>
+                        </div>
+                    </button>
+            </div>
+
+            <!-- Add donation information in the funding sources tab -->
+            <field name="company_currency_id" position="after">
+                <field name="has_donation_source" invisible="True"/>
+            </field>
+            <xpath expr="//notebook" position="inside">
+                <page string="Donations" name="donations" invisible="has_donation_source == False">
+                    <field name="donation_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="partner_id"/>
+                            <field name="amount_total"/>
+                            <field name="donation_date" string="Date"/>
+                            <field name="state"/>
+                            <field name="payment_mode_id" string="Donation Type"/>
+                            <field name="campaign_id" string="Donation Source"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            <!-- Add donation information in the funding sources tab -->
+            <group name="source_objective" position="inside">
+                <group name="donation_objective" string="Donation Objective" invisible="has_donation_source == False">
+                    <field name="source_objective_donation"
+                           widget="monetary"
+                           options="{'currency_field': 'company_currency_id'}"
+                           readonly="state != 'draft'"/>
+                    <!-- <field name="donation_raised_amount"
+                           widget="monetary"
+                           options="{'currency_field': 'company_currency_id'}"
+                           readonly="True"/> -->
+                    <field name="progress_donation"
+                           widget="progressbar"
+                           readonly="True"/>
+                    <field name="minimal_donation_amount" readonly="state != 'draft'"/>
+                </group>
+            </group>
+        </field>
+    </record>
+
+    <!-- Extender la vista de árbol para mostrar información de donaciones -->
+    <record id="funding_campaign_tree_view_donation" model="ir.ui.view">
+        <field name="name">funding.campaign.tree.donation</field>
+        <field name="model">funding.campaign</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_campaign_tree"/>
+        <field name="arch" type="xml">
+            <field name="progress" position="after">
+                <field name="has_donation_source" column_invisible="True"/>
+                <field name="donation_count" optional="hide"/>
+                <field name="donation_raised_amount"
+                       widget="monetary"
+                       optional="hide"
+                       column_invisible="has_donation_source == False"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extender la vista de búsqueda para añadir filtros relacionados con donaciones -->
+    <record id="funding_campaign_search_view_donation" model="ir.ui.view">
+        <field name="name">funding.campaign.search.donation</field>
+        <field name="model">funding.campaign</field>
+        <field name="inherit_id" ref="funding_campaign.view_funding_campaign_search"/>
+        <field name="arch" type="xml">
+            <filter name="group_by_state" position="after">
+                <filter string="Has Donation Source"
+                        name="has_donation_source"
+                        domain="[('has_donation_source', '=', True)]"/>
+            </filter>
+        </field>
+    </record>
+</odoo>

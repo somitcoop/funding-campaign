@@ -100,6 +100,24 @@ class LoanRequestApi(http.Controller):
                     "status": "error",
                 }
 
+            # Validar límites de préstamo
+            loan_amount = float(kw["loan_amount"])
+            if hasattr(campaign, 'minimal_loan_amount') and campaign.minimal_loan_amount > 0:
+                if loan_amount < campaign.minimal_loan_amount:
+                    return {
+                        "error": "Loan amount below minimum",
+                        "status": "error",
+                        "details": f"The minimum loan amount is {campaign.minimal_loan_amount}",
+                    }
+
+            if hasattr(campaign, 'maximal_loan_amount') and campaign.maximal_loan_amount > 0:
+                if loan_amount > campaign.maximal_loan_amount:
+                    return {
+                        "error": "Loan amount above maximum",
+                        "status": "error",
+                        "details": f"The maximum loan amount is {campaign.maximal_loan_amount}",
+                    }
+
             partner_id = False
             if kw.get("vat"):
                 partner = (
@@ -195,6 +213,25 @@ class LoanRequestApi(http.Controller):
 
             _logger.info(f"Loan request created with ID: {loan_request.id}")
 
+            # Incluir información adicional de la campaña en la respuesta
+            campaign_info = {
+                "id": campaign.id,
+                "name": campaign.name,
+                "state": campaign.state,
+                "description": campaign.description or "",
+                "global_objective": float(campaign.global_objective) if hasattr(campaign, 'global_objective') else 0.0,
+                "progress": float(campaign.progress) if hasattr(campaign, 'progress') else 0.0,
+                "source_objective_loan": float(campaign.source_objective_loan) if hasattr(campaign, 'source_objective_loan') else 0.0,
+                "loan_raised_amount": float(campaign.loan_raised_amount) if hasattr(campaign, 'loan_raised_amount') else 0.0,
+                "progress_loan": float(campaign.progress_loan) if hasattr(campaign, 'progress_loan') else 0.0,
+            }
+
+            # Añadir los nuevos campos si existen
+            if hasattr(campaign, 'minimal_loan_amount'):
+                campaign_info["minimal_loan_amount"] = float(campaign.minimal_loan_amount)
+            if hasattr(campaign, 'maximal_loan_amount'):
+                campaign_info["maximal_loan_amount"] = float(campaign.maximal_loan_amount)
+
             return {
                 "jsonrpc": "2.0",
                 "id": None,
@@ -205,6 +242,7 @@ class LoanRequestApi(http.Controller):
                         "name": loan_request.name,
                         "state": loan_request.state,
                         "loan_amount": loan_request.loan_amount,
+                        "campaign": campaign_info,
                     },
                 },
             }
@@ -361,6 +399,55 @@ spec.path(
                                                         "type": "number",
                                                         "format": "float",
                                                         "description": "Amount of the loan",
+                                                    },
+                                                    "campaign": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "description": "ID of the campaign",
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "description": "Name of the campaign",
+                                                            },
+                                                            "state": {
+                                                                "type": "string",
+                                                                "description": "State of the campaign",
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "description": "Description of the campaign",
+                                                            },
+                                                            "global_objective": {
+                                                                "type": "number",
+                                                                "description": "Global objective of the campaign",
+                                                            },
+                                                            "progress": {
+                                                                "type": "number",
+                                                                "description": "Progress of the campaign",
+                                                            },
+                                                            "source_objective_loan": {
+                                                                "type": "number",
+                                                                "description": "Loan objective amount",
+                                                            },
+                                                            "loan_raised_amount": {
+                                                                "type": "number",
+                                                                "description": "Amount raised through loans",
+                                                            },
+                                                            "progress_loan": {
+                                                                "type": "number",
+                                                                "description": "Progress percentage of loan objective",
+                                                            },
+                                                            "minimal_loan_amount": {
+                                                                "type": "number",
+                                                                "description": "Minimum loan amount for the campaign",
+                                                            },
+                                                            "maximal_loan_amount": {
+                                                                "type": "number",
+                                                                "description": "Maximum loan amount for the campaign",
+                                                            },
+                                                        },
                                                     },
                                                 },
                                             },
