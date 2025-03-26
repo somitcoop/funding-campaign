@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "Campaign Subscription API",
+    "description": "API para gestionar suscripciones de campañas de financiación",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Crear Suscripción",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Odoo-Db",
+            "value": "{{database}}",
+            "type": "text",
+            "description": "Nombre de la base de datos Odoo"
+          },
+          {
+            "key": "X-Odoo-Username",
+            "value": "{{username}}",
+            "type": "text",
+            "description": "Usuario de Odoo"
+          },
+          {
+            "key": "X-Odoo-Api-Key",
+            "value": "{{api_key}}",
+            "type": "text",
+            "description": "Clave API de autenticación"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"US\",\n    \"vat\": \"BE0123456789\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/campaign/{{campaign_id}}/subscription_request",
+          "host": ["{{base_url}}"],
+          "path": ["api", "campaign", "{{campaign_id}}", "subscription_request"]
+        },
+        "description": "Crea una nueva solicitud de suscripción para una campaña específica"
+      },
+      "response": [
+        {
+          "name": "Respuesta Exitosa",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"US\",\n    \"vat\": \"BE0123456789\"\n}"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"result\": {\n        \"status\": \"success\",\n        \"data\": {\n            \"id\": 1,\n            \"name\": \"SUB/2024/001\",\n            \"state\": \"draft\",\n            \"campaign\": {\n                \"id\": 1,\n                \"name\": \"Campaign 2024\",\n                \"state\": \"open\",\n                \"description\": \"Campaign description\",\n                \"global_objective\": 100000.0,\n                \"progress\": 1000.0,\n                \"minimal_subscription_amount\": 100.0,\n                \"maximal_subscription_amount\": 10000.0\n            }\n        }\n    }\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8069",
+      "type": "string",
+      "description": "URL base de la API"
+    },
+    {
+      "key": "database",
+      "value": "your_database",
+      "type": "string",
+      "description": "Nombre de la base de datos Odoo"
+    },
+    {
+      "key": "username",
+      "value": "your_username",
+      "type": "string",
+      "description": "Usuario de Odoo"
+    },
+    {
+      "key": "api_key",
+      "value": "your_api_key",
+      "type": "string",
+      "description": "Clave API de autenticación"
+    },
+    {
+      "key": "campaign_id",
+      "value": "1",
+      "type": "string",
+      "description": "ID de la campaña"
+    }
+  ]
+}

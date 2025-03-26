@@ -103,6 +103,35 @@ class CooperatorVoluntaryApi(http.Controller):
                                     example: "error"
         """
         try:
+            _logger.info(f"Received data: {kw}")
+            _logger.info(f"Request body: {request.httprequest.get_data()}")
+            _logger.info(f"Request headers: {request.httprequest.headers}")
+            _logger.info(f"Request content type: {request.httprequest.content_type}")
+            _logger.info(f"Request params: {request.params}")
+
+            # Obtener los datos del body
+            try:
+                body = request.httprequest.get_data().decode('utf-8')
+                _logger.info(f"Raw request data: {body}")
+                import json
+                data = json.loads(body)
+                _logger.info(f"Parsed JSON data: {data}")
+
+                # Si los datos vienen en el formato JSON-RPC, extraerlos de params
+                if isinstance(data, dict) and 'params' in data:
+                    kw.update(data['params'])
+                    _logger.info(f"Updated kw with params: {kw}")
+            except Exception as e:
+                _logger.error(f"Error parsing JSON: {str(e)}")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": f"Invalid JSON data: {str(e)}",
+                        "data": {"status": "error"}
+                    }
+                }
             db = request.httprequest.headers.get("X-Odoo-Db")
             username = request.httprequest.headers.get("X-Odoo-Username")
             api_key = request.httprequest.headers.get("X-Odoo-Api-Key")
@@ -146,7 +175,6 @@ class CooperatorVoluntaryApi(http.Controller):
             request.env = temp_env
 
             required_fields = [
-                "vat",
                 "ordered_parts",
                 "type",
                 "firstname",
@@ -159,6 +187,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lang",
             ]
 
+            _logger.info(f"Validating required fields. Current kw: {kw}")
             for field in required_fields:
                 if field not in kw:
                     _logger.warning(f"Missing required field: {field}")
@@ -166,7 +195,6 @@ class CooperatorVoluntaryApi(http.Controller):
                         "error": f"Missing required field: {field}",
                         "status": "error",
                     }
-
 
             campaign = request.env["funding.campaign"].browse(campaign_id)
             if not campaign.exists():
@@ -234,43 +262,16 @@ class CooperatorVoluntaryApi(http.Controller):
                     "status": "error",
                 }
 
+            # Obtener todos los idiomas disponibles
+            available_langs = request.env["res.lang"].search([])
+            _logger.info(f"Available languages: {[(lang.code, lang.name) for lang in available_langs]}")
+
             lang = request.env["res.lang"].search([("code", "=", kw["lang"])], limit=1)
             if not lang:
                 return {
-                    "error": f"Invalid language code: {kw['lang']}",
+                    "error": f"Invalid language code: {kw['lang']}. Available languages: {', '.join([lang.code for lang in available_langs])}",
                     "status": "error",
                 }
-
-            # Buscar el registro de zip en base_location usando el zip_code y country_id
-            zip_record = False
-            if kw.get("zip_code") and country:
-                zip_record = request.env["res.city.zip"].sudo().search(
-                    [
-                        ("name", "=", kw["zip_code"]),
-                        ("city_id.country_id", "=", country.id),
-                    ],
-                    limit=1,
-                )
-
-                # Si también tenemos la ciudad, refinamos la búsqueda
-                if not zip_record and kw.get("city"):
-                    # Buscar primero por ciudad y país
-                    city = request.env["res.city"].sudo().search(
-                        [
-                            ("name", "=", kw["city"]),
-                            ("country_id", "=", country.id),
-                        ],
-                        limit=1,
-                    )
-
-                    if city:
-                        zip_record = request.env["res.city.zip"].sudo().search(
-                            [
-                                ("name", "=", kw["zip_code"]),
-                                ("city_id", "=", city.id),
-                            ],
-                            limit=1,
-                        )
 
             subscription_data = {
                 "vat": kw["vat"],
@@ -285,22 +286,13 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lastname": kw["lastname"],
                 "email": kw["email"],
                 "address": kw["address"],
+                "city": kw["city"],
                 "zip_code": kw["zip_code"],
                 "country_id": country.id,
                 "phone": kw["phone"],
                 "source": "website",
                 "lang": lang.code,
             }
-
-            # Añadir zip_id si se encontró un registro válido
-            if zip_record:
-                subscription_data["zip_id"] = zip_record.id
-                # Si el registro de zip tiene ciudad, usamos esa información
-                if zip_record.city_id:
-                    subscription_data["city"] = zip_record.city_id.name
-                    # Si la ciudad tiene estado/provincia, lo usamos también
-                    if zip_record.city_id.state_id:
-                        subscription_data["state_id"] = zip_record.city_id.state_id.id
 
             if partner_id:
                 subscription_data["partner_id"] = partner_id
@@ -385,7 +377,6 @@ spec.path(
                         "schema": {
                             "type": "object",
                             "required": [
-                                "vat",
                                 "ordered_parts",
                                 "type",
                                 "firstname",

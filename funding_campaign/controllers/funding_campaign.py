@@ -117,7 +117,7 @@ class FundingCampaignApi(http.Controller):
                         "source_objective_donation": float(campaign.source_objective_donation) if hasattr(campaign, 'source_objective_donation') else 0.0,
                         "progress_donation": float(campaign.progress_donation) if hasattr(campaign, 'progress_donation') else 0.0,
                         "donation_count": campaign.donation_count,
-                        "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'minimal_donation_amount') else 0.0,
+                        "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'mºinimal_donation_amount') else 0.0,
                         "donation_request_count": campaign.donation_request_count,
                     }
 
@@ -206,15 +206,7 @@ class FundingCampaignApi(http.Controller):
                 "state": campaign.state,
                 "global_objective": float(campaign.global_objective),
                 "progress": float(campaign.progress),
-                "progress_percentage": (
-                    round(
-                        (float(campaign.current_amount) / float(campaign.target_amount))
-                        * 100,
-                        2,
-                    )
-                    if campaign.target_amount
-                    else 0
-                ),
+                "progress_percentage": (float(campaign.progress) / float(campaign.global_objective)) * 100,
                 "has_donation_source": campaign.has_donation_source,
                 "donation_raised_amount": float(campaign.donation_raised_amount) if hasattr(campaign, 'donation_raised_amount') else 0.0,
                 "source_objective_donation": float(campaign.source_objective_donation) if hasattr(campaign, 'source_objective_donation') else 0.0,

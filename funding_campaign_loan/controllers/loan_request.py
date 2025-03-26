@@ -18,13 +18,51 @@ class LoanRequestApi(http.Controller):
     )
     def create_loan_request(self, campaign_id, **kw):
         try:
+            _logger.info(f"Received data: {kw}")
+            _logger.info(f"Request body: {request.httprequest.get_data()}")
+            _logger.info(f"Request headers: {request.httprequest.headers}")
+            _logger.info(f"Request content type: {request.httprequest.content_type}")
+            _logger.info(f"Request params: {request.params}")
+
+            # Obtener los datos del body
+            try:
+                body = request.httprequest.get_data().decode('utf-8')
+                _logger.info(f"Raw request data: {body}")
+                import json
+                data = json.loads(body)
+                _logger.info(f"Parsed JSON data: {data}")
+
+                # Si los datos vienen en el formato JSON-RPC, extraerlos de params
+                if isinstance(data, dict) and 'params' in data:
+                    kw.update(data['params'])
+                    _logger.info(f"Updated kw with params: {kw}")
+            except Exception as e:
+                _logger.error(f"Error parsing JSON: {str(e)}")
+                return {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": f"Invalid JSON data: {str(e)}",
+                        "data": {"status": "error"}
+                    }
+                }
+
             db = request.httprequest.headers.get("X-Odoo-Db")
             username = request.httprequest.headers.get("X-Odoo-Username")
             api_key = request.httprequest.headers.get("X-Odoo-Api-Key")
 
             if not all([db, username, api_key]):
                 _logger.warning("Missing authentication parameters.")
-                return {"error": "Missing authentication parameters", "status": "error"}
+                return {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": "Missing authentication parameters",
+                        "data": {"status": "error"}
+                    }
+                }
 
             request.session.db = db
 
@@ -37,15 +75,28 @@ class LoanRequestApi(http.Controller):
 
             if not user:
                 _logger.warning(f"User not found: {username}")
-                return {"error": "User not found", "status": "error"}
+                return {
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": "User not found",
+                        "data": {"status": "error"}
+                    }
+                }
 
             try:
                 user.ensure_one()
             except ValueError:
                 _logger.error(f"Multiple users found with login: {username}")
                 return {
-                    "error": "Multiple users found with same login",
-                    "status": "error",
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": "Multiple users found with same login",
+                        "data": {"status": "error"}
+                    }
                 }
 
             campaign = request.env["funding.campaign"].browse(campaign_id)
@@ -141,40 +192,14 @@ class LoanRequestApi(http.Controller):
             lang = request.env["res.lang"].search([("code", "=", kw["lang"])], limit=1)
             if not lang:
                 return {
-                    "error": f"Invalid language code: {kw['lang']}",
-                    "status": "error",
+                    "jsonrpc": "2.0",
+                    "id": None,
+                    "error": {
+                        "code": 200,
+                        "message": f"Invalid language code: {kw['lang']}",
+                        "data": {"status": "error"}
+                    }
                 }
-
-            # Buscar el registro de zip en base_location usando el zip_code y country_id
-            zip_record = False
-            if kw.get("zip_code") and country:
-                zip_record = request.env["res.city.zip"].sudo().search(
-                    [
-                        ("name", "=", kw["zip_code"]),
-                        ("city_id.country_id", "=", country.id),
-                    ],
-                    limit=1,
-                )
-
-                # Si también tenemos la ciudad, refinamos la búsqueda
-                if not zip_record and kw.get("city"):
-                    # Buscar primero por ciudad y país
-                    city = request.env["res.city"].sudo().search(
-                        [
-                            ("name", "=", kw["city"]),
-                            ("country_id", "=", country.id),
-                        ],
-                        limit=1,
-                    )
-
-                    if city:
-                        zip_record = request.env["res.city.zip"].sudo().search(
-                            [
-                                ("name", "=", kw["zip_code"]),
-                                ("city_id", "=", city.id),
-                            ],
-                            limit=1,
-                        )
 
             loan_request_data = {
                 "vat": kw["vat"],
@@ -189,22 +214,13 @@ class LoanRequestApi(http.Controller):
                 "email": kw["email"],
                 "address": kw["address"],
                 "zip_code": kw["zip_code"],
+                "city": kw.get("city", False),
                 "country_id": country.id,
-                "phone": kw["phone"],
+                "phone": kw.get("phone", False),
                 "source": "website",
                 "state": "draft",
                 "lang": lang.code,
             }
-
-            # Añadir zip_id si se encontró un registro válido
-            if zip_record:
-                loan_request_data["zip_id"] = zip_record.id
-                # Si el registro de zip tiene ciudad, usamos esa información
-                if zip_record.city_id:
-                    loan_request_data["city"] = zip_record.city_id.name
-                    # Si la ciudad tiene estado/provincia, lo usamos también
-                    if zip_record.city_id.state_id:
-                        loan_request_data["state_id"] = zip_record.city_id.state_id.id
 
             if partner_id:
                 loan_request_data["partner_id"] = partner_id

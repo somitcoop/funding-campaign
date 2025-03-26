@@ -1,0 +1,101 @@
+{
+    "info": {
+        "name": "Campaign Loan API",
+        "description": "API collection for campaign loan requests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Create Loan Request",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "X-Odoo-Db",
+                        "value": "{{database}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "X-Odoo-Username",
+                        "value": "{{username}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "X-Odoo-Api-Key",
+                        "value": "{{api_key}}",
+                        "type": "text"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "url": {
+                    "raw": "{{base_url}}/api/campaign/{{campaign_id}}/loan_request",
+                    "host": ["{{base_url}}"],
+                    "path": [
+                        "api",
+                        "campaign",
+                        "{{campaign_id}}",
+                        "loan_request"
+                    ]
+                },
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"jsonrpc\": \"2.0\",\n    \"params\": {\n        \"vat\": \"BE0123456789\",\n        \"loan_amount\": 1000.00,\n        \"firstname\": \"John\",\n        \"lastname\": \"Doe\",\n        \"email\": \"john.doe@example.com\",\n        \"address\": \"123 Main St\",\n        \"city\": \"Madrid\",\n        \"zip_code\": \"12345\",\n        \"phone\": \"+1234567890\",\n        \"lang\": \"es\",\n        \"country_code\": \"ES\"\n    }\n}"
+                },
+                "description": "Create a new loan request for a campaign"
+            },
+            "response": [
+                {
+                    "name": "Success Response",
+                    "originalRequest": {
+                        "method": "POST",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/campaign/{{campaign_id}}/loan_request"
+                        }
+                    },
+                    "status": "OK",
+                    "code": 200,
+                    "_postman_previewlanguage": "json",
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"result\": {\n        \"status\": \"success\",\n        \"data\": {\n            \"id\": 1,\n            \"name\": \"LOAN/2024/001\",\n            \"state\": \"draft\",\n            \"loan_amount\": 1000.00,\n            \"campaign\": {\n                \"id\": 1,\n                \"name\": \"Campaign Name\",\n                \"state\": \"open\",\n                \"description\": \"Campaign Description\",\n                \"global_objective\": 100000.00,\n                \"progress\": 25.5,\n                \"source_objective_loan\": 50000.00,\n                \"loan_raised_amount\": 10000.00,\n                \"progress_loan\": 20.0,\n                \"minimal_loan_amount\": 100.00,\n                \"maximal_loan_amount\": 10000.00\n            }\n        }\n    }\n}"
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8069",
+            "type": "string"
+        },
+        {
+            "key": "database",
+            "value": "your_database",
+            "type": "string"
+        },
+        {
+            "key": "username",
+            "value": "your_username",
+            "type": "string"
+        },
+        {
+            "key": "api_key",
+            "value": "your_api_key",
+            "type": "string"
+        },
+        {
+            "key": "campaign_id",
+            "value": "1",
+            "type": "string"
+        }
+    ]
+}
