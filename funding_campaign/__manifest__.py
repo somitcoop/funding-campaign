@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Funding Campaign Base',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'summary': 'Manage and track funding campaigns with multiple sources',
     'description': """
         This module allows you to create and manage funding campaigns

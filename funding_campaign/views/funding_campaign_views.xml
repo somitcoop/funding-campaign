@@ -36,6 +36,7 @@
                             <field name="name"/>
                         </h1>
                     </div>
+                    <field name="image" widget="image" class="oe_avatar"/>
                     <group>
                         <group>
                             <field name="start_date"/>

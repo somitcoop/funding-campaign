@@ -13,6 +13,7 @@ class FundingCampaign(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char("Name", required=True)
+    image = fields.Image("Image", max_width=1024, max_height=1024)
     start_date = fields.Date("Start Date", required=True)
     end_date = fields.Date("End Date")
     is_permanent = fields.Boolean("Permanent", default=False)
