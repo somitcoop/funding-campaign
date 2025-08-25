@@ -23,3 +23,13 @@ class DonationDonation(models.Model):
         help='Associated funding campaign',
         default=lambda self: self.env.user.context_donation_campaign_id,
     )
+
+    def save_default_values(self):
+        """Override to handle funding.campaign instead of donation.campaign"""
+        self.ensure_one()
+        self.env.user.write(
+            {
+                "context_donation_payment_mode_id": self.payment_mode_id.id,
+                "context_donation_campaign_id": self.campaign_id.id,
+            }
+        )
