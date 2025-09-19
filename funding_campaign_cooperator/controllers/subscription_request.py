@@ -43,6 +43,7 @@ class CooperatorVoluntaryApi(http.Controller):
                             - share_product_id
                             - source
                             - type
+                            - remuneration_type (required when type is increase_remunerated)
                             - campaign_id
                             - country_id
                             - firstname
@@ -63,6 +64,8 @@ class CooperatorVoluntaryApi(http.Controller):
                     description: Source of the subscription
                 type:
                     description: Type of subscription
+                remuneration_type:
+                    description: Type of remuneration for the loan (required when type is increase_remunerated)
                 campaign_id:
                     description: ID of the funding campaign
                 country_id:
@@ -187,6 +190,10 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lang",
             ]
 
+            # Add remuneration_type as required field for increase_remunerated type
+            if kw.get("type") == "increase_remunerated":
+                required_fields.append("remuneration_type")
+
             _logger.info(f"Validating required fields. Current kw: {kw}")
             for field in required_fields:
                 if field not in kw:
@@ -262,6 +269,15 @@ class CooperatorVoluntaryApi(http.Controller):
                     "status": "error",
                 }
 
+            # Validate remuneration_type if type is increase_remunerated
+            VALID_REMUNERATION_TYPES = ["cash", "wallet"]
+            if kw.get("type") == "increase_remunerated" and kw.get("remuneration_type"):
+                if kw["remuneration_type"] not in VALID_REMUNERATION_TYPES:
+                    return {
+                        "error": f"Invalid remuneration type. Must be one of: {', '.join(VALID_REMUNERATION_TYPES)}",
+                        "status": "error",
+                    }
+
             # Obtener todos los idiomas disponibles
             available_langs = request.env["res.lang"].search([])
             _logger.info(f"Available languages: {[(lang.code, lang.name) for lang in available_langs]}")
@@ -293,6 +309,10 @@ class CooperatorVoluntaryApi(http.Controller):
                 "source": "website",
                 "lang": lang.code,
             }
+
+            # Add remuneration_type if provided and type is increase_remunerated
+            if kw.get("type") == "increase_remunerated" and kw.get("remuneration_type"):
+                subscription_data["remuneration_type"] = kw["remuneration_type"]
 
             if partner_id:
                 subscription_data["partner_id"] = partner_id
@@ -388,6 +408,7 @@ spec.path(
                                 "lang",
                                 "country_code",
                             ],
+                            # Note: remuneration_type is required when type is increase_remunerated
                             "properties": {
                                 "vat": {
                                     "type": "string",
@@ -402,6 +423,12 @@ spec.path(
                                     "description": "Type of subscription request. 'increase' for increasing existing shares, 'increase_remunerated' for increasing remunerated shares.",
                                     "enum": ["increase", "increase_remunerated"],
                                     "example": "increase",
+                                },
+                                "remuneration_type": {
+                                    "type": "string",
+                                    "description": "Type of remuneration for the loan. Required when type is 'increase_remunerated'.",
+                                    "enum": ["cash", "wallet"],
+                                    "example": "cash",
                                 },
                                 "firstname": {
                                     "type": "string",
