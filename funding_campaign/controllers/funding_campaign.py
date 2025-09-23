@@ -113,13 +113,13 @@ class FundingCampaignApi(http.Controller):
                         "state": campaign.state,
                         "global_objective": float(campaign.global_objective),
                         "progress": float(campaign.progress),
-                        "has_donation_source": campaign.has_donation_source,
+                        "has_donation_source": getattr(campaign, 'has_donation_source', False),
                         "donation_raised_amount": float(campaign.donation_raised_amount) if hasattr(campaign, 'donation_raised_amount') else 0.0,
                         "source_objective_donation": float(campaign.source_objective_donation) if hasattr(campaign, 'source_objective_donation') else 0.0,
                         "progress_donation": float(campaign.progress_donation) if hasattr(campaign, 'progress_donation') else 0.0,
-                        "donation_count": campaign.donation_count,
-                        "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'mºinimal_donation_amount') else 0.0,
-                        "donation_request_count": campaign.donation_request_count,
+                        "donation_count": getattr(campaign, 'donation_count', 0),
+                        "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'minimal_donation_amount') else 0.0,
+                        "donation_request_count": getattr(campaign, 'donation_request_count', 0),
                     }
 
                     # Aplicar los extensores registrados
@@ -208,14 +208,14 @@ class FundingCampaignApi(http.Controller):
                 "state": campaign.state,
                 "global_objective": float(campaign.global_objective),
                 "progress": float(campaign.progress),
-                "progress_percentage": (float(campaign.progress) / float(campaign.global_objective)) * 100,
-                "has_donation_source": campaign.has_donation_source,
+                "progress_percentage": (float(campaign.progress) / float(campaign.global_objective)) * 100 if float(campaign.global_objective) > 0 else 0.0,
+                "has_donation_source": getattr(campaign, 'has_donation_source', False),
                 "donation_raised_amount": float(campaign.donation_raised_amount) if hasattr(campaign, 'donation_raised_amount') else 0.0,
                 "source_objective_donation": float(campaign.source_objective_donation) if hasattr(campaign, 'source_objective_donation') else 0.0,
                 "progress_donation": float(campaign.progress_donation) if hasattr(campaign, 'progress_donation') else 0.0,
-                "donation_count": campaign.donation_count,
+                "donation_count": getattr(campaign, 'donation_count', 0),
                 "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'minimal_donation_amount') else 0.0,
-                "donation_request_count": campaign.donation_request_count,
+                "donation_request_count": getattr(campaign, 'donation_request_count', 0),
             }
 
             # Añadir fuentes de financiación si están disponibles
@@ -434,13 +434,13 @@ class FundingCampaignApi(http.Controller):
                     "state": campaign.state,
                     "global_objective": float(campaign.global_objective),
                     "progress": float(campaign.progress),
-                    "has_donation_source": campaign.has_donation_source,
+                    "has_donation_source": getattr(campaign, 'has_donation_source', False),
                     "donation_raised_amount": float(campaign.donation_raised_amount) if hasattr(campaign, 'donation_raised_amount') else 0.0,
                     "source_objective_donation": float(campaign.source_objective_donation) if hasattr(campaign, 'source_objective_donation') else 0.0,
                     "progress_donation": float(campaign.progress_donation) if hasattr(campaign, 'progress_donation') else 0.0,
-                    "donation_count": campaign.donation_count,
+                    "donation_count": getattr(campaign, 'donation_count', 0),
                     "minimal_donation_amount": float(campaign.minimal_donation_amount) if hasattr(campaign, 'minimal_donation_amount') else 0.0,
-                    "donation_request_count": campaign.donation_request_count,
+                    "donation_request_count": getattr(campaign, 'donation_request_count', 0),
                 }
 
                 # Aplicar los extensores registrados
