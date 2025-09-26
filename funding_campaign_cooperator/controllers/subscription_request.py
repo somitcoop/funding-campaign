@@ -271,10 +271,11 @@ class CooperatorVoluntaryApi(http.Controller):
 
             # Validate remuneration_type if type is increase_remunerated
             VALID_REMUNERATION_TYPES = ["cash", "wallet"]
-            if kw.get("type") == "increase_remunerated" and kw.get("remuneration_type"):
-                if kw["remuneration_type"] not in VALID_REMUNERATION_TYPES:
+            if kw.get("type") == "increase_remunerated":
+                remuneration_type = kw.get("remuneration_type")
+                if not remuneration_type or remuneration_type not in VALID_REMUNERATION_TYPES:
                     return {
-                        "error": f"Invalid remuneration type. Must be one of: {', '.join(VALID_REMUNERATION_TYPES)}",
+                        "error": f"Invalid or missing remuneration type. Must be one of: {', '.join(VALID_REMUNERATION_TYPES)}",
                         "status": "error",
                     }
 
@@ -310,8 +311,8 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lang": lang.code,
             }
 
-            # Add remuneration_type if provided and type is increase_remunerated
-            if kw.get("type") == "increase_remunerated" and kw.get("remuneration_type"):
+            # Add remuneration_type if type is increase_remunerated
+            if kw.get("type") == "increase_remunerated":
                 subscription_data["remuneration_type"] = kw["remuneration_type"]
 
             if partner_id:
