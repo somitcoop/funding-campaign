@@ -315,12 +315,46 @@ class CooperatorVoluntaryApi(http.Controller):
             if kw.get("type") == "increase_remunerated":
                 subscription_data["remuneration_type"] = kw["remuneration_type"]
 
+            # Skip IBAN control for manual processing subscriptions
+            subscription_data['skip_iban_control'] = True
+
             if partner_id:
                 subscription_data["partner_id"] = partner_id
 
             subscription = request.env["subscription.request"].create(subscription_data)
 
             _logger.info(f"Subscription created with ID: {subscription.id}")
+
+            # Handle attachment if provided
+            if kw.get('attachment') or kw.get('file'):
+                attachment_data = kw.get('attachment') or kw.get('file')
+                if isinstance(attachment_data, dict) and 'content' in attachment_data:
+                    # Handle structured attachment data
+                    attachment_name = attachment_data.get('filename', attachment_data.get('name', 'attachment'))
+                    attachment_content = attachment_data['content']
+                    attachment_mimetype = attachment_data.get('mimetype', 'application/octet-stream')
+
+                    # Create attachment
+                    attachment_vals = {
+                        'name': attachment_name,
+                        'datas': attachment_content,
+                        'res_model': 'subscription.request',
+                        'res_id': subscription.id,
+                        'mimetype': attachment_mimetype,
+                    }
+                    request.env['ir.attachment'].create(attachment_vals)
+                    _logger.info(f"Attachment created for subscription {subscription.id}")
+                elif isinstance(attachment_data, str):
+                    # Handle base64 encoded file content
+                    attachment_name = kw.get('attachment_name', kw.get('filename', 'attachment'))
+                    attachment_vals = {
+                        'name': attachment_name,
+                        'datas': attachment_data,
+                        'res_model': 'subscription.request',
+                        'res_id': subscription.id,
+                    }
+                    request.env['ir.attachment'].create(attachment_vals)
+                    _logger.info(f"Attachment created for subscription {subscription.id}")
 
             # Incluir información adicional de la campaña en la respuesta
             campaign_info = {
@@ -468,6 +502,38 @@ spec.path(
                                     "minLength": 2,
                                     "maxLength": 2,
                                     "required": False,
+                                },
+                                "attachment": {
+                                    "type": "object",
+                                    "description": "File attachment for the subscription request",
+                                    "properties": {
+                                        "filename": {
+                                            "type": "string",
+                                            "description": "Name of the attached file"
+                                        },
+                                        "content": {
+                                            "type": "string",
+                                            "description": "Base64 encoded file content",
+                                            "format": "byte"
+                                        },
+                                        "mimetype": {
+                                            "type": "string",
+                                            "description": "MIME type of the file"
+                                        }
+                                    }
+                                },
+                                "file": {
+                                    "type": "string",
+                                    "description": "Base64 encoded file content (alternative to attachment object)",
+                                    "format": "byte"
+                                },
+                                "attachment_name": {
+                                    "type": "string",
+                                    "description": "Name of the attached file (used with 'file' field)"
+                                },
+                                "filename": {
+                                    "type": "string",
+                                    "description": "Alternative name field for the attached file"
                                 },
                             },
                         }

@@ -11,27 +11,28 @@ def extend_donation_fields(campaign, campaign_info):
     _logger.debug(f"extend_donation_fields: START for campaign {campaign.id}")
     try:
         # Añadir campos del módulo funding_campaign_donation si existen
-        if hasattr(campaign, 'has_donation_source'):
-            campaign_info["has_donation_source"] = campaign.has_donation_source
-            _logger.debug(f"extend_donation_fields: Added has_donation_source")
-        if hasattr(campaign, 'donation_raised_amount'):
-            campaign_info["donation_raised_amount"] = float(campaign.donation_raised_amount)
-            _logger.debug(f"extend_donation_fields: Added donation_raised_amount")
-        if hasattr(campaign, 'source_objective_donation'):
-            campaign_info["source_objective_donation"] = float(campaign.source_objective_donation)
-            _logger.debug(f"extend_donation_fields: Added source_objective_donation")
-        if hasattr(campaign, 'progress_donation'):
-            campaign_info["progress_donation"] = float(campaign.progress_donation)
-            _logger.debug(f"extend_donation_fields: Added progress_donation")
-        if hasattr(campaign, 'donation_count'):
-            campaign_info["donation_count"] = campaign.donation_count
-            _logger.debug(f"extend_donation_fields: Added donation_count")
-        if hasattr(campaign, 'minimal_donation_amount'):
-            campaign_info["minimal_donation_amount"] = float(campaign.minimal_donation_amount)
-            _logger.debug(f"extend_donation_fields: Added minimal_donation_amount")
-        if hasattr(campaign, 'donation_request_count'):
-            campaign_info["donation_request_count"] = campaign.donation_request_count
-            _logger.debug(f"extend_donation_fields: Added donation_request_count")
+        # Usar getattr con valores por defecto para evitar AttributeError
+        campaign_info["has_donation_source"] = getattr(campaign, 'has_donation_source', False)
+        _logger.debug(f"extend_donation_fields: Added has_donation_source = {campaign_info['has_donation_source']}")
+        
+        campaign_info["donation_raised_amount"] = float(getattr(campaign, 'donation_raised_amount', 0.0))
+        _logger.debug(f"extend_donation_fields: Added donation_raised_amount")
+        
+        campaign_info["source_objective_donation"] = float(getattr(campaign, 'source_objective_donation', 0.0))
+        _logger.debug(f"extend_donation_fields: Added source_objective_donation")
+        
+        campaign_info["progress_donation"] = float(getattr(campaign, 'progress_donation', 0.0))
+        _logger.debug(f"extend_donation_fields: Added progress_donation")
+        
+        campaign_info["donation_count"] = getattr(campaign, 'donation_count', 0)
+        _logger.debug(f"extend_donation_fields: Added donation_count")
+        
+        campaign_info["minimal_donation_amount"] = float(getattr(campaign, 'minimal_donation_amount', 0.0))
+        _logger.debug(f"extend_donation_fields: Added minimal_donation_amount")
+        
+        campaign_info["donation_request_count"] = getattr(campaign, 'donation_request_count', 0)
+        _logger.debug(f"extend_donation_fields: Added donation_request_count")
+        
     except Exception as e:
         _logger.error(f"Error extending donation fields: {e}")
         _logger.error(traceback.format_exc())
