@@ -23,6 +23,17 @@ class SubscriptionRequest(models.Model):
         help="Skip IBAN validation for automatic validation",
     )
 
+    @api.model
+    def create(self, vals):
+        """Override create to ensure campaign subscriptions always use increase_remunerated type"""
+        # If this subscription request has a campaign_id, force type to be increase_remunerated
+        if vals.get('campaign_id'):
+            _logger.info(f"Campaign subscription detected (campaign_id: {vals['campaign_id']}). "
+                        f"Forcing type to 'increase_remunerated' (was: {vals.get('type')})")
+            vals['type'] = 'increase_remunerated'
+        
+        return super().create(vals)
+
     def get_invoice_vals(self, partner):
         """Override to prevent campaign_id from being copied to account.move"""
         invoice_vals = super().get_invoice_vals(partner)
