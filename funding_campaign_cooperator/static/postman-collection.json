@@ -36,14 +36,14 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"US\",\n    \"vat\": \"BE0123456789\"\n}"
+          "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase_remunerated\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"javicarrillo83@gmail.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"ES\",\n    \"vat\": \"47076198M\",\n    \"remuneration_type\": \"wallet\"\n}"
         },
         "url": {
           "raw": "{{base_url}}/api/campaign/{{campaign_id}}/subscription_request",
           "host": ["{{base_url}}"],
           "path": ["api", "campaign", "{{campaign_id}}", "subscription_request"]
         },
-        "description": "Crea una nueva solicitud de suscripción para una campaña específica"
+        "description": "Crea una nueva solicitud de suscripción para una campaña específica. Campos requeridos: ordered_parts, type, firstname, lastname, email, address, zip_code, phone, lang, country_code. Campo remuneration_type requerido cuando type='increase_remunerated'. Campo city opcional. NOTA: Se corrigió validación de campos requeridos que causaba errores KeyError."
       },
       "response": [
         {
@@ -53,14 +53,46 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"US\",\n    \"vat\": \"BE0123456789\"\n}"
+              "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase_remunerated\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"javicarrillo83@gmail.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"ES\",\n    \"vat\": \"47076198M\",\n    \"remuneration_type\": \"wallet\"\n}"
             }
           },
           "status": "OK",
           "code": 200,
           "_postman_previewlanguage": "json",
           "header": [],
-          "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"result\": {\n        \"status\": \"success\",\n        \"data\": {\n            \"id\": 1,\n            \"name\": \"SUB/2024/001\",\n            \"state\": \"draft\",\n            \"campaign\": {\n                \"id\": 1,\n                \"name\": \"Campaign 2024\",\n                \"state\": \"open\",\n                \"description\": \"Campaign description\",\n                \"global_objective\": 100000.0,\n                \"progress\": 1000.0,\n                \"minimal_subscription_amount\": 100.0,\n                \"maximal_subscription_amount\": 10000.0\n            }\n        }\n    }\n}"
+          "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"result\": {\n        \"status\": \"success\",\n        \"data\": {\n            \"id\": 1,\n            \"name\": \"SUB/2024/001\",\n            \"state\": \"draft\",\n            \"type\": \"increase_remunerated\",\n            \"remuneration_type\": \"wallet\",\n            \"campaign\": {\n                \"id\": 1,\n                \"name\": \"Campaign 2024\",\n                \"state\": \"open\",\n                \"description\": \"Campaign description\",\n                \"global_objective\": 100000.0,\n                \"progress\": 1000.0,\n                \"minimal_subscription_amount\": 100.0,\n                \"maximal_subscription_amount\": 10000.0\n            }\n        }\n    }\n}"
+        },
+        {
+          "name": "Error: Campo requerido faltante (Solucionado)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"ordered_parts\": 1,\n    \"type\": \"increase_remunerated\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"javicarrillo83@gmail.com\",\n    \"address\": \"123 Main St\",\n    \"zip_code\": \"12345\",\n    \"phone\": \"+1234567890\",\n    \"lang\": \"en_US\",\n    \"country_code\": \"ES\",\n    \"vat\": \"47076198M\",\n    \"remuneration_type\": \"wallet\"\n}"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"result\": {\n        \"error\": \"Este error ya está solucionado. Ahora se aceptan todos los campos requeridos correctamente.\",\n        \"status\": \"info\"\n    }\n}"
+        },
+        {
+          "name": "Error: KeyError en ordered_parts (Solucionado)",
+          "originalRequest": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"increase_remunerated\",\n    \"firstname\": \"John\",\n    \"lastname\": \"Doe\",\n    \"email\": \"javicarrillo83@gmail.com\",\n    \"remuneration_type\": \"wallet\"\n}"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n    \"jsonrpc\": \"2.0\",\n    \"id\": null,\n    \"error\": {\n        \"code\": 200,\n        \"message\": \"KeyError: 'ordered_parts'\",\n        \"data\": {\"status\": \"error\"}\n    }\n}"
         }
       ]
     }

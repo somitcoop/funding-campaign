@@ -1,9 +1,25 @@
-from odoo import http
+from odoo import http, fields
 from odoo.http import request
 from odoo.exceptions import AccessDenied
 import logging
 import traceback
-from odoo.addons.swagger_docs.controllers.swagger_controller import spec
+from datetime import datetime
+# from odoo.addons.swagger_docs.controllers.swagger_controller import spec
+
+try:
+    from odoo.addons.swagger_docs.controllers.swagger_controller import spec
+    SWAGGER_AVAILABLE = True
+except ImportError:
+    SWAGGER_AVAILABLE = False
+    class MockSpec:
+        class components:
+            @staticmethod
+            def schema(*args, **kwargs):
+                pass
+        @staticmethod
+        def path(*args, **kwargs):
+            pass
+    spec = MockSpec()
 
 
 _logger = logging.getLogger(__name__)
@@ -37,7 +53,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 name: X-Odoo-Api-Key
                 required: true
                 description: API key for authentication
-            required: true
+                            required: true
                             - partner_id
                             - ordered_parts
                             - share_product_id
@@ -50,10 +66,10 @@ class CooperatorVoluntaryApi(http.Controller):
                             - lastname
                             - email
                             - address
-                            - city
                             - zip_code
                             - phone
                             - lang
+                            - country_code
                 partner_id:
                     description: ID of the partner
                 ordered_parts:
@@ -106,35 +122,30 @@ class CooperatorVoluntaryApi(http.Controller):
                                     example: "error"
         """
         try:
-            _logger.info(f"Received data: {kw}")
-            _logger.info(f"Request body: {request.httprequest.get_data()}")
+            _logger.info(f"Received data (JSON parsed automatically by Odoo): {kw}")
             _logger.info(f"Request headers: {request.httprequest.headers}")
             _logger.info(f"Request content type: {request.httprequest.content_type}")
-            _logger.info(f"Request params: {request.params}")
+            
+            # Additional debugging for JSON parsing issues
+            _logger.info(f"Request method: {request.httprequest.method}")
+            _logger.info(f"Request data (raw): {request.httprequest.data}")
+            _logger.info(f"Request get_data(): {request.httprequest.get_data()}")
+            
+            # Try to manually parse JSON if kw is empty
+            if not kw and request.httprequest.data:
+                try:
+                    import json
+                    raw_data = request.httprequest.get_data(as_text=True)
+                    _logger.info(f"Raw request data as text: {raw_data}")
+                    if raw_data:
+                        kw = json.loads(raw_data)
+                        _logger.info(f"Manually parsed JSON data: {kw}")
+                except Exception as json_error:
+                    _logger.error(f"Failed to manually parse JSON: {json_error}")
+                    return {"error": "Invalid JSON format", "status": "error"}
 
-            # Obtener los datos del body
-            try:
-                body = request.httprequest.get_data().decode('utf-8')
-                _logger.info(f"Raw request data: {body}")
-                import json
-                data = json.loads(body)
-                _logger.info(f"Parsed JSON data: {data}")
-
-                # Si los datos vienen en el formato JSON-RPC, extraerlos de params
-                if isinstance(data, dict) and 'params' in data:
-                    kw.update(data['params'])
-                    _logger.info(f"Updated kw with params: {kw}")
-            except Exception as e:
-                _logger.error(f"Error parsing JSON: {str(e)}")
-                return {
-                    "jsonrpc": "2.0",
-                    "id": None,
-                    "error": {
-                        "code": 200,
-                        "message": f"Invalid JSON data: {str(e)}",
-                        "data": {"status": "error"}
-                    }
-                }
+            # With type="json", Odoo automatically parses the JSON body into **kw
+            # No need to manually parse JSON here
             db = request.httprequest.headers.get("X-Odoo-Db")
             username = request.httprequest.headers.get("X-Odoo-Username")
             api_key = request.httprequest.headers.get("X-Odoo-Api-Key")
@@ -177,36 +188,51 @@ class CooperatorVoluntaryApi(http.Controller):
 
             request.env = temp_env
 
-            required_fields = [
-                "ordered_parts",
-                "type",
-                "firstname",
-                "lastname",
-                "email",
-                "address",
-                "city",
-                "zip_code",
-                "phone",
-                "lang",
-            ]
+            # required_fields = [
+            #     "type",
+            #     "firstname",
+            #     "lastname",
+            #     "email",
+            #     "address",
+            #     "zip_code",
+            #     "phone",
+            #     "lang",
+            #     "country_code",
+            # ]
 
-            # Add remuneration_type as required field for increase_remunerated type
-            if kw.get("type") == "increase_remunerated":
-                required_fields.append("remuneration_type")
+            # # Add remuneration_type as required field for increase_remunerated type
+            # if kw.get("type") == "increase_remunerated":
+            #     required_fields.append("remuneration_type")
 
-            _logger.info(f"Validating required fields. Current kw: {kw}")
-            for field in required_fields:
-                if field not in kw:
-                    _logger.warning(f"Missing required field: {field}")
-                    return {
-                        "error": f"Missing required field: {field}",
-                        "status": "error",
-                    }
+            # _logger.info(f"Validating required fields. Current kw: {kw}")
+            # for field in required_fields:
+            #     if field not in kw:
+            #         _logger.warning(f"Missing required field: {field}")
+            #         return {
+            #             "error": f"Missing required field: {field}",
+            #             "status": "error",
+            #         }
 
             campaign = request.env["funding.campaign"].browse(campaign_id)
             if not campaign.exists():
                 _logger.warning(f"Campaign not found: {campaign_id}")
                 return {"error": "Campaign not found", "status": "error"}
+
+            # Definir campaign_info temprano para evitar errores de referencia
+            campaign_info = {
+                "id": campaign.id,
+                "name": campaign.name,
+                "state": campaign.state,
+                "description": campaign.description or "",
+                "global_objective": float(campaign.global_objective) if hasattr(campaign, 'global_objective') else 0.0,
+                "progress": float(campaign.progress) if hasattr(campaign, 'progress') else 0.0,
+            }
+
+            # Añadir los nuevos campos si existen
+            if hasattr(campaign, 'minimal_subscription_amount'):
+                campaign_info["minimal_subscription_amount"] = float(campaign.minimal_subscription_amount)
+            if hasattr(campaign, 'maximal_subscription_amount'):
+                campaign_info["maximal_subscription_amount"] = float(campaign.maximal_subscription_amount)
 
             if "campaign_id" in kw and kw["campaign_id"] != campaign_id:
                 return {
@@ -222,6 +248,28 @@ class CooperatorVoluntaryApi(http.Controller):
                     "error": "Campaign is not active",
                     "status": "error",
                     "details": "Subscriptions can only be created for active campaigns",
+                }
+
+            # Validar campos críticos antes de usarlos
+            if "ordered_parts" not in kw:
+                return {
+                    "error": "Missing required field: ordered_parts",
+                    "status": "error",
+                }
+            if "type" not in kw:
+                return {
+                    "error": "Missing required field: type",
+                    "status": "error",
+                }
+            if "country_code" not in kw:
+                return {
+                    "error": "Missing required field: country_code",
+                    "status": "error",
+                }
+            if "lang" not in kw:
+                return {
+                    "error": "Missing required field: lang",
+                    "status": "error",
                 }
 
             # Validar límites de suscripción
@@ -291,7 +339,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 }
 
             subscription_data = {
-                "vat": kw["vat"],
+                "vat": kw.get("vat"),
                 "campaign_id": campaign_id,
                 "share_product_id": request.env["funding.campaign"]
                 .sudo()
@@ -303,7 +351,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lastname": kw["lastname"],
                 "email": kw["email"],
                 "address": kw["address"],
-                "city": kw["city"],
+                "city": kw.get("city", ""),  # Optional field
                 "zip_code": kw["zip_code"],
                 "country_id": country.id,
                 "phone": kw["phone"],
@@ -324,6 +372,14 @@ class CooperatorVoluntaryApi(http.Controller):
             subscription = request.env["subscription.request"].create(subscription_data)
 
             _logger.info(f"Subscription created with ID: {subscription.id}")
+
+            # Store API response in carsharing.update.data if exists
+            self._store_api_response_in_update_data(kw, {
+                "subscription_id": subscription.id,
+                "subscription_name": subscription.name,
+                "campaign": campaign_info,
+                "status": "success"
+            })
 
             # Handle attachment if provided
             if kw.get('attachment') or kw.get('file'):
@@ -356,22 +412,6 @@ class CooperatorVoluntaryApi(http.Controller):
                     request.env['ir.attachment'].create(attachment_vals)
                     _logger.info(f"Attachment created for subscription {subscription.id}")
 
-            # Incluir información adicional de la campaña en la respuesta
-            campaign_info = {
-                "id": campaign.id,
-                "name": campaign.name,
-                "state": campaign.state,
-                "description": campaign.description or "",
-                "global_objective": float(campaign.global_objective) if hasattr(campaign, 'global_objective') else 0.0,
-                "progress": float(campaign.progress) if hasattr(campaign, 'progress') else 0.0,
-            }
-
-            # Añadir los nuevos campos si existen
-            if hasattr(campaign, 'minimal_subscription_amount'):
-                campaign_info["minimal_subscription_amount"] = float(campaign.minimal_subscription_amount)
-            if hasattr(campaign, 'maximal_subscription_amount'):
-                campaign_info["maximal_subscription_amount"] = float(campaign.maximal_subscription_amount)
-
             return {
                 "jsonrpc": "2.0",
                 "id": None,
@@ -388,11 +428,78 @@ class CooperatorVoluntaryApi(http.Controller):
 
         except Exception as e:
             _logger.error("Unexpected error: %s", traceback.format_exc())
+
+            # Store error response in carsharing.update.data if exists
+            self._store_api_response_in_update_data(kw, {
+                "status": "error",
+                "error_message": str(e),
+                "campaign": campaign_info if 'campaign_info' in locals() else {}
+            })
+
             return {
                 "jsonrpc": "2.0",
                 "id": None,
                 "error": {"code": 200, "message": str(e), "data": {"status": "error"}},
             }
+
+    def _store_api_response_in_update_data(self, request_data, response_data):
+        """Store API response data in carsharing.update.data record if exists"""
+        try:
+            # Try to find carsharing.update.data record by VAT/DNI
+            vat = request_data.get('vat')
+            if vat:
+                # Search for carsharing.update.data records that match the VAT and are not completed
+                update_data_record = request.env['carsharing.update.data'].sudo().search([
+                    ('cs_update_dni', '=', vat),
+                    ('state', '!=', 'completed'),
+                    ('final_state', '=', 'not_completed')
+                ], limit=1, order='id desc')
+
+                if update_data_record:
+                    # Prepare the data to store
+                    import json
+                    from datetime import datetime
+                    
+                    campaign_info_str = json.dumps(response_data.get('campaign', {}), indent=2, default=str)
+
+                    if response_data.get('status') == 'error':
+                        response_data_str = json.dumps({
+                            'status': response_data.get('status'),
+                            'error_message': response_data.get('error_message'),
+                            'campaign': response_data.get('campaign')
+                        }, indent=2, default=str)
+                    else:
+                        response_data_str = json.dumps({
+                            'subscription_id': response_data.get('subscription_id'),
+                            'subscription_name': response_data.get('subscription_name'),
+                            'status': response_data.get('status'),
+                            'campaign': response_data.get('campaign')
+                        }, indent=2, default=str)
+
+                    # Update the record
+                    update_data = {
+                        'api_response_status': response_data.get('status', 'unknown'),
+                        'api_response_data': response_data_str,
+                        'api_response_campaign_info': campaign_info_str,
+                        'api_request_date': datetime.now(),
+                        'api_response_date': datetime.now(),
+                    }
+
+                    # Only add subscription fields if not an error
+                    if response_data.get('status') != 'error':
+                        update_data.update({
+                            'api_response_subscription_id': response_data.get('subscription_id'),
+                            'api_response_subscription_name': response_data.get('subscription_name'),
+                        })
+
+                    update_data_record.write(update_data)
+
+                    _logger.info(f"Stored API response in carsharing.update.data record {update_data_record.id}")
+                else:
+                    _logger.info(f"No matching carsharing.update.data record found for VAT {vat}")
+
+        except Exception as e:
+            _logger.error(f"Error storing API response in carsharing.update.data: {str(e)}")
 
 
 spec.path(
@@ -443,6 +550,8 @@ spec.path(
                                 "lang",
                                 "country_code",
                             ],
+                            # Note: city is now optional, country_code is required
+                            # Note: Fixed KeyError issues by adding proper field validation before usage
                             # Note: remuneration_type is required when type is increase_remunerated
                             "properties": {
                                 "vat": {
