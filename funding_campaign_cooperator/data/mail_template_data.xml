@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plantilles de correu electrònic per a Funding Campaign Cooperator
+    Declarades en bloc NOUPDATE per permetre personalització
+-->
+<odoo noupdate="1">
+
+    <!-- Plantilla de correu per enviament d'acord de subscripció amb informe adjunt -->
+    <record id="email_template_subscription_agreement" model="mail.template">
+        <field name="name">Acord de Subscripció - Campanya de Finançament</field>
+        <field name="model_id" ref="cooperator.model_subscription_request"/>
+        <field name="email_from">{{ object.company_id.coop_email_contact or object.user_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.email }}{{ object.is_company and object.company_email and (", " + object.company_email) or "" }}</field>
+        <field name="subject">Acord de Subscripció - {{ object.campaign_id.name or 'Campanya de Finançament' }} (Ref: {{ object.name or 'N/A' }})</field>
+        <field name="description">Plantilla professional per enviament d'acord de subscripció amb informe adjunt a cooperativistes</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    
+    <!-- Capçalera -->
+    <div style="background: linear-gradient(135deg, #2c5aa0 0%, #1e3a8a 100%); color: white; padding: 30px 40px; text-align: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">
+            {{ object.company_id.name or 'Cooperativa' }}
+        </h1>
+        <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+            Acord de Subscripció - Campanya de Finançament
+        </p>
+    </div>
+
+    <!-- Contingut principal -->
+    <div style="padding: 40px;">
+        
+        <!-- Salutació personalitzada -->
+        <div style="margin-bottom: 30px;">
+            <p style="font-size: 16px; color: #333333; margin: 0; line-height: 1.6;">
+                Benvolgut/da 
+                <strong>
+                    <t t-if="object.is_company">
+                        <t t-out="object.company_name or 'Empresa'"/>
+                    </t>
+                    <t t-else="">
+                        <t t-out="object.firstname or ''"/> <t t-out="object.lastname or ''"/>
+                    </t>
+                </strong>,
+            </p>
+        </div>
+
+        <!-- Cos del missatge -->
+        <div style="background-color: #f8fafc; padding: 25px; border-radius: 6px; border-left: 4px solid #2c5aa0; margin-bottom: 30px;">
+            <p style="font-size: 15px; color: #374151; margin: 0 0 15px 0; line-height: 1.7;">
+                Ens complau confirmar la recepció de la seva sol·licitud de subscripció per a la nostra campanya de finançament 
+                <strong>"<t t-out="object.campaign_id.name or 'Campanya Activa'"/>"</strong>.
+            </p>
+            
+            <p style="font-size: 15px; color: #374151; margin: 0 0 15px 0; line-height: 1.7;">
+                Adjunt a aquest correu trobarà l'<strong>Acord de Subscripció</strong> detallat que inclou:
+            </p>
+            
+            <ul style="font-size: 14px; color: #374151; margin: 0 0 15px 20px; line-height: 1.6;">
+                <li>Termes i condicions de la subscripció</li>
+                <li>Detalls de la inversió i participacions</li>
+                <li>Informació sobre la campanya de finançament</li>
+                <li>Instruccions de pagament i pròxims passos</li>
+            </ul>
+            
+            <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.7;">
+                Li preguem revisi acuradament el document adjunt i no dubti a contactar-nos si té alguna consulta.
+            </p>
+        </div>
+
+        <!-- Informació de la subscripció -->
+        <div style="background-color: #ffffff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 20px; margin-bottom: 30px;">
+            <h3 style="color: #2c5aa0; font-size: 16px; margin: 0 0 15px 0; font-weight: 600;">
+                Resum de la seva Subscripció
+            </h3>
+            <table style="width: 100%; font-size: 14px; color: #374151;">
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Referència:</strong></td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.name or 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Campanya:</strong></td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.campaign_id.name or 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Participacions:</strong></td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.ordered_parts or 0 }}</td>
+                </tr>
+                <tr>
+                    <td style="padding: 8px 0;"><strong>Import Total:</strong></td>
+                    <td style="padding: 8px 0; text-align: right; color: #2c5aa0; font-weight: 600;">
+                        {{ "%.2f"|format(object.subscription_amount or 0) }} {{ object.company_currency_id.symbol or '€' }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Pròxims passos -->
+        <div style="background-color: #fef3c7; border: 1px solid #fbbf24; border-radius: 6px; padding: 20px; margin-bottom: 30px;">
+            <h3 style="color: #92400e; font-size: 16px; margin: 0 0 10px 0; font-weight: 600;">
+                📋 Pròxims Passos
+            </h3>
+            <p style="font-size: 14px; color: #92400e; margin: 0; line-height: 1.6;">
+                Un cop revisat l'acord, el nostre equip processarà la seva sol·licitud i li enviarem les instruccions de pagament corresponents. 
+                La seva subscripció serà efectiva un cop rebut el pagament.
+            </p>
+        </div>
+
+        <!-- Comiat -->
+        <div style="margin-bottom: 20px;">
+            <p style="font-size: 15px; color: #374151; margin: 0 0 10px 0; line-height: 1.6;">
+                Agraïm la seva confiança en el nostre projecte cooperatiu.
+            </p>
+            <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.6;">
+                Atentament,
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Peu de pàgina amb dades de contacte -->
+    <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 30px 40px;">
+        <div style="text-align: center;">
+            <h3 style="color: #2c5aa0; font-size: 16px; margin: 0 0 15px 0; font-weight: 600;">
+                {{ object.company_id.name or 'Cooperativa' }}
+            </h3>
+            
+            <div style="font-size: 13px; color: #6b7280; line-height: 1.5;">
+                <t t-if="object.company_id.street">
+                    <p style="margin: 5px 0;">
+                        📍 {{ object.company_id.street }}
+                        <t t-if="object.company_id.street2">, {{ object.company_id.street2 }}</t>
+                    </p>
+                </t>
+                <t t-if="object.company_id.city">
+                    <p style="margin: 5px 0;">
+                        {{ object.company_id.zip or '' }} {{ object.company_id.city }}
+                        <t t-if="object.company_id.country_id">, {{ object.company_id.country_id.name }}</t>
+                    </p>
+                </t>
+                <t t-if="object.company_id.phone">
+                    <p style="margin: 5px 0;">📞 {{ object.company_id.phone }}</p>
+                </t>
+                <t t-if="object.company_id.coop_email_contact or object.company_id.email">
+                    <p style="margin: 5px 0;">
+                        ✉️ {{ object.company_id.coop_email_contact or object.company_id.email }}
+                    </p>
+                </t>
+                <t t-if="object.company_id.website">
+                    <p style="margin: 5px 0;">🌐 {{ object.company_id.website }}</p>
+                </t>
+            </div>
+            
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e5e7eb;">
+                <p style="font-size: 11px; color: #9ca3af; margin: 0;">
+                    Aquest correu ha estat generat automàticament. Si us plau, no respongui directament a aquest missatge.
+                    <br/>Per a consultes, utilitzi les dades de contacte proporcionades a dalt.
+                </p>
+            </div>
+        </div>
+    </div>
+
+</div>
+        </field>
+        <field name="lang">{{ object.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+        <field name="report_template_ids" eval="[(4, ref('funding_campaign_cooperator.action_report_subscription_agreement'))]"/>
+    </record>
+
+    <!-- Plantilla de correu per confirmació de recepció de sol·licitud -->
+    <record id="email_template_funding_campaign_confirmation" model="mail.template">
+        <field name="name">Confirmació de Sol·licitud - Campanya de Finançament</field>
+        <field name="model_id" ref="cooperator.model_subscription_request"/>
+        <field name="email_from">{{ object.company_id.coop_email_contact or object.user_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.email }}{{ object.is_company and object.company_email and (", " + object.company_email) or "" }}</field>
+        <field name="subject">Confirmació de Sol·licitud - {{ object.campaign_id.name or 'Campanya de Finançament' }}</field>
+        <field name="description">Confirmació automàtica de recepció de sol·licitud de subscripció per campanya de finançament</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    
+    <!-- Capçalera -->
+    <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px 40px; text-align: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">
+            ✅ Sol·licitud Rebuda
+        </h1>
+        <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+            {{ object.company_id.name or 'Cooperativa' }}
+        </p>
+    </div>
+
+    <!-- Contingut -->
+    <div style="padding: 40px;">
+        <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
+            Benvolgut/da 
+            <strong>
+                <t t-if="object.is_company">
+                    <t t-out="object.company_name or 'Empresa'"/>
+                </t>
+                <t t-else="">
+                    <t t-out="object.firstname or ''"/> <t t-out="object.lastname or ''"/>
+                </t>
+            </strong>,
+        </p>
+
+        <div style="background-color: #f0fdf4; padding: 25px; border-radius: 6px; border-left: 4px solid #059669; margin-bottom: 30px;">
+            <p style="font-size: 15px; color: #374151; margin: 0 0 15px 0; line-height: 1.7;">
+                Hem rebut correctament la seva sol·licitud de subscripció per a la campanya de finançament 
+                <strong>"<t t-out="object.campaign_id.name or 'Campanya Activa'"/>"</strong>.
+            </p>
+            
+            <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.7;">
+                El nostre equip revisarà la seva sol·licitud i li enviarem l'acord de subscripció detallat en les pròximes hores.
+            </p>
+        </div>
+
+        <p style="font-size: 15px; color: #374151; margin: 0 0 10px 0; line-height: 1.6;">
+            Gràcies pel seu interès en el nostre projecte cooperatiu.
+        </p>
+        <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.6;">
+            Atentament,
+        </p>
+    </div>
+
+    <!-- Peu de pàgina simplificat -->
+    <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 40px; text-align: center;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0;">
+            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-if="object.company_id.coop_email_contact or object.company_id.email">
+                | {{ object.company_id.coop_email_contact or object.company_id.email }}
+            </t>
+        </p>
+    </div>
+
+</div>
+        </field>
+        <field name="lang">{{ object.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+    <!-- Plantilla de correu per confirmació de recepció de sol·licitud de campanya -->
+    <record id="email_template_campaign_subscription_confirmation" model="mail.template">
+        <field name="name">Confirmació de Sol·licitud de Subscripció a Campanya</field>
+        <field name="model_id" ref="cooperator.model_subscription_request"/>
+        <field name="email_from">{{ object.company_id.coop_email_contact or object.user_id.email_formatted or user.email_formatted }}</field>
+        <field name="email_to">{{ object.email }}{{ object.is_company and object.company_email and (", " + object.company_email) or "" }}</field>
+        <field name="subject">Confirmació de Sol·licitud - {{ object.campaign_id.name or 'Campanya de Finançament' }}</field>
+        <field name="description">Confirmació automàtica de recepció de sol·licitud de subscripció per campanya de finançament</field>
+        <field name="body_html" type="html">
+<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+    
+    <!-- Capçalera -->
+    <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px 40px; text-align: center;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600;">
+            ✅ Sol·licitud Rebuda
+        </h1>
+        <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
+            {{ object.company_id.name or 'Cooperativa' }}
+        </p>
+    </div>
+
+    <!-- Contingut -->
+    <div style="padding: 40px;">
+        <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
+            Benvolgut/da 
+            <strong>
+                <t t-if="object.is_company">
+                    <t t-out="object.company_name or 'Empresa'"/>
+                </t>
+                <t t-else="">
+                    <t t-out="object.firstname or ''"/> <t t-out="object.lastname or ''"/>
+                </t>
+            </strong>,
+        </p>
+
+        <div style="background-color: #f0fdf4; padding: 25px; border-radius: 6px; border-left: 4px solid #059669; margin-bottom: 30px;">
+            <p style="font-size: 15px; color: #374151; margin: 0 0 15px 0; line-height: 1.7;">
+                Hem rebut correctament la seva sol·licitud de subscripció per a la campanya de finançament 
+                <strong>"<t t-out="object.campaign_id.name or 'Campanya Activa'"/>"</strong>.
+            </p>
+            
+            <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.7;">
+                El nostre equip revisarà la seva sol·licitud i li enviarem l'acord de subscripció detallat en les pròximes hores.
+            </p>
+        </div>
+
+        <p style="font-size: 15px; color: #374151; margin: 0 0 10px 0; line-height: 1.6;">
+            Gràcies pel seu interès en el nostre projecte cooperatiu.
+        </p>
+        <p style="font-size: 15px; color: #374151; margin: 0; line-height: 1.6;">
+            Atentament,
+        </p>
+    </div>
+
+    <!-- Peu de pàgina simplificat -->
+    <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 40px; text-align: center;">
+        <p style="font-size: 13px; color: #6b7280; margin: 0;">
+            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-if="object.company_id.coop_email_contact or object.company_id.email">
+                | {{ object.company_id.coop_email_contact or object.company_id.email }}
+            </t>
+        </p>
+    </div>
+
+</div>
+        </field>
+        <field name="lang">{{ object.lang }}</field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+
+</odoo>

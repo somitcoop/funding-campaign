@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Actualizar el rol de cliente para usar expresión -->
+    <record id="sign_oca.sign_role_customer" model="sign.oca.role">
+        <field name="partner_selection_policy">expression</field>
+        <field name="expression_partner">{{object.partner_id.id}}</field>
+    </record>
+
+    <!-- Plantilla de firma para acuerdos de subscripción -->
+    <record id="subscription_agreement_sign_template" model="sign.oca.template">
+        <field name="name">Subscription Agreement Template</field>
+        <field name="model_id" ref="cooperator.model_subscription_request"/>
+        <field name="ask_location" eval="False"/>
+        <!-- El PDF se establecerá dinámicamente desde el reporte -->
+    </record>
+
+    <!-- Campo de firma para el cliente -->
+    <record id="subscription_client_signature_field" model="sign.oca.template.item">
+        <field name="template_id" ref="subscription_agreement_sign_template"/>
+        <field name="field_id" ref="sign_oca.sign_field_signature"/>
+        <field name="role_id" ref="sign_oca.sign_role_customer"/>
+        <field name="required" eval="True"/>
+        <field name="page">3</field>
+        <!-- Posición en la parte derecha del documento donde está el espacio reservado -->
+        <field name="position_x">49.62</field>  <!-- 55% desde la izquierda -->
+        <field name="position_y">33.67</field>  <!-- 85% desde arriba -->
+        <field name="width">32.78</field>       <!-- 40% de ancho -->
+        <field name="height">8.24</field>      <!-- 10% de alto -->
+        <field name="placeholder">Firma del Cliente</field>
+    </record>
+
+    <!-- Campo de texto para fecha del cliente -->
+    <record id="subscription_client_date_field" model="sign.oca.template.item">
+        <field name="template_id" ref="subscription_agreement_sign_template"/>
+        <field name="field_id" ref="sign_oca.sign_field_text"/>
+        <field name="role_id" ref="sign_oca.sign_role_customer"/>
+        <field name="required" eval="False"/>
+        <field name="page">3</field>
+        <field name="position_x">53.82</field> 
+        <field name="position_y">43.45</field>
+        <field name="width">20</field>
+        <field name="height">1.50</field>
+        <field name="placeholder">Fecha</field>
+    </record>
+</odoo>

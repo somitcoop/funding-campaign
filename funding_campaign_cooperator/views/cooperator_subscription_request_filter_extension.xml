@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extensión de filtros para subscription.request en cooperator -->
+    <record id="cooperator_subscription_request_filter_signature_extension" model="ir.ui.view">
+        <field name="name">cooperator.subscription.request.filter.signature.extension</field>
+        <field name="model">subscription.request</field>
+        <field name="inherit_id" ref="cooperator.view_subscription_request_filter"/>
+        <field name="arch" type="xml">
+            <!-- Añadir filtros de firma después del filtro de IBAN inválido -->
+            <filter name="is_valid_iban" position="after">
+                <separator/>
+                <filter string="Signed"
+                        name="filter_signed"
+                        domain="[('is_signed', '=', True)]"
+                        help="Show only signed subscription requests"/>
+                <filter string="Not Signed"
+                        name="filter_not_signed"
+                        domain="[('is_signed', '=', False)]"
+                        help="Show only unsigned subscription requests"/>
+                <filter string="Pending Signature"
+                        name="filter_pending_signature"
+                        domain="[('signature_state', '=', 'pending')]"
+                        help="Show subscription requests with pending signatures"/>
+                <filter string="Partially Signed"
+                        name="filter_partially_signed"
+                        domain="[('signature_state', '=', 'partial')]"
+                        help="Show subscription requests with partial signatures"/>
+            </filter>
+            
+            <!-- Añadir campo de búsqueda para signature_state -->
+            <field name="partner_id" position="after">
+                <field name="signature_state" string="Signature State"/>
+                <field name="is_signed" string="Is Signed"/>
+            </field>
+            
+            <!-- Añadir agrupación por estado de firma -->
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter name="group_by_signature_state"
+                        string="Signature State"
+                        context="{'group_by': 'signature_state'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

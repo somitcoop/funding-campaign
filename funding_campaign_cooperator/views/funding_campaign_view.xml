@@ -30,6 +30,7 @@
                             <field name="subscription_amount" sum="Total"/>
                             <field name="state"/>
                             <field name="date"/>
+                            <field name="is_signed" widget="boolean_toggle"/>
                         </tree>
                     </field>
                 </page>

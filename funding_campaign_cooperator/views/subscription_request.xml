@@ -11,11 +11,15 @@
                 <attribute name="decoration-warning">state == 'waiting'</attribute>
                 <attribute name="decoration-danger">state == 'blocked'</attribute>
             </xpath>
+            <xpath expr="//tree/field[@name='state']" position="after">
+                <field name="signature_state" string="Signature" widget="badge"/>
+            </xpath>
             <field name="source" position="after">
                 <field name="campaign_id"/>
             </field>
         </field>
     </record>
+    
     <record id="funding_subscription_request_form_inherit" model="ir.ui.view">
         <field name="name">funding.subscription.request.form.inherit</field>
         <field name="model">subscription.request</field>
@@ -25,22 +29,98 @@
                 <field name="campaign_id"
                        options="{'no_create': True}"
                        readonly="state != 'draft'"/>
+                <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
             </field>
+            
+            <!-- Añadir botón de firma digital después de los botones existentes -->
+            <xpath expr="//header/button[@name='cancel_subscription_request']" position="after">
+                <button name="action_send_for_signature"
+                        string="Send for Signature"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state not in ['draft', 'waiting']"
+                        groups="cooperator.cooperator_group_manager"/>
+                <button name="action_send_campaign_confirmation_email"
+                        string="Send Campaign Confirmation"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="not campaign_id"/>
+            </xpath>
+            
+            <!-- Añadir notebook con información de firma -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Digital Signature" name="digital_signature">
+                    <group>
+                        <group string="Signature Information">
+                            <field name="sign_request_count"/>
+                            <button name="action_view_sign_requests"
+                                    string="View Sign Requests"
+                                    type="object"
+                                    class="oe_link"
+                                    invisible="sign_request_count == 0"/>
+                        </group>
+                        <group string="Signed Document">
+                            <field name="signed_contract" filename="signed_contract_filename"/>
+                            <field name="signed_contract_filename" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Signature Details" invisible="not signed_contract">
+                        <group string="Partner Signature">
+                            <field name="partner_signed_date"/>
+                            <field name="partner_signed_user_id"/>
+                        </group>
+                        <group string="Company Signature">
+                            <field name="company_signed_date"/>
+                            <field name="company_signed_user_id"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
         </field>
     </record>
+    
     <record id="funding_view_subscription_request_filter_inherit" model="ir.ui.view">
         <field name="name">funding.subscription.request.search.inherit</field>
         <field name="model">subscription.request</field>
         <field name="inherit_id" ref="cooperator.view_subscription_request_filter"/>
         <field name="arch" type="xml">
+            <!-- Añadir filtros de firma después del filtro de IBAN inválido -->
+            <filter name="is_valid_iban" position="after">
+                <separator/>
+                <filter string="Signed"
+                        name="filter_signed"
+                        domain="[('is_signed', '=', True)]"
+                        help="Show only signed subscription requests"/>
+                <filter string="Not Signed"
+                        name="filter_not_signed"
+                        domain="[('is_signed', '=', False)]"
+                        help="Show only unsigned subscription requests"/>
+                <filter string="Pending Signature"
+                        name="filter_pending_signature"
+                        domain="[('signature_state', '=', 'pending')]"
+                        help="Show subscription requests with pending signatures"/>
+                <filter string="Partially Signed"
+                        name="filter_partially_signed"
+                        domain="[('signature_state', '=', 'partial')]"
+                        help="Show subscription requests with partial signatures"/>
+            </filter>
+            
+            <!-- Añadir campos de búsqueda para firma -->
+            <field name="partner_id" position="after">
+                <field name="campaign_id"/>
+                <field name="signature_state" string="Signature State"/>
+                <field name="is_signed" string="Is Signed"/>
+            </field>
+            
+            <!-- Añadir agrupaciones -->
             <xpath expr="//group[@name='group_by']" position="inside">
                 <filter name="campaign_id"
                         string="Campaign"
                         context="{'group_by': 'campaign_id'}"/>
+                <filter name="group_by_signature_state"
+                        string="Signature State"
+                        context="{'group_by': 'signature_state'}"/>
             </xpath>
-            <field name="partner_id" position="after">
-                <field name="campaign_id"/>
-            </field>
         </field>
     </record>
 </odoo>

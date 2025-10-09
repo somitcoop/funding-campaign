@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Definició de l'informe -->
+    <record id="action_report_subscription_agreement" model="ir.actions.report">
+        <field name="name">Acord de Subscripció</field>
+        <field name="model">subscription.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">funding_campaign_cooperator.subscription_agreement_template</field>
+        <field name="report_file">funding_campaign_cooperator.subscription_agreement_template</field>
+        <field name="binding_model_id" ref="cooperator.model_subscription_request"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="base.paperformat_euro"/>
+    </record>
+
+    <!-- Plantilla de l'informe -->
+    <template id="subscription_agreement_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="object">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="oe_structure"/>
+                        
+                        <!-- Capçalera del document -->
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <h2><strong>ACORD DE SUBSCRIPCIÓ</strong></h2>
+                                <h3 t-if="object.campaign_id">Campanya: <t t-esc="object.campaign_id.name"/></h3>
+                            </div>
+                        </div>
+
+                        
+                        <!-- I.- REUNITS -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>I.- REUNITS</strong></h4>
+                                <p>
+                                    D'una part, en Victor Luna Puerto, major d'edat, amb DNI 47661156G, i domicili als efectes del present contracte al Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró.
+                                </p>
+                                <p>
+                                    D'altra part, <strong><t t-esc="object.name or ''"/></strong> 
+                                    <t t-if="object.partner_id and object.partner_id.cooperator_register_number">
+                                        soci número <strong><t t-esc="object.partner_id.cooperator_register_number"/></strong>
+                                    </t>
+                                    <t t-else="">
+                                        futur soci
+                                    </t>
+                                    de Som Mobilitat SCCL, major d'edat, 
+                                    <t t-if="object.partner_id and object.partner_id.vat">
+                                        amb DNI <strong><t t-esc="object.partner_id.vat"/></strong>,
+                                    </t>
+                                    i domicili a <t t-esc="object.address or ''"/>, 
+                                    amb codi postal <t t-esc="object.zip_code or ''"/> 
+                                    de <t t-esc="object.city or ''"/>.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <br/>
+                        
+                        <!-- II.- INTERVENEN -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>II.- INTERVENEN</strong></h4>
+                                <p>
+                                    En Victor Luna Puerto en la seva condició de president de Som Mobilitat SCCL i en nom i representació de Som Mobilitat SCCL, domiciliada al Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró, amb NIF F66835125, inscrita al Registre Territorial de Cooperatives de la Generalitat de Catalunya, al full 14746.
+                                </p>
+                                <p>
+                                    En <strong><t t-esc="object.name or ''"/></strong>, actuant en nom propi i interès.
+                                </p>
+                                <p>
+                                    Ambdues parts, en les respectives qualitats amb les quals actuen, es reconeixen mútuament capacitat suficient per contractar i obligar-se.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <br/>
+                        
+                        <!-- III.- MANIFESTEN -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>III.- MANIFESTEN</strong></h4>
+                                <p><strong>I.-</strong> Que Som Mobilitat SCCL és una cooperativa de consum i sense ànim de lucre.</p>
+                                <p><strong>II.-</strong> Que el seu objecte social és proveir de serveis de mobilitat sostenible a les persones sòcies que formem part de la cooperativa.</p>
+                                <p><strong>III.-</strong> Que Som Mobilitat SCCL ha acordat l'emissió de títols participatius amb un valor nominal de <t t-esc="object.share_unit_price"/> euros cada títol 
+                                    <t t-if="object.campaign_id">
+                                        en el marc de la campanya "<strong><t t-esc="object.campaign_id.name"/></strong>"
+                                    </t>
+                                    amb l'objecte de finançar la posada en funcionament del servei de mobilitat elèctrica compartida (p2p) i de la compra de cotxes elèctrics per a la flota de la cooperativa amb la qual volem accelerar l'arribada del servei de mobilitat compartida, elèctrica i amb renovables.
+                                </p>
+                                <p><strong>IV.-</strong> Que els títols participatius 
+                                    <t t-if="object.type == 'increase_remunerated'">
+                                        oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual del 3,5%.
+                                    </t>
+                                    <t t-else="">
+                                        no oferiran remuneració econòmica, sent una aportació solidària al projecte cooperatiu.
+                                    </t>
+                                </p>
+                                <p><strong>V.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està disposat a subscriure títols participatius per col·laborar amb Som Mobilitat SCCL per fer possibles les finalitats anteriors i, amb aquesta finalitat, fa la subscripció de títols que s'especifica més endavant.</p>
+                                <p><strong>VI.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està interessat a rebre i accepta la subscripció que realitza i que accepta les condicions de retribució i devolució dels títols subscrits amb Som Mobilitat SCCL, que són del seu interès, i que es detallen en el present contracte.</p>
+                                <p>En conseqüència, ambdues parts de mutu acord subscriuen el present contracte que es regeix especialment pels següents pactes que s'estableixen a continuació.</p>
+                            </div>
+                        </div>
+                        
+                        <br/>
+                        
+                        <!-- VII.- PACTES -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>VII.- PACTES</strong></h4>
+                                <p><strong>Primer.-</strong> <t t-esc="object.name or ''"/> adquireix, en aquest acte, i per un import de <strong><t t-esc="'{:.2f}'.format(object.subscription_amount)"/> euros</strong>, <strong><t t-esc="object.ordered_parts"/></strong> títols participatius de Som Mobilitat SCCL, els rep i accepta en les condicions que seguidament s'estableixen.</p>
+                                
+                                <t t-if="object.type == 'increase_remunerated'">
+                                    <p><strong>Segon.-</strong> L'aportació voluntària mereixerà a favor un interès nominal variable anual. Els interessos meritats seran pagats durant els cinc dies hàbils següents al 31 de desembre de l'any. L'interès podrà variar previ acord de l'Assemblea General de la cooperativa.</p>
+                                </t>
+                                <t t-else="">
+                                    <p><strong>Segon.-</strong> L'aportació és de caràcter solidari i no genera interessos ni remuneració econòmica, sent una contribució al desenvolupament del projecte cooperatiu de mobilitat sostenible.</p>
+                                </t>
+                                
+                                <p><strong>Tercer.-</strong> L'import nominal dels títols participatius podrà ser renovat amb acord d'ambdues parts abans dels tres mesos pel seu venciment. En cas contrari l'import nominal dels títols participatius serà retornat per Som Mobilitat SCCL en un sol terme, dins dels cinc dies hàbils següents a la data de la seva finalització, mitjançant ingrés al compte bancari indicat per <t t-esc="object.name or ''"/>.</p>
+                                
+                                <p><strong>Quart.-</strong> <t t-esc="object.name or ''"/> pot demanar el retorn anticipat dels títols subscrits, total o parcialment, un cop hagi transcorregut un any des de la seva aportació, mitjançant una sol·licitud per escrit, dirigida al Consell Rector de Som Mobilitat SCCL que farà efectiu el retorn en un terme no superior als tres mesos des de la recepció de la seva sol·licitud al Consell Rector, mitjançant l'ingrés de la quantitat resultant al compte bancari indicat per <t t-esc="object.name or ''"/>.</p>
+                                
+                                <p><strong>Cinquè.-</strong> Les comunicacions entre les parts es dirigiran a les persones i a les adreces que consten a l'encapçalament i s'efectuaran per escrit, per qualsevol mitjà que acrediti la recepció de la comunicació per la part destinatària.</p>
+                                
+                                <p><strong>Sisè.-</strong> Les parts, renunciant a qualsevol altre fur que els pogués correspondre, per a la resolució de tota controvèrsia derivada del present contracte, se sotmeten a l'Arbitratge del Consell Superior de la Cooperació, el qual, d'acord amb el seu Reglament, nomenarà un àrbitre i gestionarà l'arbitratge; l'Arbitratge se celebrarà a Barcelona. Les parts es comprometen des d'ara al compliment de la resolució arbitral.</p>
+                            </div>
+                        </div>
+                        
+                        <br/>
+                        
+                        <!-- Informació de la subscripció -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>INFORMACIÓ DE LA SUBSCRIPCIÓ</strong></h4>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td><strong>Data de sol·licitud:</strong></td>
+                                        <td><t t-esc="object.date"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tipus de subscripció:</strong></td>
+                                        <td>
+                                            <t t-if="object.type == 'new'">Nou Cooperativista</t>
+                                            <t t-elif="object.type == 'increase'">Augment de participacions</t>
+                                            <t t-elif="object.type == 'increase_remunerated'">Augment de participacions remunerades</t>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="object.campaign_id">
+                                        <td><strong>Campanya:</strong></td>
+                                        <td><t t-esc="object.campaign_id.name"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Nombre de participacions:</strong></td>
+                                        <td><t t-esc="object.ordered_parts"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Valor per participació:</strong></td>
+                                        <td><t t-esc="'{:.2f}'.format(object.share_unit_price)"/> €</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Import total:</strong></td>
+                                        <td><strong><t t-esc="'{:.2f}'.format(object.subscription_amount)"/> €</strong></td>
+                                    </tr>
+                                    <tr t-if="object.iban">
+                                        <td><strong>IBAN:</strong></td>
+                                        <td><t t-esc="object.iban"/></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <br/>
+                        <br/>
+                        
+                        <!-- Parts del contracte -->
+                        <div class="row">
+                            <div class="col-12">
+                                <h4><strong>PARTS DEL CONTRACTE</strong></h4>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5><strong>Som Mobilitat SCCL</strong></h5>
+                                        <p>
+                                            Victor Luna Puerto<br/>
+                                            President de Som Mobilitat SCCL<br/>
+                                            Carrer Toló 18, Espai Can Fugarolas - Coworking<br/>
+                                            08301 Mataró<br/>
+                                            NIF: F66835125<br/>
+                                            España
+                                        </p>
+                                        
+                                        <!-- Firma predefinida de la empresa -->
+                                        <div style="margin-top: 30px;">
+                                            <p><strong>Signat:</strong></p>
+                                            <img src="/funding_campaign_cooperator/static/description/FirmaVictor.png" 
+                                                 alt="Firma Victor Luna Puerto" 
+                                                 style="max-width: 200px; max-height: 80px; padding: 5px;"/>
+                                            <br/>
+                                            <small>Victor Luna Puerto - President</small>
+                                            <br/>
+                                            <small>Data: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5><strong>Soci Subscriptor</strong></h5>
+                                        <p>
+                                            <strong><t t-esc="object.name or ''"/></strong><br/>
+                                            <t t-if="object.partner_id and object.partner_id.cooperator_register_number">
+                                                Soci número: <t t-esc="object.partner_id.cooperator_register_number"/><br/>
+                                            </t>
+                                            <t t-if="object.partner_id and object.partner_id.vat">
+                                                DNI/NIF: <t t-esc="object.partner_id.vat"/><br/>
+                                            </t>
+                                            <t t-esc="object.address or ''"/><br/>
+                                            <t t-esc="object.zip_code or ''"/> <t t-esc="object.city or ''"/><br/>
+                                            <t t-if="object.country_id"><t t-esc="object.country_id.name"/></t>
+                                        </p>
+                                        
+                                        <!-- Espacio para firma del cliente (manejado por sign_oca) -->
+                                        <div style="margin-top: 30px;">
+                                            <p><strong>Signat:</strong></p>
+                                            <div style="height: 80px;">
+                                                <small style="color: #666;">Espai reservat per a la firma digital</small>
+                                            </div>
+                                            <br/>
+                                            <small><t t-esc="object.name or ''"/> - Soci Subscriptor</small>
+                                            <br/>
+                                            <small>Data: _______________</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="oe_structure"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
