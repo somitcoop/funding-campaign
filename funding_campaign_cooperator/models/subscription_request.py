@@ -103,8 +103,10 @@ class SubscriptionRequest(models.Model):
             vals['type'] = 'increase_remunerated'
         
         subscription_request = super().create(vals)
-        if subscription_request.campaign_id:
-            subscription_request.action_send_campaign_confirmation_email()
+        # The original module sends a confirmation email here.
+        # We call it to preserve the original behavior for non-campaign subscriptions.
+        # For campaign subscriptions, we assume this method is overridden to send the correct template.
+        subscription_request._send_confirmation_mail()
         return subscription_request
 
     def get_invoice_vals(self, partner):
@@ -204,6 +206,12 @@ class SubscriptionRequest(models.Model):
             state = "signed" if signed else "pending"
             rec.is_signed = signed
             rec.signature_state = state
+
+    def _send_confirmation_mail(self):
+        if self.campaign_id:
+            self.action_send_campaign_confirmation_email()
+        else:
+            super(SubscriptionRequest, self)._send_confirmation_mail()
 
     def action_send_campaign_confirmation_email(self):
         for rec in self.filtered(lambda r: r.campaign_id and r.email):

@@ -163,7 +163,7 @@
         </field>
         <field name="lang">{{ object.lang }}</field>
         <field name="auto_delete" eval="True"/>
-        <field name="report_template_ids" eval="[(4, ref('funding_campaign_cooperator.action_report_subscription_agreement'))]"/>
+
     </record>
 
     <!-- Plantilla de correu per confirmació de recepció de sol·licitud -->
