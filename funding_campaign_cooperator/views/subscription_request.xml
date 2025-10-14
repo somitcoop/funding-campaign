@@ -38,7 +38,7 @@
                         string="Send for Signature"
                         type="object"
                         class="btn-primary"
-                        invisible="state not in ['draft', 'waiting']"
+                        invisible="state in ['draft', 'cancel']"
                         groups="cooperator.cooperator_group_manager"/>
                 <button name="action_send_campaign_confirmation_email"
                         string="Send Campaign Confirmation"
