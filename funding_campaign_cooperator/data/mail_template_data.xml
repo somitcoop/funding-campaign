@@ -19,7 +19,7 @@
     <!-- Capçalera -->
     <div style="background: linear-gradient(135deg, #2c5aa0 0%, #1e3a8a 100%); color: white; padding: 30px 40px; text-align: center;">
         <h1 style="margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px;">
-            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-out="object.company_id.name or 'Cooperativa'"/>
         </h1>
         <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
             Acord de Subscripció - Campanya de Finançament
@@ -75,20 +75,20 @@
             <table style="width: 100%; font-size: 14px; color: #374151;">
                 <tr>
                     <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Referència:</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.name or 'N/A' }}</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;"><t t-out="object.name or 'N/A'"/></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Campanya:</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.campaign_id.name or 'N/A' }}</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;"><t t-out="object.campaign_id.name or 'N/A'"/></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6;"><strong>Participacions:</strong></td>
-                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;">{{ object.ordered_parts or 0 }}</td>
+                    <td style="padding: 8px 0; border-bottom: 1px solid #f3f4f6; text-align: right;"><t t-out="object.ordered_parts or 0"/></td>
                 </tr>
                 <tr>
                     <td style="padding: 8px 0;"><strong>Import Total:</strong></td>
                     <td style="padding: 8px 0; text-align: right; color: #2c5aa0; font-weight: 600;">
-                        {{ "%.2f"|format(object.subscription_amount or 0) }} {{ object.company_currency_id.symbol or '€' }}
+                        <t t-out="'%.2f' % (object.subscription_amount or 0)"/> <t t-out="object.company_currency_id.symbol or '€'"/>
                     </td>
                 </tr>
             </table>
@@ -121,32 +121,32 @@
     <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 30px 40px;">
         <div style="text-align: center;">
             <h3 style="color: #2c5aa0; font-size: 16px; margin: 0 0 15px 0; font-weight: 600;">
-                {{ object.company_id.name or 'Cooperativa' }}
+                <t t-out="object.company_id.name or 'Cooperativa'"/>
             </h3>
             
             <div style="font-size: 13px; color: #6b7280; line-height: 1.5;">
                 <t t-if="object.company_id.street">
                     <p style="margin: 5px 0;">
-                        📍 {{ object.company_id.street }}
-                        <t t-if="object.company_id.street2">, {{ object.company_id.street2 }}</t>
+                        📍 <t t-out="object.company_id.street"/>
+                        <t t-if="object.company_id.street2">, <t t-out="object.company_id.street2"/></t>
                     </p>
                 </t>
                 <t t-if="object.company_id.city">
                     <p style="margin: 5px 0;">
-                        {{ object.company_id.zip or '' }} {{ object.company_id.city }}
-                        <t t-if="object.company_id.country_id">, {{ object.company_id.country_id.name }}</t>
+                        <t t-out="object.company_id.zip or ''"/> <t t-out="object.company_id.city"/>
+                        <t t-if="object.company_id.country_id">, <t t-out="object.company_id.country_id.name"/></t>
                     </p>
                 </t>
                 <t t-if="object.company_id.phone">
-                    <p style="margin: 5px 0;">📞 {{ object.company_id.phone }}</p>
+                    <p style="margin: 5px 0;">📞 <t t-out="object.company_id.phone"/></p>
                 </t>
                 <t t-if="object.company_id.coop_email_contact or object.company_id.email">
                     <p style="margin: 5px 0;">
-                        ✉️ {{ object.company_id.coop_email_contact or object.company_id.email }}
+                        ✉️ <t t-out="object.company_id.coop_email_contact or object.company_id.email"/>
                     </p>
                 </t>
                 <t t-if="object.company_id.website">
-                    <p style="margin: 5px 0;">🌐 {{ object.company_id.website }}</p>
+                    <p style="margin: 5px 0;">🌐 <t t-out="object.company_id.website"/></p>
                 </t>
             </div>
             
@@ -162,7 +162,7 @@
 </div>
         </field>
         <field name="lang">{{ object.lang }}</field>
-        <field name="auto_delete" eval="True"/>
+        <field name="auto_delete" eval="False"/>
 
     </record>
 
@@ -176,14 +176,14 @@
         <field name="description">Confirmació automàtica de recepció de sol·licitud de subscripció per campanya de finançament</field>
         <field name="body_html" type="html">
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-    
+
     <!-- Capçalera -->
     <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px 40px; text-align: center;">
         <h1 style="margin: 0; font-size: 24px; font-weight: 600;">
             ✅ Sol·licitud Rebuda
         </h1>
         <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
-            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-out="object.company_id.name or 'Cooperativa'"/>
         </p>
     </div>
 
@@ -223,9 +223,9 @@
     <!-- Peu de pàgina simplificat -->
     <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 40px; text-align: center;">
         <p style="font-size: 13px; color: #6b7280; margin: 0;">
-            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-out="object.company_id.name or 'Cooperativa'"/>
             <t t-if="object.company_id.coop_email_contact or object.company_id.email">
-                | {{ object.company_id.coop_email_contact or object.company_id.email }}
+                | <t t-out="object.company_id.coop_email_contact or object.company_id.email"/>
             </t>
         </p>
     </div>
@@ -233,7 +233,7 @@
 </div>
         </field>
         <field name="lang">{{ object.lang }}</field>
-        <field name="auto_delete" eval="True"/>
+        <field name="auto_delete" eval="False"/>
     </record>
 
     <!-- Plantilla de correu per confirmació de recepció de sol·licitud de campanya -->
@@ -246,14 +246,14 @@
         <field name="description">Confirmació automàtica de recepció de sol·licitud de subscripció per campanya de finançament</field>
         <field name="body_html" type="html">
 <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-    
+
     <!-- Capçalera -->
     <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; padding: 30px 40px; text-align: center;">
         <h1 style="margin: 0; font-size: 24px; font-weight: 600;">
             ✅ Sol·licitud Rebuda
         </h1>
         <p style="margin: 10px 0 0 0; font-size: 14px; opacity: 0.9;">
-            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-out="object.company_id.name or 'Cooperativa'"/>
         </p>
     </div>
 
@@ -293,9 +293,9 @@
     <!-- Peu de pàgina simplificat -->
     <div style="background-color: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 40px; text-align: center;">
         <p style="font-size: 13px; color: #6b7280; margin: 0;">
-            {{ object.company_id.name or 'Cooperativa' }}
+            <t t-out="object.company_id.name or 'Cooperativa'"/>
             <t t-if="object.company_id.coop_email_contact or object.company_id.email">
-                | {{ object.company_id.coop_email_contact or object.company_id.email }}
+                | <t t-out="object.company_id.coop_email_contact or object.company_id.email"/>
             </t>
         </p>
     </div>
