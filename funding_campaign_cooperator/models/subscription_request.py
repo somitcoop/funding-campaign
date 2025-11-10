@@ -120,7 +120,13 @@ class SubscriptionRequest(models.Model):
     def action_send_for_signature(self):
         """Send subscription agreement for digital signature using sign_oca template"""
         self.ensure_one()
-        
+
+        # Validar que solo se ejecute para suscripciones de tipo increase_remunerated
+        if self.type != 'increase_remunerated':
+            raise ValidationError(
+                _("Digital signature is only available for remunerated subscription increases.")
+            )
+
         # Validaciones
         if not self.partner_id:
             raise ValidationError(
@@ -214,10 +220,27 @@ class SubscriptionRequest(models.Model):
             super(SubscriptionRequest, self)._send_confirmation_mail()
 
     def action_send_campaign_confirmation_email(self):
-        for rec in self.filtered(lambda r: r.campaign_id and r.email):
+        for rec in self.filtered(lambda r: r.campaign_id and r.email and r.type == 'increase_remunerated'):
             template = self.env.ref(
                 "funding_campaign_cooperator.email_template_campaign_subscription_confirmation",
                 raise_if_not_found=False,
             )
-            if template:
-                template.sudo().send_mail(rec.id, force_send=True)
+            if not template:
+                rec.message_post(body=_("No se encontró la plantilla 'email_template_campaign_subscription_confirmation'."))
+                continue
+            try:
+                # Enviar el correo usando la plantilla
+                mail_id = template.send_mail(rec.id, force_send=True)
+                
+                # Registrar en el chatter que se envió el correo
+                rec.message_post(
+                    body=_("Se envió la confirmación de campaña por correo electrónico."),
+                    subject=_("Confirmación de campaña enviada"),
+                    subtype_id=self.env.ref("mail.mt_comment").id,
+                )
+                
+                _logger.info(f"Correo de confirmación de campaña enviado para subscription_request {rec.id}, mail_id: {mail_id}")
+                
+            except Exception as e:
+                _logger.error(f"Error al enviar confirmación de campaña para subscription_request {rec.id}: {e}")
+                rec.message_post(body=_("Error al enviar la confirmación de campaña: %s") % e)
