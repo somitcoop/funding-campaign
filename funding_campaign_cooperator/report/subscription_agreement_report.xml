@@ -89,7 +89,15 @@
                                 </p>
                                 <p><strong>IV.-</strong> Que els títols participatius 
                                     <t t-if="object.type == 'increase_remunerated'">
-                                        oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual del 3,5%.
+                                        <t t-if="object.remuneration_type == 'cash'">
+                                            oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual del <strong>2,5%</strong>.
+                                        </t>
+                                        <t t-elif="object.remuneration_type == 'wallet'">
+                                            oferiran una remuneració de tipus <strong>moneder</strong> amb un interès nominal anual del <strong>3,5%</strong>.
+                                        </t>
+                                        <t t-else="">
+                                            oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual variable.
+                                        </t>
                                     </t>
                                     <t t-else="">
                                         no oferiran remuneració econòmica, sent una aportació solidària al projecte cooperatiu.

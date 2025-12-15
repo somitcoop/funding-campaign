@@ -96,8 +96,8 @@ class SubscriptionRequest(models.Model):
     @api.model
     def create(self, vals):
         """Override create to ensure campaign subscriptions always use increase_remunerated type"""
-        # If this subscription request has a campaign_id, force type to be increase_remunerated
-        if vals.get('campaign_id'):
+        # If this subscription request has a campaign_id AND is an increase, force type to be increase_remunerated
+        if vals.get('campaign_id') and vals.get('type') == 'increase':
             _logger.info(f"Campaign subscription detected (campaign_id: {vals['campaign_id']}). "
                         f"Forcing type to 'increase_remunerated' (was: {vals.get('type')})")
             vals['type'] = 'increase_remunerated'
@@ -214,7 +214,7 @@ class SubscriptionRequest(models.Model):
             rec.signature_state = state
 
     def _send_confirmation_mail(self):
-        if self.campaign_id:
+        if self.campaign_id and self.type == 'increase_remunerated':
             self.action_send_campaign_confirmation_email()
         else:
             super(SubscriptionRequest, self)._send_confirmation_mail()
@@ -244,3 +244,16 @@ class SubscriptionRequest(models.Model):
             except Exception as e:
                 _logger.error(f"Error al enviar confirmación de campaña para subscription_request {rec.id}: {e}")
                 rec.message_post(body=_("Error al enviar la confirmación de campaña: %s") % e)
+
+    def validate_subscription_request(self):
+        invoice = super().validate_subscription_request()
+        # Check if auto pay is enabled in company settings
+        if self.company_id.funding_campaign_auto_pay_invoice and invoice:
+            if invoice.state == 'posted' and invoice.payment_state not in ('paid', 'in_payment'):
+                # Create payment
+                payment_register = self.env['account.payment.register'].with_context(
+                    active_model='account.move',
+                    active_ids=invoice.ids,
+                ).create({})
+                payment_register._create_payments()
+        return invoice

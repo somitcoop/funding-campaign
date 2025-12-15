@@ -26,6 +26,7 @@
         'views/subscription_request.xml',
         'report/subscription_agreement_report.xml',
         'security/ir.model.access.csv',
+        'views/res_config_settings_views.xml',
     ],
     'application': False,
     'installable': True,

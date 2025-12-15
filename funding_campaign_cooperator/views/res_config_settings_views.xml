@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.funding.campaign</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app
+                    data-string="Funding Campaign"
+                    string="Funding Campaign"
+                    name="funding_campaign"
+                    groups="cooperator.cooperator_group_manager"
+                >
+                    <block title="Subscription Settings" name="subscription_settings">
+                        <setting
+                            help="Automatically pay the invoice when a subscription request is validated."
+                        >
+                            <field name="funding_campaign_auto_pay_invoice" />
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_funding_campaign_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'funding_campaign'}</field>
+    </record>
+
+    <menuitem
+        id="menu_funding_campaign_config_settings"
+        name="Settings"
+        parent="cooperator.menu_cooperator_config"
+        sequence="0"
+        action="action_funding_campaign_config_settings"
+        groups="cooperator.cooperator_group_manager"
+    />
+</odoo>
