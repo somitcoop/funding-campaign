@@ -2,7 +2,7 @@
 <odoo>
     <!-- Definició de l'informe -->
     <record id="action_report_subscription_agreement" model="ir.actions.report">
-        <field name="name">Acord de Subscripció</field>
+        <field name="name">Contracte d'Aportacions al Capital Social</field>
         <field name="model">subscription.request</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">funding_campaign_cooperator.subscription_agreement_template</field>
@@ -27,21 +27,20 @@
                         <!-- Capçalera del document -->
                         <div class="row">
                             <div class="col-12 text-center">
-                                <h2><strong>ACORD DE SUBSCRIPCIÓ</strong></h2>
+                                <h2><strong>CONTRACTE D'APORTACIONS AL CAPITAL SOCIAL</strong></h2>
                                 <h3 t-if="object.campaign_id">Campanya: <t t-esc="object.campaign_id.name"/></h3>
                             </div>
                         </div>
-
 
                         <!-- I.- REUNITS -->
                         <div class="row">
                             <div class="col-12">
                                 <h4><strong>I.- REUNITS</strong></h4>
                                 <p>
-                                    D'una part, en Victor Luna Puerto, major d'edat, amb DNI 47661156G, i domicili als efectes del present contracte al Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró.
+                                    Per una part, en Victor Luna Puerto, major d'edat, amb DNI 47661156G i domicili als efectes del present contracte al Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró.
                                 </p>
                                 <p>
-                                    D'altra part, <strong><t t-esc="object.name or ''"/></strong>
+                                    Per altre part, <strong><t t-esc="object.name or ''"/></strong>
                                     <t t-if="object.partner_id and object.partner_id.cooperator_register_number">
                                         soci número <strong><t t-esc="object.partner_id.cooperator_register_number"/></strong>
                                     </t>
@@ -52,9 +51,9 @@
                                     <t t-if="object.partner_id and object.partner_id.vat">
                                         amb DNI <strong><t t-esc="object.partner_id.vat"/></strong>,
                                     </t>
-                                    i domicili a <t t-esc="object.address or ''"/>,
-                                    amb codi postal <t t-esc="object.zip_code or ''"/>
-                                    de <t t-esc="object.city or ''"/>.
+                                    i domicili al Carrer <t t-esc="object.address or ''"/>,
+                                    <t t-if="object.zip_code">amb codi postal <t t-esc="object.zip_code"/></t>
+                                    <t t-if="object.city">de <t t-esc="object.city"/></t>.
                                 </p>
                             </div>
                         </div>
@@ -66,10 +65,10 @@
                             <div class="col-12">
                                 <h4><strong>II.- INTERVENEN</strong></h4>
                                 <p>
-                                    En Victor Luna Puerto en la seva condició de president de Som Mobilitat SCCL i en nom i representació de Som Mobilitat SCCL, domiciliada al Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró, amb NIF F66835125, inscrita al Registre Territorial de Cooperatives de la Generalitat de Catalunya, al full 14746.
+                                    En Victor Luna Puerto en la seva condició de president de Som Mobilitat SCCL i en nom i representació de Som Mobilitat SCCL, domiciliada a, Carrer Toló 18, Espai Can Fugarolas - Coworking, a 08301 de Mataró, amb NIF F66835125, inscrita al Registre Territorial de Cooperatives de la Generalitat de Catalunya, al full 14746.
                                 </p>
                                 <p>
-                                    En <strong><t t-esc="object.name or ''"/></strong>, actuant en nom propi i interès.
+                                    En <strong><t t-esc="object.name or ''"/></strong>, actuant en el seu propi nom i interès.
                                 </p>
                                 <p>
                                     Ambdues parts, en les respectives qualitats amb les quals actuen, es reconeixen mútuament capacitat suficient per contractar i obligar-se.
@@ -83,34 +82,15 @@
                         <div class="row">
                             <div class="col-12">
                                 <h4><strong>III.- MANIFESTEN</strong></h4>
-                                <p><strong>I.-</strong> Que Som Mobilitat SCCL és una cooperativa de consum i sense ànim de lucre.</p>
-                                <p><strong>II.-</strong> Que el seu objecte social és proveir de serveis de mobilitat sostenible a les persones sòcies que formem part de la cooperativa.</p>
-                                <p><strong>III.-</strong> Que Som Mobilitat SCCL ha acordat l'emissió de títols participatius amb un valor nominal de <t t-esc="object.share_unit_price"/> euros cada títol
-                                    <t t-if="object.campaign_id">
-                                        en el marc de la campanya "<strong><t t-esc="object.campaign_id.name"/></strong>"
-                                    </t>
-                                    amb l'objecte de finançar la posada en funcionament del servei de mobilitat elèctrica compartida (p2p) i de la compra de cotxes elèctrics per a la flota de la cooperativa amb la qual volem accelerar l'arribada del servei de mobilitat compartida, elèctrica i amb renovables.
-                                </p>
-                                <p><strong>IV.-</strong> Que els títols participatius
-                                    <t t-if="object.type == 'increase_remunerated'">
-                                        <t t-if="object.remuneration_type == 'cash'">
-                                            oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual del <strong>2,5%</strong>.
-                                        </t>
-                                        <t t-elif="object.remuneration_type == 'wallet'">
-                                            oferiran una remuneració de tipus <strong>moneder</strong> amb un interès nominal anual del <strong>3,5%</strong>.
-                                        </t>
-                                        <t t-else="">
-                                            oferiran una remuneració de tipus <strong>efectiu</strong> amb un interès nominal anual variable.
-                                        </t>
-                                    </t>
-                                    <t t-else="">
-                                        no oferiran remuneració econòmica, sent una aportació solidària al projecte cooperatiu.
-                                    </t>
-                                </p>
-                                <p><strong>V.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està disposat a subscriure títols participatius per col·laborar amb Som Mobilitat SCCL per fer possibles les finalitats anteriors i, amb aquesta finalitat, fa la subscripció de títols que s'especifica més endavant.</p>
-                                <p><strong>VI.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està interessat a rebre i accepta la subscripció que realitza i que accepta les condicions de retribució i devolució dels títols subscrits amb Som Mobilitat SCCL, que són del seu interès, i que es detallen en el present contracte.</p>
+                                <p><strong>I.-</strong> Que Som Mobilitat SCCL és una cooperativa de consum i sense afany de lucre.</p>
+                                <p><strong>II.-</strong> Que el seu objecte social es proveir de serveis de mobilitat sostenible a les persones sòcies que formen part de la cooperativa.</p>
+                                <p><strong>III.-</strong> Que Som Mobilitat SCCL estableix a l'Assemblea General Ordinària l'import anual de la capitalització de la cooperativa, acord que regula aquesta campanya d'aportacions al capital social.</p>
+                                <p><strong>IV.-</strong> Que les Aportacions al capital social s'acrediten mitjançant títols nominatius de 100 € que en cap cas tenen la consideració de títols valors i podran ser retribuïdes amb un interès variable, que s'aprova anualment per l'Assemblea General per cada any fiscal.</p>
+                                <p><strong>V.-</strong> Que les Aportacions són amb caràcter indefinit.</p>
+                                <p><strong>VI.-</strong> Que l'aportació tindrà una disponibilitat del capital aportat a partir del primer any i amb un preavís de tres mesos.</p>
                                 <p><strong>VII.-</strong> Que en el cas que <strong><t t-esc="object.name or ''"/></strong> es doni de baixa com a soci de Som Mobilitat o si aquest exerceix el dret a reemborsament de les seves aportacions voluntàries al capital social, el Consell Rector està obligat a acordar el reemborsament de les aportacions voluntàries fins al límit del 10% del capital social existent a la data d'inici de l'exercici econòmic en què se sol·licita el reemborsament en els terminis establerts en aquest contracte. En els casos en què les sol·licituds de reemborsament excedeixin aquest límit els nous reemborsaments estaran condicionats a l'acord favorable del Consell Rector i podrà ser refusar incondicionalment fins al següent exercici.</p>
-                                <p><strong>VIII.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està interessat a rebre i accepta la subscripció que realitza i que accepta les condicions de retribució i devolució dels títols subscrits amb Som Mobilitat SCCL, que són del seu interès, i que es detallen en el present contracte. En conseqüència, ambdues parts de mutu acord subscriuen el present contracte que es regeix especialment pels següents pactes que s'estableixen a continuació.</p>
+                                <p><strong>VIII.-</strong> Que <strong><t t-esc="object.name or ''"/></strong> està interessat en rebre i accepta la subscripció que realitza i que accepta les condicions de retribució i devolució del títols subscrits amb Som Mobilitat SCCL, que són del seu interès, i que es detallen al present contracte.</p>
+                                <p>En conseqüència, ambdues parts de mutu acord subscriuen el present contracte que es regeix especialment pels següents:</p>
                             </div>
                         </div>
 
@@ -120,22 +100,23 @@
                         <div class="row">
                             <div class="col-12">
                                 <h4><strong>IV.- PACTES</strong></h4>
-                                <p><strong>Primer.-</strong> <t t-esc="object.name or ''"/> adquireix, en aquest acte, i per un import de <strong><t t-esc="'{:.2f}'.format(object.subscription_amount)"/> euros</strong>, <strong><t t-esc="object.ordered_parts"/></strong> títols participatius de Som Mobilitat SCCL, els rep i accepta en les condicions que seguidament s'estableixen.</p>
 
-                                <t t-if="object.type == 'increase_remunerated'">
-                                    <p><strong>Segon.-</strong> L'aportació voluntària mereixerà a favor un interès nominal variable anual. Els interessos meritats seran pagats durant els cinc dies hàbils següents al 31 de desembre de l'any. L'interès podrà variar previ acord de l'Assemblea General de la cooperativa.</p>
+                                <p><strong>Primer.-</strong> <t t-esc="object.name or ''"/> fa una aportació, en aquest acte, i per un import de <strong><t t-esc="object._get_amount_in_words(object.subscription_amount)"/> euros</strong> (<strong><t t-esc="'{:.2f}'.format(object.subscription_amount)"/> €</strong>), que correspon a <strong><t t-esc="object.ordered_parts"/></strong> títols nominatius del Capital Social de Som Mobilitat SCCL, els rep i accepta en les condicions que seguidament s'estableixen.</p>
+
+                                <t t-if="object.remuneration_type == 'wallet'">
+                                    <p><strong>Segon.-</strong> L'aportació voluntària meritarà a favor d'un interès nominal variable anual. L'interès podrà variar previ acord a l'Assemblea General Ordinària. Els interessos meritats seran ingressats en el moneder de l'App durant els cinc dies hàbils següents al 31 de desembre de l'any. En el cas d'ingrés al moneder en concepte de mobilitat, es contempla sumar a l'interès meritat un 1%.</p>
                                 </t>
                                 <t t-else="">
-                                    <p><strong>Segon.-</strong> L'aportació és de caràcter solidari i no genera interessos ni remuneració econòmica, sent una contribució al desenvolupament del projecte cooperatiu de mobilitat sostenible.</p>
+                                    <p><strong>Segon.-</strong> L'aportació voluntària meritarà a favor d'un interès nominal variable anual. Els interessos meritats seran pagats durant els cinc dies hàbils següents al 31 de desembre de l'any. L'interès podrà variar previ acord de l'Assemblea General de la cooperativa.</p>
                                 </t>
 
-                                <p><strong>Tercer.-</strong> L'import nominal dels títols participatius podrà ser renovat amb acord d'ambdues parts abans dels tres mesos pel seu venciment. En cas contrari l'import nominal dels títols participatius serà retornat per Som Mobilitat SCCL en un sol terme, dins dels cinc dies hàbils següents a la data de la seva finalització, mitjançant ingrés al compte bancari indicat per <t t-esc="object.name or ''"/>.</p>
+                                <p><strong>Tercer.-</strong> <t t-esc="object.name or ''"/> pot demanar el retorn anticipat de l'aportació, total o parcialment, un cop hagi transcorregut un any des de la seva aportació, mitjançant una sol·licitud per escrit, dirigida al Consell Rector de Som Mobilitat SCCL, que un cop verificades les limitacions de reemborsament i si no es supera el 10% del capital social existent a la data d'inici de l'exercici econòmic, es farà efectiu el retorn en un termini no superior als tres mesos des de la recepció de la seva sol·licitud al Consell Rector, mitjançant l'ingrés de la quantitat resultant al compte bancari de <t t-esc="object.name or ''"/>.</p>
 
-                                <p><strong>Quart.-</strong> <t t-esc="object.name or ''"/> pot demanar el retorn anticipat dels títols subscrits, total o parcialment, un cop hagi transcorregut un any des de la seva aportació, mitjançant una sol·licitud per escrit, dirigida al Consell Rector de Som Mobilitat SCCL que farà efectiu el retorn en un terme no superior als tres mesos des de la recepció de la seva sol·licitud al Consell Rector, mitjançant l'ingrés de la quantitat resultant al compte bancari indicat per <t t-esc="object.name or ''"/>.</p>
+                                <p><strong>Quart.-</strong> Les comunicacions entre les parts es dirigiran a les persones i a les adreces que consten a l'encapçalament i s'efectuaran per escrit, per qualsevol mitjà que acrediti la recepció de la comunicació per la part destinatària.</p>
 
-                                <p><strong>Cinquè.-</strong> Les comunicacions entre les parts es dirigiran a les persones i a les adreces que consten a l'encapçalament i s'efectuaran per escrit, per qualsevol mitjà que acrediti la recepció de la comunicació per la part destinatària.</p>
+                                <p><strong>Cinqué.-</strong> El present contracte està subjecte a la Llei Catalana de Cooperatives d'acord amb l'article 3.</p>
 
-                                <p><strong>Sisè.-</strong> Les parts, renunciant a qualsevol altre fur que els pogués correspondre, per a la resolució de tota controvèrsia derivada del present contracte, se sotmeten a l'Arbitratge del Consell Superior de la Cooperació, el qual, d'acord amb el seu Reglament, nomenarà un àrbitre i gestionarà l'arbitratge; l'Arbitratge se celebrarà a Barcelona. Les parts es comprometen des d'ara al compliment de la resolució arbitral.</p>
+                                <p><strong>Sisé.-</strong> Les parts, renunciant a qualsevol altre fur que els pogués correspondre, per a la resolució de tota controvèrsia derivada del present contracte, se sotmeten a l'Arbitratge del Consell Superior de la Cooperació, el qual, d'acord amb el seu Reglament, nomenarà un àrbitre i gestionarà l'arbitratge; l'Arbitratge se celebrarà a Barcelona. Les parts es comprometen des d'ara al compliment de la resolució arbitral.</p>
                             </div>
                         </div>
 
@@ -168,7 +149,7 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Valor per participació:</strong></td>
-                                        <td><t t-esc="'{:.2f}'.format(object.share_unit_price)"/> €</td>
+                                        <td>100,00 €</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Import total:</strong></td>
@@ -177,6 +158,13 @@
                                     <tr t-if="object.iban">
                                         <td><strong>IBAN:</strong></td>
                                         <td><t t-esc="object.iban"/></td>
+                                    </tr>
+                                    <tr t-if="object.remuneration_type">
+                                        <td><strong>Tipus de remuneració:</strong></td>
+                                        <td>
+                                            <t t-if="object.remuneration_type == 'wallet'">Moneder (App)</t>
+                                            <t t-else="">Efectiu</t>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>
@@ -210,7 +198,7 @@
                                             <br/>
                                             <small>Victor Luna Puerto - President</small>
                                             <br/>
-                                            <small>Data: <t t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/></small>
+                                            <small>Data: <t t-esc="object._get_catalan_date()['day']"/> de <t t-esc="object._get_catalan_date()['month']"/> de <t t-esc="object._get_catalan_date()['year']"/></small>
                                         </div>
                                     </div>
                                     <div class="col-6">
@@ -237,7 +225,7 @@
                                             <br/>
                                             <small><t t-esc="object.name or ''"/> - Soci Subscriptor</small>
                                             <br/>
-                                            <small>Data: _______________</small>
+                                            <small>Data: <t t-esc="object._get_catalan_date()['day']"/> de <t t-esc="object._get_catalan_date()['month']"/> de <t t-esc="object._get_catalan_date()['year']"/></small>
                                         </div>
                                     </div>
                                 </div>
