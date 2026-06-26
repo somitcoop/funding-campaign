@@ -257,3 +257,103 @@ class SubscriptionRequest(models.Model):
                 ).create({})
                 payment_register._create_payments()
         return invoice
+
+    def _get_amount_in_words(self, amount):
+        """Convert amount to words in Catalan for the subscription agreement.
+        Uses Odoo's currency amount_to_text if available, otherwise falls back
+        to a manual implementation.
+        """
+        self.ensure_one()
+        currency = self.company_id.currency_id or self.env.company.currency_id
+        if currency and hasattr(currency, 'amount_to_text'):
+            try:
+                return currency.amount_to_text(amount)
+            except Exception:
+                pass
+        # Fallback: manual conversion to Catalan
+        return self._amount_to_text_ca(amount)
+
+    def _amount_to_text_ca(self, amount):
+        """Manual conversion of amount to words in Catalan."""
+        units = ['', 'un', 'dos', 'tres', 'quatre', 'cinc', 'sis', 'set', 'vuit', 'nou']
+        tens = ['', 'deu', 'vint', 'trenta', 'quaranta', 'cinquanta', 'seixanta', 'setanta', 'vuitanta', 'noranta']
+        teens = ['deu', 'onze', 'dotze', 'tretze', 'catorze', 'quinze', 'setze', 'disset', 'divuit', 'dinou']
+
+        def _convert_hundreds(n):
+            result = ''
+            if n >= 100:
+                if n == 100:
+                    result += 'cent'
+                elif n < 200:
+                    result += 'cent ' + _convert_tens(n % 100)
+                else:
+                    result += units[n // 100] + '-cents ' + _convert_tens(n % 100)
+                return result.strip()
+            return _convert_tens(n)
+
+        def _convert_tens(n):
+            if n < 10:
+                return units[n]
+            if n < 20:
+                return teens[n - 10]
+            if n < 100:
+                t = n // 10
+                u = n % 10
+                if t == 2 and u == 0:
+                    return 'vint'
+                elif t == 2:
+                    return 'vint-i-' + units[u]
+                else:
+                    result = tens[t]
+                    if u > 0:
+                        result += '-' + units[u]
+                    return result
+            return ''
+
+        integer_part = int(amount)
+        decimal_part = int(round((amount - integer_part) * 100))
+
+        if integer_part == 0:
+            result = 'zero'
+        elif integer_part < 1000000:
+            if integer_part >= 1000:
+                thousands = integer_part // 1000
+                remainder = integer_part % 1000
+                if thousands == 1:
+                    result = 'mil'
+                else:
+                    result = _convert_hundreds(thousands) + ' mil'
+                if remainder > 0:
+                    result += ' ' + _convert_hundreds(remainder)
+            else:
+                result = _convert_hundreds(integer_part)
+        else:
+            # For millions and above, use a simpler approach
+            millions = integer_part // 1000000
+            remainder = integer_part % 1000000
+            if millions == 1:
+                result = 'un milió'
+            else:
+                result = _convert_hundreds(millions) + ' milions'
+            if remainder > 0:
+                result += ' ' + _convert_hundreds(remainder)
+
+        result += ' euros'
+        if decimal_part > 0:
+            result += f' amb {decimal_part:02d} cèntims'
+
+        return result
+
+    def _get_catalan_date(self):
+        """Return current date in Catalan format for the subscription agreement."""
+        months_ca = {
+            1: 'gener', 2: 'febrer', 3: 'març', 4: 'abril',
+            5: 'maig', 6: 'juny', 7: 'juliol', 8: 'agost',
+            9: 'setembre', 10: 'octubre', 11: 'novembre', 12: 'desembre',
+        }
+        now = fields.Datetime.now()
+        return {
+            'day': now.day,
+            'month': months_ca[now.month],
+            'year': now.year,
+        }
