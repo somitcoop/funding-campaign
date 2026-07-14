@@ -134,3 +134,51 @@ class FundingCampaign(models.Model):
     )
     def _compute_progress(self):
         return super()._compute_progress()
+
+    # === Contributions vinculadas ===
+    contribution_ids = fields.One2many(
+        "carsharing.contribution",
+        "campaign_id",
+        string="Contributions",
+    )
+
+    contribution_count = fields.Integer(
+        string="Number of Contributions",
+        compute="_compute_contribution_count",
+        store=True,
+    )
+
+    @api.depends("contribution_ids")
+    def _compute_contribution_count(self):
+        for campaign in self:
+            campaign.contribution_count = len(campaign.contribution_ids)
+
+    def action_view_contributions(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Contributions",
+            "res_model": "carsharing.contribution",
+            "view_mode": "tree,form",
+            "domain": [("campaign_id", "=", self.id)],
+            "context": {"default_campaign_id": self.id},
+        }
+
+    # === Campos de templates por campaña ===
+    contribution_contract_report_id = fields.Many2one(
+        "ir.actions.report",
+        string="Contribution Contract Report",
+        domain="[('model', '=', 'carsharing.contribution')]",
+        help="QWeb report template for contribution contracts of this campaign",
+    )
+    contribution_sign_template_id = fields.Many2one(
+        "sign.oca.template",
+        string="Signature Template",
+        help="sign_oca template for digital signature of contribution contracts",
+    )
+    contribution_email_template_id = fields.Many2one(
+        "mail.template",
+        string="Contribution Email Template",
+        domain="[('model_id.model', '=', 'carsharing.contribution')]",
+        help="Email template for sending contribution contracts",
+    )

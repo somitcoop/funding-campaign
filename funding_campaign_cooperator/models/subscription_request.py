@@ -19,6 +19,13 @@ class SubscriptionRequest(models.Model):
         help="Campaign associated with this subscription request",
     )
 
+    contribution_id = fields.Many2one(
+        "carsharing.contribution",
+        string="Contribution",
+        copy=False,
+        help="Contribution created from this subscription request",
+    )
+
     skip_iban_control = fields.Boolean(
         string="Skip IBAN Control",
         help="Skip IBAN validation for automatic validation",
@@ -257,6 +264,74 @@ class SubscriptionRequest(models.Model):
                 ).create({})
                 payment_register._create_payments()
         return invoice
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("state") == "paid":
+            for subscription in self:
+                if (
+                    subscription.type == "increase_remunerated"
+                    and subscription.campaign_id
+                    and not subscription.contribution_id
+                ):
+                    subscription._create_contribution_from_subscription()
+        return res
+
+    def _create_contribution_from_subscription(self):
+        """Create a carsharing.contribution from this subscription request."""
+        self.ensure_one()
+        Contribution = self.env["carsharing.contribution"]
+
+        # Determine contribution type based on remuneration_type
+        # Use config parameters to store the mapping, with fallback
+        IrConfig = self.env["ir.config_parameter"].sudo()
+        cash_type_id = int(IrConfig.get_param(
+            "carsharing_contributions.contribution_type_cash", "0"
+        ) or 0)
+        wallet_type_id = int(IrConfig.get_param(
+            "carsharing_contributions.contribution_type_wallet", "0"
+        ) or 0)
+
+        contribution_type_id = cash_type_id or False
+        if hasattr(self, 'remuneration_type') and self.remuneration_type == 'wallet':
+            contribution_type_id = wallet_type_id or cash_type_id
+
+        # Fallback: search by name if no config parameter set
+        if not contribution_type_id:
+            type_cash = self.env["carsharing.contribution.type"].search([], limit=1)
+            contribution_type_id = type_cash.id if type_cash else False
+
+        vals = {
+            "associated_member": self.partner_id.id,
+            "initial_import": self.subscription_amount,
+            "initial_day": self.date,
+            "contribution_type": contribution_type_id,
+            "campaign_id": self.campaign_id.id if self.campaign_id else False,
+            "subscription_request_id": self.id,
+        }
+
+        # Copy remuneration_type if available
+        if hasattr(self, 'remuneration_type') and self.remuneration_type:
+            vals["remuneration_type"] = self.remuneration_type
+
+        # Copy signed contract if available
+        if hasattr(self, 'signed_contract') and self.signed_contract:
+            vals["upload_file"] = self.signed_contract
+        if hasattr(self, 'signed_contract_filename') and self.signed_contract_filename:
+            vals["file_name"] = self.signed_contract_filename
+
+        # Use campaign-specific email template if available
+        if self.campaign_id and self.campaign_id.contribution_email_template_id:
+            vals["contribution_email_template_id"] = \
+                self.campaign_id.contribution_email_template_id.id
+
+        contribution = Contribution.create(vals)
+        self.contribution_id = contribution.id
+        _logger.info(
+            "Created contribution %s from subscription %s",
+            contribution.id, self.id
+        )
+        return contribution
 
     def _get_amount_in_words(self, amount):
         """Convert amount to words in Catalan for the subscription agreement.

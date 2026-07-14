@@ -16,8 +16,20 @@
                             <field name="source_raised_amount" widget="monetary"/>
                         </span>
                         <span class="o_stat_text">
-                            <field name="subscription_request_count" nolabel="1"/> (Subscriptions requests)
+                            <field name="subscription_request_count" nolabel="1"/> (Subscriptions)
                         </span>
+                    </div>
+                </button>
+                <button name="action_view_contributions"
+                        type="object"
+                        class="oe_stat_button"
+                        invisible="has_subscription_source == False"
+                        icon="fa-file-text-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="contribution_count" nolabel="1"/>
+                        </span>
+                        <span class="o_stat_text">Contributions</span>
                     </div>
                 </button>
             </xpath>
@@ -34,6 +46,19 @@
                         </tree>
                     </field>
                 </page>
+                <page string="Contributions" name="contributions"
+                      invisible="has_subscription_source == False">
+                    <field name="contribution_ids" readonly="1" nolabel="1">
+                        <tree>
+                            <field name="associated_member"/>
+                            <field name="initial_import" sum="Total"/>
+                            <field name="contribution_type"/>
+                            <field name="initial_day"/>
+                            <field name="expiration_day"/>
+                            <field name="signature_state" widget="badge"/>
+                        </tree>
+                    </field>
+                </page>
             </xpath>
             <xpath expr="//group[@name='source_objective']" position="inside">
                 <group name="subscription_objective" string="Subscription Objective" invisible="has_subscription_source == False">
@@ -42,6 +67,11 @@
                     <field name="share_product_id" readonly="state != 'draft'"/>
                     <field name="minimal_subscription_amount" readonly="state != 'draft'"/>
                     <field name="maximal_subscription_amount" readonly="state != 'draft'"/>
+                </group>
+                <group name="contribution_templates" string="Contribution Templates" invisible="has_subscription_source == False">
+                    <field name="contribution_contract_report_id" readonly="state != 'draft'"/>
+                    <field name="contribution_sign_template_id" readonly="state != 'draft'"/>
+                    <field name="contribution_email_template_id" readonly="state != 'draft'"/>
                 </group>
             </xpath>
         </field>
