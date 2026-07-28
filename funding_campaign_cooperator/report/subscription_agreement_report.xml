@@ -85,7 +85,7 @@
                                 <p><strong>I.-</strong> Que Som Mobilitat SCCL és una cooperativa de consum i sense afany de lucre.</p>
                                 <p><strong>II.-</strong> Que el seu objecte social es proveir de serveis de mobilitat sostenible a les persones sòcies que formen part de la cooperativa.</p>
                                 <p><strong>III.-</strong> Que Som Mobilitat SCCL estableix a l'Assemblea General Ordinària l'import anual de la capitalització de la cooperativa, acord que regula aquesta campanya d'aportacions al capital social.</p>
-                                <p><strong>IV.-</strong> Que les Aportacions al capital social s'acrediten mitjançant títols nominatius de 100 € que en cap cas tenen la consideració de títols valors i podran ser retribuïdes amb un interès variable, que s'aprova anualment per l'Assemblea General per cada any fiscal.</p>
+                                <p><strong>IV.-</strong> Que les Aportacions al capital social s'acrediten mitjançant títols nominatius de 10 € que en cap cas tenen la consideració de títols valors i podran ser retribuïdes amb un interès variable, que s'aprova anualment per l'Assemblea General per cada any fiscal.</p>
                                 <p><strong>V.-</strong> Que les Aportacions són amb caràcter indefinit.</p>
                                 <p><strong>VI.-</strong> Que l'aportació tindrà una disponibilitat del capital aportat a partir del primer any i amb un preavís de tres mesos.</p>
                                 <p><strong>VII.-</strong> Que en el cas que <strong><t t-esc="object.name or ''"/></strong> es doni de baixa com a soci de Som Mobilitat o si aquest exerceix el dret a reemborsament de les seves aportacions voluntàries al capital social, el Consell Rector està obligat a acordar el reemborsament de les aportacions voluntàries fins al límit del 10% del capital social existent a la data d'inici de l'exercici econòmic en què se sol·licita el reemborsament en els terminis establerts en aquest contracte. En els casos en què les sol·licituds de reemborsament excedeixin aquest límit els nous reemborsaments estaran condicionats a l'acord favorable del Consell Rector i podrà ser refusar incondicionalment fins al següent exercici.</p>
@@ -149,7 +149,7 @@
                                     </tr>
                                     <tr>
                                         <td><strong>Valor per participació:</strong></td>
-                                        <td>100,00 €</td>
+                                        <td>10,00 €</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Import total:</strong></td>
