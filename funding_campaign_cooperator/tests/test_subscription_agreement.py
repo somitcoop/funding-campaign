@@ -146,8 +146,8 @@ class TestSubscriptionAgreement(TransactionCase):
         pdf_content, content_type = self.env['ir.actions.report']._render_qweb_pdf(
             report.report_name, sr.ids
         )
-        # 7 shares * 100€ = 700.00
-        self.assertIn(b'700.00', pdf_content)
+        # 7 shares * 10€ = 70.00
+        self.assertIn(b'70.00', pdf_content)
 
     def test_report_contains_ordered_parts(self):
         """Test that the report contains the number of ordered parts."""
