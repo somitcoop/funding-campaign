@@ -38,13 +38,13 @@
                         string="Send for Signature"
                         type="object"
                         class="btn-primary"
-                        invisible="state in ['draft', 'cancel'] or type != 'increase_remunerated'"
+                        invisible="state in ['draft', 'cancel'] or not campaign_id"
                         groups="cooperator.cooperator_group_manager"/>
                 <button name="action_send_campaign_confirmation_email"
                         string="Send Campaign Confirmation"
                         type="object"
                         class="btn-secondary"
-                        invisible="not campaign_id or type != 'increase_remunerated'"/>
+                        invisible="not campaign_id"/>
             </xpath>
             
             <!-- Añadir notebook con información de firma -->
