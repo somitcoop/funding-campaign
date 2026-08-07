@@ -18,9 +18,6 @@
         'views/funding_source_views.xml',
         'views/funding_campaign_menus.xml',
     ],
-    'demo': [
-        'data/demo.xml',
-    ],
     'application': True,
     'installable': True,
     'auto_install': False,
