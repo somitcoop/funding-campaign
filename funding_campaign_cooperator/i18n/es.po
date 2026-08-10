@@ -17,6 +17,111 @@ msgstr ""
 "Language: es\n"
 
 #. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__campaign_id
+msgid "Campaign"
+msgstr "Campaña"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__skip_iban_control
+msgid "Skip IBAN Control"
+msgstr "Omitir control de IBAN"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signed_contract
+msgid "Signed Document"
+msgstr "Documento firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signed_contract_filename
+msgid "Signed Document Filename"
+msgstr "Nombre del documento firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__sign_request_ids
+msgid "Sign Requests"
+msgstr "Solicitudes de firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__sign_request_count
+msgid "Sign request count"
+msgstr "Número de solicitudes de firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__partner_signed_date
+msgid "Partner Signed Date"
+msgstr "Fecha de firma del socio/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__partner_signed_user_id
+msgid "Partner Signatory"
+msgstr "Firmante del socio/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__company_signed_date
+msgid "Company Signed Date"
+msgstr "Fecha de firma de la empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__company_signed_user_id
+msgid "Company Signatory"
+msgstr "Firmante de la empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__is_signed
+msgid "Signed"
+msgstr "Firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signature_state
+msgid "Signature Status"
+msgstr "Estado de la firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__has_subscription_source
+msgid "Has Subscription Source"
+msgstr "Tiene fuente de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__subscription_objective_amount
+msgid "Subscription Objective Amount"
+msgstr "Importe objetivo de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__minimal_subscription_amount
+msgid "Minimal Subscription Amount"
+msgstr "Importe mínimo de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__maximal_subscription_amount
+msgid "Maximal Subscription Amount"
+msgstr "Importe máximo de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__source_raised_amount
+msgid "Source Raised Amount"
+msgstr "Importe recaudado de la fuente"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__number_of_subscription_requests
+msgid "Number of Subscription Requests"
+msgstr "Número de solicitudes de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__contribution_ids
+msgid "Contributions"
+msgstr "Aportaciones"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_res_company__funding_campaign_auto_pay_invoice
+msgid "Auto Pay Invoice on Subscription Validation"
+msgstr "Pagar factura automáticamente al validar la suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__share_type
+msgid "Share type"
+msgstr "Tipo de participación"
+
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_subscription_request_form_inherit
 msgid "Campaign"
 msgstr "Campaña"
