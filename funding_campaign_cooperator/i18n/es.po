@@ -1,0 +1,102 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following module:
+#	* funding_campaign_cooperator
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-30 12:00+0000\n"
+"PO-Revision-Date: 2026-07-30 12:00+0000\n"
+"Last-Translator: Nicolás Ramos <nicolas.ramos@somit.coop>\n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Campaign"
+msgstr "Campaña"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Send for Signature"
+msgstr "Enviar para firmar"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Send Campaign Confirmation"
+msgstr "Enviar confirmación de campaña"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature"
+msgstr "Firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Digital Signature"
+msgstr "Firma digital"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature Information"
+msgstr "Información de la firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "View Sign Requests"
+msgstr "Ver solicitudes de firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signed Document"
+msgstr "Documento firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature Details"
+msgstr "Detalles de la firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Partner Signature"
+msgstr "Firma del socio/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Company Signature"
+msgstr "Firma de la empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Signed"
+msgstr "Firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Not Signed"
+msgstr "No firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Pending Signature"
+msgstr "Firma pendiente"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Partially Signed"
+msgstr "Firmado parcialmente"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Signature State"
+msgstr "Estado de la firma"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Is Signed"
+msgstr "Está firmado"
