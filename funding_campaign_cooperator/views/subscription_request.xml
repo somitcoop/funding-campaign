@@ -31,7 +31,7 @@
                        readonly="state != 'draft'"/>
                 <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
             </field>
-            
+
             <!-- Añadir botón de firma digital después de los botones existentes -->
             <xpath expr="//header/button[@name='cancel_subscription_request']" position="after">
                 <button name="action_send_for_signature"
@@ -45,6 +45,14 @@
                         type="object"
                         class="btn-secondary"
                         invisible="not campaign_id"/>
+            </xpath>
+
+            <!-- Banner de guía rápida -->
+            <xpath expr="//sheet" position="inside">
+                <div class="alert alert-info" role="alert" style="margin-bottom: 12px;">
+                    <strong><i class="fa fa-info-circle"/> Guia ràpida:</strong>
+                    <span>Aquesta subscripció pertany a una <strong>campanya de finançament</strong>. Quan es validi i es pagui, es crearà automàticament l'<strong>aportació</strong> corresponent (sense préstec). Envieu el contracte amb <strong>Enviar per signar</strong> i, quan el soci/a el signi, quedarà vinculat. Vegeu la pestanya <strong>Guia d'ús</strong>.</span>
+                </div>
             </xpath>
             
             <!-- Añadir notebook con información de firma -->
@@ -74,6 +82,30 @@
                             <field name="company_signed_user_id"/>
                         </group>
                     </group>
+                </page>
+                <page string="Guia d'ús" name="usage_guide">
+                    <div class="alert alert-success" role="alert">
+                        <strong><i class="fa fa-lightbulb-o"/> Com funciona una subscripció de campanya?</strong>
+                        <p>El soci/a fa una subscripció a una campanya de finançament. En validar-se i pagar-se, el sistema crea automàticament l'aportació corresponent (sense préstec). El contracte s'envia per signar i queda vinculat a l'aportació.</p>
+                    </div>
+                    <group>
+                        <group string="1. Crear la subscripció">
+                            <p>Indiqueu la <strong>campanya</strong>, el soci/a, el nombre de participacions i el tipus de remuneració (efectiu o moneder).</p>
+                        </group>
+                        <group string="2. Enviar el contracte">
+                            <p>Useu <strong>Enviar per signar</strong> per enviar el contracte de subscripció amb signatura digital. Quan el soci/a el signi, es guarda automàticament.</p>
+                        </group>
+                        <group string="3. Validació i pagament">
+                            <p>En validar la subscripció es genera la factura. Si l'opció de pagament automàtic està activa a l'empresa, es paga automàticament; en cas contrari, cal registrar el pagament manualment.</p>
+                        </group>
+                        <group string="4. Aportació automàtica">
+                            <p>Quan la subscripció passa a <strong>pagada</strong>, es crea automàticament l'aportació al mòdul d'aportacions amb els mateixos imports, el contracte signat i la campanya vinculada.</p>
+                        </group>
+                    </group>
+                    <div class="alert alert-warning" role="alert">
+                        <strong><i class="fa fa-exclamation-triangle"/> Important:</strong>
+                        <span>Les subscripcions de campanya <strong>no generen préstecs</strong> (préstecs només per a subscripcions sense campanya, per compatibilitat amb versions anteriors).</span>
+                    </div>
                 </page>
             </xpath>
         </field>

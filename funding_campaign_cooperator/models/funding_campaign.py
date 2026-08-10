@@ -140,12 +140,14 @@ class FundingCampaign(models.Model):
         "carsharing.contribution",
         "campaign_id",
         string="Contributions",
+        help="Aportacions creades a partir de les subscripcions d'aquesta campanya. Es generen automàticament en validar i pagar les subscripcions.",
     )
 
     contribution_count = fields.Integer(
         string="Number of Contributions",
         compute="_compute_contribution_count",
         store=True,
+        help="Nombre total d'aportacions generades per aquesta campanya.",
     )
 
     @api.depends("contribution_ids")
@@ -169,16 +171,16 @@ class FundingCampaign(models.Model):
         "ir.actions.report",
         string="Contribution Contract Report",
         domain="[('model', '=', 'carsharing.contribution')]",
-        help="QWeb report template for contribution contracts of this campaign",
+        help="Plantilla QWeb (report) utilitzada per generar els contractes d'aportació d'aquesta campanya. Si no s'indica, s'usa el contracte per defecte.",
     )
     contribution_sign_template_id = fields.Many2one(
         "sign.oca.template",
         string="Signature Template",
-        help="sign_oca template for digital signature of contribution contracts",
+        help="Plantilla de sign_oca utilitzada per a la signatura digital dels contractes d'aportació d'aquesta campanya.",
     )
     contribution_email_template_id = fields.Many2one(
         "mail.template",
         string="Contribution Email Template",
         domain="[('model_id.model', '=', 'carsharing.contribution')]",
-        help="Email template for sending contribution contracts",
+        help="Plantilla de correu per enviar els contractes d'aportació als socis/es d'aquesta campanya.",
     )
