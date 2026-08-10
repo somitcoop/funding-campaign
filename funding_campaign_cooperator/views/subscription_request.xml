@@ -88,20 +88,24 @@
                         <strong><i class="fa fa-lightbulb-o"/> Com funciona una subscripció de campanya?</strong>
                         <p>El soci/a fa una subscripció a una campanya de finançament. En validar-se i pagar-se, el sistema crea automàticament l'aportació corresponent (sense préstec). El contracte s'envia per signar i queda vinculat a l'aportació.</p>
                     </div>
-                    <group>
-                        <group string="1. Crear la subscripció">
+                    <div class="row">
+                        <div class="col-6">
+                            <h5>1. Crear la subscripció</h5>
                             <p>Indiqueu la <strong>campanya</strong>, el soci/a, el nombre de participacions i el tipus de remuneració (efectiu o moneder).</p>
-                        </group>
-                        <group string="2. Enviar el contracte">
+                        </div>
+                        <div class="col-6">
+                            <h5>2. Enviar el contracte</h5>
                             <p>Useu <strong>Enviar per signar</strong> per enviar el contracte de subscripció amb signatura digital. Quan el soci/a el signi, es guarda automàticament.</p>
-                        </group>
-                        <group string="3. Validació i pagament">
+                        </div>
+                        <div class="col-6">
+                            <h5>3. Validació i pagament</h5>
                             <p>En validar la subscripció es genera la factura. Si l'opció de pagament automàtic està activa a l'empresa, es paga automàticament; en cas contrari, cal registrar el pagament manualment.</p>
-                        </group>
-                        <group string="4. Aportació automàtica">
+                        </div>
+                        <div class="col-6">
+                            <h5>4. Aportació automàtica</h5>
                             <p>Quan la subscripció passa a <strong>pagada</strong>, es crea automàticament l'aportació al mòdul d'aportacions amb els mateixos imports, el contracte signat i la campanya vinculada.</p>
-                        </group>
-                    </group>
+                        </div>
+                    </div>
                     <div class="alert alert-warning" role="alert">
                         <strong><i class="fa fa-exclamation-triangle"/> Important:</strong>
                         <span>Les subscripcions de campanya <strong>no generen préstecs</strong> (préstecs només per a subscripcions sense campanya, per compatibilitat amb versions anteriors).</span>
