@@ -337,8 +337,15 @@ class SubscriptionRequest(models.Model):
         """Convert amount to words in Catalan for the subscription agreement.
         Uses Odoo's currency amount_to_text if available, otherwise falls back
         to a manual implementation.
+
+        NOTE: num2words does not support Catalan, and currency.amount_to_text
+        silently falls back to English when the language is not supported.
+        For Catalan partners we therefore always use the manual converter.
         """
         self.ensure_one()
+        lang = (self.lang or self.env.lang or 'ca_ES').lower()
+        if lang.startswith('ca'):
+            return self._amount_to_text_ca(amount)
         currency = self.company_id.currency_id or self.env.company.currency_id
         if currency and hasattr(currency, 'amount_to_text'):
             try:
