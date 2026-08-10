@@ -15,6 +15,7 @@
     'depends': [
         'funding_campaign',
         'cooperator',
+        'carsharing_contributions',
         'swagger_docs',
         'sign_oca',
     ],

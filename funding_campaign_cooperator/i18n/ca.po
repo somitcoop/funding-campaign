@@ -1,0 +1,207 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following module:
+#	* funding_campaign_cooperator
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-30 12:00+0000\n"
+"PO-Revision-Date: 2026-07-30 12:00+0000\n"
+"Last-Translator: Nicolás Ramos <nicolas.ramos@somit.coop>\n"
+"Language-Team: Catalan\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: ca\n"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__campaign_id
+msgid "Campaign"
+msgstr "Campanya"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__skip_iban_control
+msgid "Skip IBAN Control"
+msgstr "Ometre control d'IBAN"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signed_contract
+msgid "Signed Document"
+msgstr "Document signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signed_contract_filename
+msgid "Signed Document Filename"
+msgstr "Nom del document signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__sign_request_ids
+msgid "Sign Requests"
+msgstr "Peticions de signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__sign_request_count
+msgid "Sign request count"
+msgstr "Nombre de peticions de signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__partner_signed_date
+msgid "Partner Signed Date"
+msgstr "Data de signatura del soci/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__partner_signed_user_id
+msgid "Partner Signatory"
+msgstr "Signant del soci/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__company_signed_date
+msgid "Company Signed Date"
+msgstr "Data de signatura de l'empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__company_signed_user_id
+msgid "Company Signatory"
+msgstr "Signant de l'empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__is_signed
+msgid "Signed"
+msgstr "Signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__signature_state
+msgid "Signature Status"
+msgstr "Estat de la signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__has_subscription_source
+msgid "Has Subscription Source"
+msgstr "Té font de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__subscription_objective_amount
+msgid "Subscription Objective Amount"
+msgstr "Import objectiu de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__minimal_subscription_amount
+msgid "Minimal Subscription Amount"
+msgstr "Import mínim de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__maximal_subscription_amount
+msgid "Maximal Subscription Amount"
+msgstr "Import màxim de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__source_raised_amount
+msgid "Source Raised Amount"
+msgstr "Import recaptat de la font"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__number_of_subscription_requests
+msgid "Number of Subscription Requests"
+msgstr "Nombre de peticions de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_funding_campaign__contribution_ids
+msgid "Contributions"
+msgstr "Aportacions"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_res_company__funding_campaign_auto_pay_invoice
+msgid "Auto Pay Invoice on Subscription Validation"
+msgstr "Pagar factura automàticament en validar la subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:field_subscription_request__share_type
+msgid "Share type"
+msgstr "Tipus de participació"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Campaign"
+msgstr "Campanya"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Send for Signature"
+msgstr "Enviar per signar"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Send Campaign Confirmation"
+msgstr "Enviar confirmació de campanya"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature"
+msgstr "Signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Digital Signature"
+msgstr "Signatura digital"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature Information"
+msgstr "Informació de la signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "View Sign Requests"
+msgstr "Veure peticions de signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signed Document"
+msgstr "Document signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Signature Details"
+msgstr "Detalls de la signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Partner Signature"
+msgstr "Signatura del soci/a"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_form_inherit
+msgid "Company Signature"
+msgstr "Signatura de l'empresa"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Signed"
+msgstr "Signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Not Signed"
+msgstr "No signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Pending Signature"
+msgstr "Signatura pendent"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Partially Signed"
+msgstr "Signat parcialment"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Signature State"
+msgstr "Estat de la signatura"
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_subscription_request_filter_inherit
+msgid "Is Signed"
+msgstr "Està signat"
