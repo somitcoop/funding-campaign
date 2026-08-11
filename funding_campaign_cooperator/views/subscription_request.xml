@@ -50,8 +50,8 @@
             <!-- Banner de guía rápida -->
             <xpath expr="//sheet" position="inside">
                 <div class="alert alert-info" role="alert" style="margin-bottom: 12px;">
-                    <strong><i class="fa fa-info-circle"/> Guia ràpida:</strong>
-                    <span>Aquesta subscripció pertany a una <strong>campanya de finançament</strong>. Quan es validi i es pagui, es crearà automàticament l'<strong>aportació</strong> corresponent (sense préstec). Envieu el contracte amb <strong>Enviar per signar</strong> i, quan el soci/a el signi, quedarà vinculat. Vegeu la pestanya <strong>Guia d'ús</strong>.</span>
+                    <strong><i class="fa fa-info-circle"/> Quick guide:</strong>
+                    <span>This subscription belongs to a <strong>funding campaign</strong>. When it is validated and paid, the corresponding <strong>contribution</strong> is created automatically (no loan). Send the contract with <strong>Send for Signature</strong> and, when the member signs it, it will be linked. See the <strong>User Guide</strong> tab.</span>
                 </div>
             </xpath>
             
@@ -83,32 +83,32 @@
                         </group>
                     </group>
                 </page>
-                <page string="Guia d'ús" name="usage_guide">
+                <page string="User Guide" name="usage_guide">
                     <div class="alert alert-success" role="alert">
-                        <strong><i class="fa fa-lightbulb-o"/> Com funciona una subscripció de campanya?</strong>
-                        <p>El soci/a fa una subscripció a una campanya de finançament. En validar-se i pagar-se, el sistema crea automàticament l'aportació corresponent (sense préstec). El contracte s'envia per signar i queda vinculat a l'aportació.</p>
+                        <strong><i class="fa fa-lightbulb-o"/> How does a campaign subscription work?</strong>
+                        <p>The member makes a subscription to a funding campaign. When it is validated and paid, the system creates the corresponding contribution automatically (no loan). The contract is sent for signature and linked to the contribution.</p>
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <h5>1. Crear la subscripció</h5>
-                            <p>Indiqueu la <strong>campanya</strong>, el soci/a, el nombre de participacions i el tipus de remuneració (efectiu o moneder).</p>
+                            <h5>1. Create the subscription</h5>
+                            <p>Indicate the <strong>campaign</strong>, the member, the number of shares and the remuneration type (cash or wallet).</p>
                         </div>
                         <div class="col-6">
-                            <h5>2. Enviar el contracte</h5>
-                            <p>Useu <strong>Enviar per signar</strong> per enviar el contracte de subscripció amb signatura digital. Quan el soci/a el signi, es guarda automàticament.</p>
+                            <h5>2. Send the contract</h5>
+                            <p>Use <strong>Send for Signature</strong> to send the subscription contract with digital signature. When the member signs it, it is saved automatically.</p>
                         </div>
                         <div class="col-6">
-                            <h5>3. Validació i pagament</h5>
-                            <p>En validar la subscripció es genera la factura. Si l'opció de pagament automàtic està activa a l'empresa, es paga automàticament; en cas contrari, cal registrar el pagament manualment.</p>
+                            <h5>3. Validation and payment</h5>
+                            <p>Validating the subscription generates the invoice. If automatic payment is enabled on the company, it is paid automatically; otherwise, the payment must be registered manually.</p>
                         </div>
                         <div class="col-6">
-                            <h5>4. Aportació automàtica</h5>
-                            <p>Quan la subscripció passa a <strong>pagada</strong>, es crea automàticament l'aportació al mòdul d'aportacions amb els mateixos imports, el contracte signat i la campanya vinculada.</p>
+                            <h5>4. Automatic contribution</h5>
+                            <p>When the subscription changes to <strong>paid</strong>, the contribution is created automatically in the contributions module with the same amounts, the signed contract and the linked campaign.</p>
                         </div>
                     </div>
                     <div class="alert alert-warning" role="alert">
                         <strong><i class="fa fa-exclamation-triangle"/> Important:</strong>
-                        <span>Les subscripcions de campanya <strong>no generen préstecs</strong> (préstecs només per a subscripcions sense campanya, per compatibilitat amb versions anteriors).</span>
+                        <span>Campaign subscriptions <strong>do not generate loans</strong> (loans only for subscriptions without a campaign, for backward compatibility).</span>
                     </div>
                 </page>
             </xpath>

@@ -205,3 +205,148 @@ msgstr "Estado de la firma"
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_filter_inherit
 msgid "Is Signed"
 msgstr "Está firmado"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "This subscription belongs to a "
+msgstr "Esta suscripción pertenece a una "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "funding campaign"
+msgstr "campaña de financiación"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid ". When it is validated and paid, the corresponding "
+msgstr ". Cuando se valide y se pague, se creará automáticamente la "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid " is created automatically (no loan). Send the contract with "
+msgstr " correspondiente (sin préstamo). Envía el contrato con "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid " and, when the member signs it, it will be linked. See the "
+msgstr " y, cuando el socio/a lo firme, quedará vinculado. Consulta la pestaña "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "How does a campaign subscription work?"
+msgstr "¿Cómo funciona una suscripción de campaña?"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "The member makes a subscription to a funding campaign. When it is validated and paid, the system creates the corresponding contribution automatically (no loan). The contract is sent for signature and linked to the contribution."
+msgstr "El socio/a realiza una suscripción a una campaña de financiación. Al validarse y pagarse, el sistema crea automáticamente la aportación correspondiente (sin préstamo). El contrato se envía para firmar y queda vinculado a la aportación."
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "1. Create the subscription"
+msgstr "1. Crear la suscripción"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "Indicate the "
+msgstr "Indica la "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid ", the member, the number of shares and the remuneration type (cash or wallet)."
+msgstr ", el socio/a, el número de participaciones y el tipo de remuneración (efectivo o monedero)."
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "2. Send the contract"
+msgstr "2. Enviar el contrato"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "Use "
+msgstr "Usa "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid " to send the subscription contract with digital signature. When the member signs it, it is saved automatically."
+msgstr " para enviar el contrato de suscripción con firma digital. Cuando el socio/a lo firme, se guarda automáticamente."
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "3. Validation and payment"
+msgstr "3. Validación y pago"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "Validating the subscription generates the invoice. If automatic payment is enabled on the company, it is paid automatically; otherwise, the payment must be registered manually."
+msgstr "Al validar la suscripción se genera la factura. Si la opción de pago automático está activa en la empresa, se paga automáticamente; en caso contrario, hay que registrar el pago manualmente."
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "4. Automatic contribution"
+msgstr "4. Aportación automática"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "When the subscription changes to "
+msgstr "Cuando la suscripción pasa a "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid ", the contribution is created automatically in the contributions module with the same amounts, the signed contract and the linked campaign."
+msgstr ", se crea automáticamente la aportación en el módulo de aportaciones con los mismos importes, el contrato firmado y la campaña vinculada."
+
+#. module: funding_campaign_cooperator
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "Campaign subscriptions "
+msgstr "Las suscripciones de campaña "
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid "do not generate loans"
+msgstr "no generan préstamos"
+
+#. module: carsharing_contributions
+#: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
+msgid " (loans only for subscriptions without a campaign, for backward compatibility)."
+msgstr " (préstamos solo para suscripciones sin campaña, por compatibilidad con versiones anteriores)."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__sign_request_count
+msgid "Number of digital signature requests sent for this subscription."
+msgstr "Número de solicitudes de firma digital enviadas para esta suscripción."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__is_signed
+msgid "Whether the subscription contract has been signed (by the member or the company)."
+msgstr "Indica si el contrato de suscripción ya ha sido firmado (por el socio/a o la empresa)."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__signature_state
+msgid "Signature status of the subscription contract: pending or signed."
+msgstr "Estado de la firma del contrato de suscripción: pendiente o firmado."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_ids
+msgid "Contributions created from the subscriptions of this campaign. Generated automatically when subscriptions are validated and paid."
+msgstr "Aportaciones creadas a partir de las suscripciones de esta campaña. Se generan automáticamente al validar y pagar las suscripciones."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_count
+msgid "Total number of contributions generated by this campaign."
+msgstr "Número total de aportaciones generadas por esta campaña."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_contract_report_id
+msgid "QWeb report template used to generate the contribution contracts of this campaign. If not set, the default contract is used."
+msgstr "Plantilla QWeb (informe) utilizada para generar los contratos de aportación de esta campaña. Si no se indica, se usa el contrato por defecto."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_sign_template_id
+msgid "sign_oca template used for the digital signature of the contribution contracts of this campaign."
+msgstr "Plantilla de sign_oca utilizada para la firma digital de los contratos de aportación de esta campaña."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_email_template_id
+msgid "Email template to send contribution contracts to members of this campaign."
+msgstr "Plantilla de correo para enviar los contratos de aportación a los socios/as de esta campaña."

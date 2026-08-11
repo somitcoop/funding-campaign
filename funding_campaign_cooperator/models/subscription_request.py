@@ -52,7 +52,7 @@ class SubscriptionRequest(models.Model):
         compute="_compute_sign_request_count",
         compute_sudo=True,
         store=True,
-        help="Nombre de sol·licituds de signatura digital enviades per a aquesta subscripció.",
+        help="Number of digital signature requests sent for this subscription.",
     )
     partner_signed_date = fields.Datetime(
         string="Partner Signed Date",
@@ -76,7 +76,7 @@ class SubscriptionRequest(models.Model):
         string="Signed",
         compute="_compute_signature_flags",
         store=True,
-        help="Indica si el contracte de subscripció ja ha estat signat (pel soci/a o per l'empresa).",
+        help="Whether the subscription contract has been signed (by the member or the company).",
     )
     signature_state = fields.Selection(
         [
@@ -86,7 +86,7 @@ class SubscriptionRequest(models.Model):
         string="Signature Status",
         compute="_compute_signature_flags",
         store=True,
-        help="Estat de la signatura del contracte de subscripció: pendent o signat.",
+        help="Signature status of the subscription contract: pending or signed.",
     )
 
     @api.depends("sign_request_ids")
