@@ -350,3 +350,58 @@ msgstr "Plantilla de sign_oca utilitzada per a la signatura digital dels contrac
 #: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_email_template_id
 msgid "Email template to send contribution contracts to members of this campaign."
 msgstr "Plantilla de correu per enviar els contractes d'aportació als socis/es d'aquesta campanya."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__campaign_id
+msgid "Campaign associated with this subscription request"
+msgstr "Campanya associada a aquesta sol·licitud de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__contribution_id
+msgid "Contribution created from this subscription request"
+msgstr "Aportació creada a partir d'aquesta sol·licitud de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__sign_request_ids
+msgid "Digital signature requests for this subscription"
+msgstr "Sol·licituds de signatura digital d'aquesta subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__signed_contract_filename
+msgid "Filename of the signed document"
+msgstr "Nom del fitxer del document signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__invoice_created
+msgid "If checked, the invoice generated from a subscription request"
+msgstr "Si està marcat, la factura generada a partir d'una sol·licitud de subscripció"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__skip_iban_control
+msgid "Skip IBAN validation for automatic validation"
+msgstr "Omet la validació de l'IBAN per a la validació automàtica"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__signed_contract
+msgid "The signed subscription agreement document"
+msgstr "El document de l'acord de subscripció signat"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__company_signed_user_id
+msgid "Company user who signed the document"
+msgstr "Usuari de l'empresa que va signar el document"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__company_signed_date
+msgid "Date when the company signed the document"
+msgstr "Data en què l'empresa va signar el document"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_date
+msgid "Date when the partner signed the document"
+msgstr "Data en què la persona sòcia va signar el document"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_user_id
+msgid "Partner who signed the document"
+msgstr "Persona sòcia que va signar el document"

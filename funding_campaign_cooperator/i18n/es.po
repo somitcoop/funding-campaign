@@ -350,3 +350,58 @@ msgstr "Plantilla de sign_oca utilizada para la firma digital de los contratos d
 #: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_email_template_id
 msgid "Email template to send contribution contracts to members of this campaign."
 msgstr "Plantilla de correo para enviar los contratos de aportación a los socios/as de esta campaña."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__campaign_id
+msgid "Campaign associated with this subscription request"
+msgstr "Campaña asociada a esta solicitud de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__contribution_id
+msgid "Contribution created from this subscription request"
+msgstr "Aportación creada a partir de esta solicitud de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__sign_request_ids
+msgid "Digital signature requests for this subscription"
+msgstr "Solicitudes de firma digital de esta suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__signed_contract_filename
+msgid "Filename of the signed document"
+msgstr "Nombre del archivo del documento firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__invoice_created
+msgid "If checked, the invoice generated from a subscription request"
+msgstr "Si está marcado, la factura generada a partir de una solicitud de suscripción"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__skip_iban_control
+msgid "Skip IBAN validation for automatic validation"
+msgstr "Omitir la validación del IBAN para la validación automática"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__signed_contract
+msgid "The signed subscription agreement document"
+msgstr "El documento del acuerdo de suscripción firmado"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__company_signed_user_id
+msgid "Company user who signed the document"
+msgstr "Usuario de la empresa que firmó el documento"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__company_signed_date
+msgid "Date when the company signed the document"
+msgstr "Fecha en que la empresa firmó el documento"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_date
+msgid "Date when the partner signed the document"
+msgstr "Fecha en que la persona socia firmó el documento"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_user_id
+msgid "Partner who signed the document"
+msgstr "Persona socia que firmó el documento"
