@@ -115,6 +115,20 @@
         </field>
     </record>
     
+    <!-- 2026: el flujo de préstamos queda obsoleto — las suscripciones de campaña generan
+         aportación (carsharing.contribution) directamente, sin loan. Se oculta la pestaña
+         "Loan request" inyectada por cooperator_share_increase_loan. -->
+    <record id="funding_hide_loan_request_page" model="ir.ui.view">
+        <field name="name">funding.subscription.request.form.hide.loan</field>
+        <field name="model">subscription.request</field>
+        <field name="inherit_id" ref="cooperator.subscription_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='loan_request']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="funding_view_subscription_request_filter_inherit" model="ir.ui.view">
         <field name="name">funding.subscription.request.search.inherit</field>
         <field name="model">subscription.request</field>
