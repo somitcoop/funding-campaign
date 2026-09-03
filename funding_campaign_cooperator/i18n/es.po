@@ -405,3 +405,16 @@ msgstr "Fecha en que la persona socia firmó el documento"
 #: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_user_id
 msgid "Partner who signed the document"
 msgstr "Persona socia que firmó el documento"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+msgctxt "pending"
+msgid "Pending Signature"
+msgstr "Pendiente de firma"
+
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+msgctxt "signed"
+msgid "Signed"
+msgstr "Firmado"

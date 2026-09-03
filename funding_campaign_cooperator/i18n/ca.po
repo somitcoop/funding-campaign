@@ -405,3 +405,16 @@ msgstr "Data en què la persona sòcia va signar el document"
 #: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__partner_signed_user_id
 msgid "Partner who signed the document"
 msgstr "Persona sòcia que va signar el document"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+msgctxt "pending"
+msgid "Pending Signature"
+msgstr "Pendent de signatura"
+
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+msgctxt "signed"
+msgid "Signed"
+msgstr "Signat"
