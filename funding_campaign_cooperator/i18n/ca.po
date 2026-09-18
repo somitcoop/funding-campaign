@@ -418,3 +418,8 @@ msgstr "Pendent de signatura"
 msgctxt "signed"
 msgid "Signed"
 msgstr "Signat"
+
+#. module: funding_campaign_cooperator
+#: code:addons/funding_campaign_cooperator/controllers/subscription_request.py:0
+msgid "Attachment received from the subscription form"
+msgstr "Adjunt rebut des del formulari de subscripció."

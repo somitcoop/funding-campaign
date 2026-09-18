@@ -1,4 +1,4 @@
-from odoo import http, fields
+from odoo import _, http, fields
 from odoo.http import request
 from odoo.exceptions import AccessDenied
 import logging
@@ -102,6 +102,8 @@ class CooperatorVoluntaryApi(http.Controller):
                     description: Phone number
                 lang:
                     description: Language code
+                iban:
+                    description: IBAN of the subscriber (bank account for the contribution)
                 description: Successful response
                                 jsonrpc:
                                     example: "2.0"
@@ -366,6 +368,11 @@ class CooperatorVoluntaryApi(http.Controller):
             # Skip IBAN control for manual processing subscriptions
             subscription_data['skip_iban_control'] = True
 
+            # Keep the IBAN provided in the form (processed at validation,
+            # when the cooperative partner is created)
+            if kw.get("iban"):
+                subscription_data["iban"] = kw["iban"]
+
             if partner_id:
                 subscription_data["partner_id"] = partner_id
 
@@ -398,7 +405,12 @@ class CooperatorVoluntaryApi(http.Controller):
                         'res_id': subscription.id,
                         'mimetype': attachment_mimetype,
                     }
-                    request.env['ir.attachment'].create(attachment_vals)
+                    attachment = request.env['ir.attachment'].create(attachment_vals)
+                    subscription.message_post(
+                        body=_("Attachment received from the subscription form"),
+                        attachment_ids=[attachment.id],
+                        subtype_xmlid="mail.mt_note",
+                    )
                     _logger.info(f"Attachment created for subscription {subscription.id}")
                 elif isinstance(attachment_data, str):
                     # Handle base64 encoded file content
@@ -409,7 +421,12 @@ class CooperatorVoluntaryApi(http.Controller):
                         'res_model': 'subscription.request',
                         'res_id': subscription.id,
                     }
-                    request.env['ir.attachment'].create(attachment_vals)
+                    attachment = request.env['ir.attachment'].create(attachment_vals)
+                    subscription.message_post(
+                        body=_("Attachment received from the subscription form"),
+                        attachment_ids=[attachment.id],
+                        subtype_xmlid="mail.mt_note",
+                    )
                     _logger.info(f"Attachment created for subscription {subscription.id}")
 
             return {

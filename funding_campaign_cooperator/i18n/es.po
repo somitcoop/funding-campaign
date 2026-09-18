@@ -418,3 +418,8 @@ msgstr "Pendiente de firma"
 msgctxt "signed"
 msgid "Signed"
 msgstr "Firmado"
+
+#. module: funding_campaign_cooperator
+#: code:addons/funding_campaign_cooperator/controllers/subscription_request.py:0
+msgid "Attachment received from the subscription form"
+msgstr "Adjunto recibido desde el formulario de suscripción."
