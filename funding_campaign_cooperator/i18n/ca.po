@@ -407,14 +407,14 @@ msgid "Partner who signed the document"
 msgstr "Persona sòcia que va signar el document"
 
 #. module: funding_campaign_cooperator
-#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+#: model:ir.model.fields.selection,name:funding_campaign_cooperator.selection__subscription_request__signature_state__pending
 msgctxt "pending"
 msgid "Pending Signature"
 msgstr "Pendent de signatura"
 
 
 #. module: funding_campaign_cooperator
-#: model:ir.model.fields.selection:funding_campaign_cooperator.field_subscription_request__signature_state
+#: model:ir.model.fields.selection,name:funding_campaign_cooperator.selection__subscription_request__signature_state__signed
 msgctxt "signed"
 msgid "Signed"
 msgstr "Signat"
