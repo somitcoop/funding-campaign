@@ -1,9 +1,15 @@
-from odoo import _, http, fields
-from odoo.http import request
-from odoo.exceptions import AccessDenied
+# Copyright 2026 Som IT Cooperatiu SCCL
+# Nicolás Ramos https://github.com/nicolasramos
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
+import json
 import logging
 import traceback
 from datetime import datetime
+
+from odoo import _, http
+from odoo.exceptions import AccessDenied
+from odoo.http import request
 # from odoo.addons.swagger_docs.controllers.swagger_controller import spec
 
 try:
@@ -11,11 +17,13 @@ try:
     SWAGGER_AVAILABLE = True
 except ImportError:
     SWAGGER_AVAILABLE = False
+
     class MockSpec:
         class components:
             @staticmethod
             def schema(*args, **kwargs):
                 pass
+
         @staticmethod
         def path(*args, **kwargs):
             pass
@@ -59,7 +67,7 @@ class CooperatorVoluntaryApi(http.Controller):
                             - share_product_id
                             - source
                             - type
-                            - remuneration_type (required when type is increase_remunerated)
+                            - remuneration_type (required when remunerated)
                             - campaign_id
                             - country_id
                             - firstname
@@ -81,7 +89,7 @@ class CooperatorVoluntaryApi(http.Controller):
                 type:
                     description: Type of subscription
                 remuneration_type:
-                    description: Type of remuneration for the loan (required when type is increase_remunerated)
+                    description: Remuneration type for the increase (if remunerated)
                 campaign_id:
                     description: ID of the funding campaign
                 country_id:
@@ -124,26 +132,20 @@ class CooperatorVoluntaryApi(http.Controller):
                                     example: "error"
         """
         try:
-            _logger.info(f"Received data (JSON parsed automatically by Odoo): {kw}")
-            _logger.info(f"Request headers: {request.httprequest.headers}")
-            _logger.info(f"Request content type: {request.httprequest.content_type}")
-            
-            # Additional debugging for JSON parsing issues
-            _logger.info(f"Request method: {request.httprequest.method}")
-            _logger.info(f"Request data (raw): {request.httprequest.data}")
-            _logger.info(f"Request get_data(): {request.httprequest.get_data()}")
-            
+            _logger.info("Received data (JSON parsed automatically by Odoo)")
+            _logger.info(
+                "Request content type: %s", request.httprequest.content_type
+            )
+            _logger.info("Request method: %s", request.httprequest.method)
+
             # Try to manually parse JSON if kw is empty
             if not kw and request.httprequest.data:
                 try:
-                    import json
                     raw_data = request.httprequest.get_data(as_text=True)
-                    _logger.info(f"Raw request data as text: {raw_data}")
                     if raw_data:
                         kw = json.loads(raw_data)
-                        _logger.info(f"Manually parsed JSON data: {kw}")
                 except Exception as json_error:
-                    _logger.error(f"Failed to manually parse JSON: {json_error}")
+                    _logger.error("Failed to manually parse JSON: %s", json_error)
                     return {"error": "Invalid JSON format", "status": "error"}
 
             # With type="json", Odoo automatically parses the JSON body into **kw
@@ -319,9 +321,13 @@ class CooperatorVoluntaryApi(http.Controller):
                     "status": "error",
                 }
 
-            # Validate remuneration_type if type is increase_remunerated
+            # Remunerated increases: legacy 'increase_remunerated' type or
+            # 'increase' with remunerated = true
             VALID_REMUNERATION_TYPES = ["cash", "wallet"]
-            if kw.get("type") == "increase_remunerated":
+            is_remunerated = kw.get("type") == "increase_remunerated" or str(
+                kw.get("remunerated", "")
+            ).lower() in ("true", "1")
+            if is_remunerated:
                 remuneration_type = kw.get("remuneration_type")
                 if not remuneration_type or remuneration_type not in VALID_REMUNERATION_TYPES:
                     return {
@@ -348,7 +354,12 @@ class CooperatorVoluntaryApi(http.Controller):
                 .browse(campaign_id)
                 .share_product_id.id,
                 "ordered_parts": kw["ordered_parts"],
-                "type": kw["type"],
+                "type": (
+                    "increase"
+                    if kw["type"] == "increase_remunerated"
+                    else kw["type"]
+                ),
+                "remunerated": is_remunerated,
                 "firstname": kw["firstname"],
                 "lastname": kw["lastname"],
                 "email": kw["email"],
@@ -361,8 +372,8 @@ class CooperatorVoluntaryApi(http.Controller):
                 "lang": lang.code,
             }
 
-            # Add remuneration_type if type is increase_remunerated
-            if kw.get("type") == "increase_remunerated":
+            # Add remuneration_type for remunerated increases
+            if is_remunerated:
                 subscription_data["remuneration_type"] = kw["remuneration_type"]
 
             # Skip IBAN control for manual processing subscriptions
@@ -474,10 +485,9 @@ class CooperatorVoluntaryApi(http.Controller):
 
                 if update_data_record:
                     # Prepare the data to store
-                    import json
-                    from datetime import datetime
-                    
-                    campaign_info_str = json.dumps(response_data.get('campaign', {}), indent=2, default=str)
+                    campaign_info_str = json.dumps(
+                        response_data.get('campaign', {}), indent=2, default=str
+                    )
 
                     if response_data.get('status') == 'error':
                         response_data_str = json.dumps({
@@ -569,7 +579,7 @@ spec.path(
                             ],
                             # Note: city is now optional, country_code is required
                             # Note: Fixed KeyError issues by adding proper field validation before usage
-                            # Note: remuneration_type is required when type is increase_remunerated
+                            # Note: remuneration_type required for remunerated increases
                             "properties": {
                                 "vat": {
                                     "type": "string",
@@ -581,13 +591,30 @@ spec.path(
                                 },
                                 "type": {
                                     "type": "string",
-                                    "description": "Type of subscription request. 'increase' for increasing existing shares, 'increase_remunerated' for increasing remunerated shares.",
+                                    "description": (
+                                        "Type of subscription request. 'increase' for "
+                                        "increasing existing shares; remunerated increases "
+                                        "are marked with 'remunerated': true (legacy "
+                                        "'increase_remunerated' is accepted and normalized)."
+                                    ),
                                     "enum": ["increase", "increase_remunerated"],
                                     "example": "increase",
                                 },
+                                "remunerated": {
+                                    "type": "boolean",
+                                    "description": (
+                                        "Set to true for remunerated increases "
+                                        "(interest-bearing)."
+                                    ),
+                                    "example": True,
+                                },
                                 "remuneration_type": {
                                     "type": "string",
-                                    "description": "Type of remuneration for the loan. Required when type is 'increase_remunerated'.",
+                                    "description": (
+                                        "Type of remuneration for the increase. Required "
+                                        "when the increase is remunerated "
+                                        "('increase_remunerated' or 'remunerated': true)."
+                                    ),
                                     "enum": ["cash", "wallet"],
                                     "example": "cash",
                                 },

@@ -135,8 +135,8 @@
                                         <td><strong>Tipus de subscripció:</strong></td>
                                         <td>
                                             <t t-if="object.type == 'new'">Nou Cooperativista</t>
+                                            <t t-elif="object.remunerated">Augment de participacions remunerades</t>
                                             <t t-elif="object.type == 'increase'">Augment de participacions</t>
-                                            <t t-elif="object.type == 'increase_remunerated'">Augment de participacions remunerades</t>
                                         </td>
                                     </tr>
                                     <tr t-if="object.campaign_id">

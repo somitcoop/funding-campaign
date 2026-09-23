@@ -16,6 +16,7 @@
             </xpath>
             <field name="source" position="after">
                 <field name="campaign_id"/>
+                <field name="remunerated" optional="hide"/>
             </field>
         </field>
     </record>
@@ -28,6 +29,9 @@
             <field name="source" position="after">
                 <field name="campaign_id"
                        options="{'no_create': True}"
+                       readonly="state != 'draft'"/>
+                <field name="remunerated"
+                       invisible="not campaign_id"
                        readonly="state != 'draft'"/>
                 <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
             </field>
