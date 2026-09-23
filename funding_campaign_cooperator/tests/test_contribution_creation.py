@@ -33,6 +33,7 @@ class TestContributionCreation(TransactionCase):
         self.share_product = self.env['product.product'].create({
             'name': 'Share Product',
             'is_share': True,
+            'by_individual': True,
             'list_price': 100.0,
             'contribution_type_cash_id': self.cash_type.id,
             'contribution_type_wallet_id': self.wallet_type.id,
