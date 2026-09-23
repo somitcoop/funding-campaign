@@ -1,10 +1,14 @@
-# -*- coding: utf-8 -*-
+# Copyright 2026 Som IT Cooperatiu SCCL
+# Nicolás Ramos https://github.com/nicolasramos
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import fields
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, tagged
 
 
+@tagged('post_install', '-at_install')
 class TestSubscriptionAgreement(TransactionCase):
-    """Tests for the subscription agreement report (contracte d'aportacions al capital social)."""
+    """Tests for the subscription agreement report (contracte d'aportacions)."""
 
     def setUp(self):
         super(TestSubscriptionAgreement, self).setUp()
@@ -26,6 +30,12 @@ class TestSubscriptionAgreement(TransactionCase):
             'cooperator_register_number': 12345,
         })
 
+        # Share products must always define both contribution types
+        self.contribution_type = self.env['carsharing.contribution.type'].create({
+            'name': 'Test Contribution Type',
+            'duration': 12,
+        })
+
         # Create a share product (10€ per share per #3594)
         self.share_product = self.env['product.product'].create({
             'name': 'Test Share',
@@ -33,6 +43,8 @@ class TestSubscriptionAgreement(TransactionCase):
             'list_price': 10.0,
             'default_code': 'TEST_SHARE',
             'by_individual': True,
+            'contribution_type_cash_id': self.contribution_type.id,
+            'contribution_type_wallet_id': self.contribution_type.id,
         })
 
         # Create a funding campaign
@@ -49,7 +61,8 @@ class TestSubscriptionAgreement(TransactionCase):
             'partner_id': self.partner.id,
             'share_product_id': self.share_product.id,
             'ordered_parts': ordered_parts,
-            'type': 'increase_remunerated',
+            'type': 'increase',
+            'remunerated': True,
             'firstname': 'Test',
             'lastname': 'Soci',
             'email': 'test@somit.coop',
@@ -62,6 +75,29 @@ class TestSubscriptionAgreement(TransactionCase):
             'remuneration_type': remuneration_type,
             'skip_iban_control': True,
         })
+
+    def test_legacy_increase_remunerated_is_normalized(self):
+        """Legacy 'increase_remunerated' type is normalized on create."""
+        sr = self.env['subscription.request'].create({
+            'campaign_id': self.campaign.id,
+            'partner_id': self.partner.id,
+            'share_product_id': self.share_product.id,
+            'ordered_parts': 1,
+            'type': 'increase_remunerated',
+            'remuneration_type': 'cash',
+            'firstname': 'Test',
+            'lastname': 'Soci',
+            'email': 'test@somit.coop',
+            'address': 'Carrer Test 123',
+            'zip_code': '08001',
+            'city': 'Barcelona',
+            'country_id': self.env.ref('base.es').id,
+            'lang': 'ca_ES',
+            'source': 'website',
+            'skip_iban_control': True,
+        })
+        self.assertEqual(sr.type, 'increase')
+        self.assertTrue(sr.remunerated)
 
     def test_amount_to_text_cash(self):
         """Test _get_amount_in_words returns correct Catalan text for cash amounts."""
@@ -94,8 +130,10 @@ class TestSubscriptionAgreement(TransactionCase):
         self.assertIsInstance(date_info['day'], int)
         self.assertIsInstance(date_info['year'], int)
         # Month should be a Catalan month name
-        valid_months = ['gener', 'febrer', 'març', 'abril', 'maig', 'juny',
-                        'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre']
+        valid_months = [
+            'gener', 'febrer', 'març', 'abril', 'maig', 'juny',
+            'juliol', 'agost', 'setembre', 'octubre', 'novembre', 'desembre',
+        ]
         self.assertIn(date_info['month'], valid_months)
 
     def test_report_renders_cash_version(self):
@@ -103,7 +141,9 @@ class TestSubscriptionAgreement(TransactionCase):
         sr = self._create_subscription_request('cash', 10)
         # Render the report (force_report_rendering needed in test mode,
         # otherwise Odoo falls back to HTML)
-        report = self.env.ref('funding_campaign_cooperator.action_report_subscription_agreement')
+        report = self.env.ref(
+            'funding_campaign_cooperator.action_report_subscription_agreement'
+        )
         pdf_content, content_type = self.env['ir.actions.report'].with_context(
             force_report_rendering=True
         )._render_qweb_pdf(report.report_name, sr.ids)
@@ -114,7 +154,9 @@ class TestSubscriptionAgreement(TransactionCase):
         """Test that the report renders correctly for wallet remuneration type."""
         sr = self._create_subscription_request('wallet', 10)
         # Render the report
-        report = self.env.ref('funding_campaign_cooperator.action_report_subscription_agreement')
+        report = self.env.ref(
+            'funding_campaign_cooperator.action_report_subscription_agreement'
+        )
         pdf_content, content_type = self.env['ir.actions.report'].with_context(
             force_report_rendering=True
         )._render_qweb_pdf(report.report_name, sr.ids)
@@ -123,7 +165,9 @@ class TestSubscriptionAgreement(TransactionCase):
 
     def _render_report_html(self, sr):
         """Helper: render report as HTML to check its textual content."""
-        report = self.env.ref('funding_campaign_cooperator.action_report_subscription_agreement')
+        report = self.env.ref(
+            'funding_campaign_cooperator.action_report_subscription_agreement'
+        )
         html_content, content_type = self.env['ir.actions.report']._render_qweb_html(
             report.report_name, sr.ids
         )

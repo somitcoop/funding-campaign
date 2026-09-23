@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 {
     'name': 'Funding Campaign Cooperator',
-    'version': '17.0.1.0.0',
-    'category': 'Cooperative',
+    'version': '17.0.1.1.0',
     'summary': 'Link between Funding Campaigns and Cooperator modules',
     'description': """
         This module allows you to create and manage funding campaigns
         with multiple funding sources, track progress, and manage
         campaign states.
     """,
-    'author': 'Som IT Cooperatiu SCCL ',
+    'author': 'Som IT Cooperatiu SCCL',
     'website': 'https://somit.coop',
     'category': 'Marketing/Fundraising',
     'depends': [

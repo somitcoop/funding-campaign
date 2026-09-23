@@ -206,92 +206,92 @@ msgstr "Estado de la firma"
 msgid "Is Signed"
 msgstr "Está firmado"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "This subscription belongs to a "
 msgstr "Esta suscripción pertenece a una "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "funding campaign"
 msgstr "campaña de financiación"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid ". When it is validated and paid, the corresponding "
 msgstr ". Cuando se valide y se pague, se creará automáticamente la "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid " is created automatically (no loan). Send the contract with "
 msgstr " correspondiente (sin préstamo). Envía el contrato con "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid " and, when the member signs it, it will be linked. See the "
 msgstr " y, cuando el socio/a lo firme, quedará vinculado. Consulta la pestaña "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "How does a campaign subscription work?"
 msgstr "¿Cómo funciona una suscripción de campaña?"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "The member makes a subscription to a funding campaign. When it is validated and paid, the system creates the corresponding contribution automatically (no loan). The contract is sent for signature and linked to the contribution."
 msgstr "El socio/a realiza una suscripción a una campaña de financiación. Al validarse y pagarse, el sistema crea automáticamente la aportación correspondiente (sin préstamo). El contrato se envía para firmar y queda vinculado a la aportación."
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "1. Create the subscription"
 msgstr "1. Crear la suscripción"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "Indicate the "
 msgstr "Indica la "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid ", the member, the number of shares and the remuneration type (cash or wallet)."
 msgstr ", el socio/a, el número de participaciones y el tipo de remuneración (efectivo o monedero)."
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "2. Send the contract"
 msgstr "2. Enviar el contrato"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "Use "
 msgstr "Usa "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid " to send the subscription contract with digital signature. When the member signs it, it is saved automatically."
 msgstr " para enviar el contrato de suscripción con firma digital. Cuando el socio/a lo firme, se guarda automáticamente."
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "3. Validation and payment"
 msgstr "3. Validación y pago"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "Validating the subscription generates the invoice. If automatic payment is enabled on the company, it is paid automatically; otherwise, the payment must be registered manually."
 msgstr "Al validar la suscripción se genera la factura. Si la opción de pago automático está activa en la empresa, se paga automáticamente; en caso contrario, hay que registrar el pago manualmente."
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "4. Automatic contribution"
 msgstr "4. Aportación automática"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "When the subscription changes to "
 msgstr "Cuando la suscripción pasa a "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid ", the contribution is created automatically in the contributions module with the same amounts, the signed contract and the linked campaign."
 msgstr ", se crea automáticamente la aportación en el módulo de aportaciones con los mismos importes, el contrato firmado y la campaña vinculada."
@@ -301,12 +301,12 @@ msgstr ", se crea automáticamente la aportación en el módulo de aportaciones 
 msgid "Campaign subscriptions "
 msgstr "Las suscripciones de campaña "
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid "do not generate loans"
 msgstr "no generan préstamos"
 
-#. module: carsharing_contributions
+#. module: funding_campaign_cooperator
 #: model:ir.ui.view,string:funding_campaign_cooperator.funding_subscription_request_form_inherit
 msgid " (loans only for subscriptions without a campaign, for backward compatibility)."
 msgstr " (préstamos solo para suscripciones sin campaña, por compatibilidad con versiones anteriores)."
@@ -423,3 +423,37 @@ msgstr "Firmado"
 #: code:addons/funding_campaign_cooperator/controllers/subscription_request.py:0
 msgid "Attachment received from the subscription form"
 msgstr "Adjunto recibido desde el formulario de suscripción."
+
+#. module: funding_campaign_cooperator
+#. odoo-python
+#: model:ir.model.fields,field_description:funding_campaign_cooperator.field_subscription_request__remunerated
+msgid "Remunerated"
+msgstr "Remunerada"
+
+#. module: funding_campaign_cooperator
+#. odoo-python
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__remunerated
+msgid "Whether the subscription increase is remunerated (eligible for "
+"interest). Replaces the legacy 'increase_remunerated' type."
+msgstr "Indica si el aumento de participaciones es remunerado (devenga "
+"intereses). Sustituye al tipo antiguo 'increase_remunerated'."
+
+#. module: funding_campaign_cooperator
+#. odoo-python
+#: code:addons/funding_campaign_cooperator/models/subscription_request.py:0
+msgid "Cannot create the contribution: the subscription request has no share "
+"product assigned."
+msgstr "No se puede crear la aportación: la solicitud de suscripción no tiene "
+"producto de participaciones asignado."
+
+#. module: funding_campaign_cooperator
+#. odoo-python
+#: code:addons/funding_campaign_cooperator/models/subscription_request.py:0
+#, python-format
+msgid "Cannot create the contribution: the share product '%s' has no "
+"contribution type configured for %s subscriptions. Configure it in the "
+"product form (Contributions section)."
+msgstr "No se puede crear la aportación: el producto de participaciones '%s' no "
+"tiene tipo de contribución configurado para suscripciones en %s. "
+"Configúralo en la ficha del producto (sección Aportaciones)."
+
