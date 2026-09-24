@@ -457,3 +457,23 @@ msgstr "No es pot crear l'aportació: el producte de participacions '%s' no té 
 "cap tipus de contribució configurat per a subscripcions en %s. "
 "Configura'l a la fitxa del producte (secció Aportacions)."
 
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:funding_campaign_cooperator.field_funding_campaign__contribution_type_cash_id
+msgid "Contribution Type (Cash)"
+msgstr "Tipus de contribució (Efectiu)"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_type_cash_id
+msgid "Contribution type applied to cash subscriptions of this campaign. Read-only, taken from the campaign share type."
+msgstr "Tipus de contribució aplicat a les subscripcions en efectiu d'aquesta campanya. Només lectura, provinent del tipus de participació de la campanya."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:funding_campaign_cooperator.field_funding_campaign__contribution_type_wallet_id
+msgid "Contribution Type (Wallet)"
+msgstr "Tipus de contribució (Moneder)"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_type_wallet_id
+msgid "Contribution type applied to wallet subscriptions of this campaign. Read-only, taken from the campaign share type."
+msgstr "Tipus de contribució aplicat a les subscripcions en moneder d'aquesta campanya. Només lectura, provinent del tipus de participació de la campanya."

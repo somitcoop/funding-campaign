@@ -457,3 +457,23 @@ msgstr "No se puede crear la aportación: el producto de participaciones '%s' no
 "tiene tipo de contribución configurado para suscripciones en %s. "
 "Configúralo en la ficha del producto (sección Aportaciones)."
 
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:funding_campaign_cooperator.field_funding_campaign__contribution_type_cash_id
+msgid "Contribution Type (Cash)"
+msgstr "Tipo de contribución (Efectivo)"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_type_cash_id
+msgid "Contribution type applied to cash subscriptions of this campaign. Read-only, taken from the campaign share type."
+msgstr "Tipo de contribución aplicado a las suscripciones en efectivo de esta campaña. Solo lectura, tomado del tipo de participación de la campaña."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,field_description:funding_campaign_cooperator.field_funding_campaign__contribution_type_wallet_id
+msgid "Contribution Type (Wallet)"
+msgstr "Tipo de contribución (Monedero)"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_type_wallet_id
+msgid "Contribution type applied to wallet subscriptions of this campaign. Read-only, taken from the campaign share type."
+msgstr "Tipo de contribución aplicado a las suscripciones en monedero de esta campaña. Solo lectura, tomado del tipo de participación de la campaña."
