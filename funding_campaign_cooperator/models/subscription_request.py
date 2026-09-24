@@ -124,16 +124,7 @@ class SubscriptionRequest(models.Model):
         plus ``remunerated = True``. Campaign subscriptions are always
         remunerated increases.
         """
-        if vals.get("type") == "increase_remunerated":
-            _logger.info(
-                "Normalizing legacy type 'increase_remunerated' to "
-                "'increase' + remunerated (campaign_id: %s)",
-                vals.get("campaign_id"),
-            )
-            vals["type"] = "increase"
-            vals["remunerated"] = True
-        if vals.get("campaign_id") and vals.get("type") == "increase":
-            vals["remunerated"] = True
+        vals = self._normalize_remunerated_vals(vals)
         subscription_request = super().create(vals)
         # The original module sends a confirmation email here.
         # We call it to preserve the original behavior for non-campaign subscriptions.
@@ -141,6 +132,23 @@ class SubscriptionRequest(models.Model):
         # the correct template.
         subscription_request._send_confirmation_mail()
         return subscription_request
+
+    def _normalize_remunerated_vals(self, vals):
+        """Normalize the legacy ``increase_remunerated`` type.
+
+        Applied on both ``create`` and ``write`` so the legacy type cannot be
+        reintroduced by editing the ``type`` of an existing subscription.
+        """
+        if vals.get("type") == "increase_remunerated":
+            _logger.info(
+                "Normalizing legacy type 'increase_remunerated' to "
+                "'increase' + remunerated (campaign_id: %s)",
+                vals.get("campaign_id"),
+            )
+            vals = dict(vals, type="increase", remunerated=True)
+        if vals.get("campaign_id") and vals.get("type") == "increase":
+            vals["remunerated"] = True
+        return vals
 
     def get_invoice_vals(self, partner):
         """Override to prevent campaign_id from being copied to account.move"""
@@ -326,6 +334,7 @@ class SubscriptionRequest(models.Model):
         return invoice
 
     def write(self, vals):
+        vals = self._normalize_remunerated_vals(vals)
         res = super().write(vals)
         if vals.get("state") == "paid":
             for subscription in self:
