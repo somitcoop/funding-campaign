@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [IMP] Cancelling a contribution now cancels its linked `subscription.request`
+  (`paid` to `cancelled`); `cancel_subscription_request` also accepts requests
+  in the `paid` state
+
 - [IMP] `subscription.request`: new `remunerated` field replacing the legacy
   `increase_remunerated` type (normalized in `create` and in the REST API);
   digital signature and campaign emails now rely on `remunerated`

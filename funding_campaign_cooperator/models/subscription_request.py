@@ -346,6 +346,22 @@ class SubscriptionRequest(models.Model):
                     subscription._create_contribution_from_subscription()
         return res
 
+    def cancel_subscription_request(self):
+        """Allow cancelling subscription requests in the ``paid`` state.
+
+        In the funding/contribution integration a request reaches ``paid``
+        once its contribution has been created, so cancelling that
+        contribution must be able to cancel the request as well. Requests in
+        any other state are delegated to the base implementation.
+        """
+        paid = self.filtered(lambda req: req.state == "paid")
+        if paid:
+            paid.write({"state": "cancelled"})
+        rest = self - paid
+        if rest:
+            return super(SubscriptionRequest, rest).cancel_subscription_request()
+        return True
+
     def _create_contribution_from_subscription(self):
         """Create a carsharing.contribution from this subscription request.
 
