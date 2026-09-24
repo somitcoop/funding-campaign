@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-import logging
+# Copyright 2026 Som IT Cooperatiu SCCL
+# Nicolás Ramos https://github.com/nicolasramos
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError, ValidationError
-
-_logger = logging.getLogger(__name__)
+from odoo import api, fields, models
 
 
 class FundingCampaign(models.Model):
@@ -33,6 +31,24 @@ class FundingCampaign(models.Model):
         "product.product",
         string="Share type",
         domain="[('is_share', '=', True)]",
+    )
+
+    contribution_type_cash_id = fields.Many2one(
+        comodel_name="carsharing.contribution.type",
+        string="Contribution Type (Cash)",
+        related="share_product_id.contribution_type_cash_id",
+        readonly=True,
+        help="Contribution type applied to cash subscriptions of this campaign. "
+        "Read-only, taken from the campaign share type.",
+    )
+
+    contribution_type_wallet_id = fields.Many2one(
+        comodel_name="carsharing.contribution.type",
+        string="Contribution Type (Wallet)",
+        related="share_product_id.contribution_type_wallet_id",
+        readonly=True,
+        help="Contribution type applied to wallet subscriptions of this campaign. "
+        "Read-only, taken from the campaign share type.",
     )
 
     source_objective_subscription = fields.Float(
@@ -140,7 +156,8 @@ class FundingCampaign(models.Model):
         "carsharing.contribution",
         "campaign_id",
         string="Contributions",
-        help="Contributions created from the subscriptions of this campaign. Generated automatically when subscriptions are validated and paid.",
+        help="Contributions created from the subscriptions of this campaign. "
+        "Generated automatically when subscriptions are validated and paid.",
     )
 
     contribution_count = fields.Integer(
@@ -171,16 +188,19 @@ class FundingCampaign(models.Model):
         "ir.actions.report",
         string="Contribution Contract Report",
         domain="[('model', '=', 'carsharing.contribution')]",
-        help="QWeb report template used to generate the contribution contracts of this campaign. If not set, the default contract is used.",
+        help="QWeb report template used to generate the contribution contracts "
+        "of this campaign. If not set, the default contract is used.",
     )
     contribution_sign_template_id = fields.Many2one(
         "sign.oca.template",
         string="Signature Template",
-        help="sign_oca template used for the digital signature of the contribution contracts of this campaign.",
+        help="sign_oca template used for the digital signature of the "
+        "contribution contracts of this campaign.",
     )
     contribution_email_template_id = fields.Many2one(
         "mail.template",
         string="Contribution Email Template",
         domain="[('model_id.model', '=', 'carsharing.contribution')]",
-        help="Email template to send contribution contracts to members of this campaign.",
+        help="Email template to send contribution contracts to members of this "
+        "campaign.",
     )
