@@ -17,6 +17,7 @@
             <field name="source" position="after">
                 <field name="campaign_id"/>
                 <field name="remunerated" optional="hide"/>
+                <field name="contribution_id" optional="hide"/>
             </field>
         </field>
     </record>
@@ -34,6 +35,7 @@
                        invisible="not campaign_id"
                        readonly="state != 'draft'"/>
                 <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
+                <field name="contribution_id" readonly="1" invisible="not contribution_id"/>
             </field>
 
             <!-- Añadir botón de firma digital después de los botones existentes -->
