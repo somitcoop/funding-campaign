@@ -16,7 +16,7 @@
             </xpath>
             <field name="source" position="after">
                 <field name="campaign_id"/>
-                <field name="remunerated" optional="hide"/>
+                <field name="remunerated" optional="show"/>
                 <field name="contribution_id" optional="hide"/>
             </field>
         </field>
