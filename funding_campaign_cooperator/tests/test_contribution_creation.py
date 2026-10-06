@@ -105,3 +105,23 @@ class TestContributionCreation(TransactionCase):
         request.write({'remunerated': False})
         request.write({'state': 'paid'})
         self.assertFalse(request.contribution_id)
+
+    def test_has_contribution_false_before_payment(self):
+        """A request that has not paid yet reports no contribution."""
+        request = self._create_request('cash')
+        self.assertFalse(request.contribution_id)
+        self.assertFalse(request.has_contribution)
+
+    def test_has_contribution_true_after_payment(self):
+        """Creating the contribution flips the boolean on."""
+        request = self._create_request('cash')
+        request.write({'state': 'paid'})
+        self.assertTrue(request.contribution_id)
+        self.assertTrue(request.has_contribution)
+
+    def test_has_contribution_follows_contribution_id(self):
+        """The boolean always mirrors whether contribution_id is set."""
+        request = self._create_request('cash')
+        request.write({'state': 'paid'})
+        request.write({'contribution_id': False})
+        self.assertFalse(request.has_contribution)

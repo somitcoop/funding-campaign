@@ -17,6 +17,7 @@
             <field name="source" position="after">
                 <field name="campaign_id"/>
                 <field name="remunerated" optional="show"/>
+                <field name="has_contribution" optional="show"/>
                 <field name="contribution_id" optional="hide"/>
             </field>
         </field>
@@ -35,6 +36,7 @@
                        invisible="not campaign_id"
                        readonly="state != 'draft'"/>
                 <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
+                <field name="has_contribution" readonly="1"/>
                 <field name="contribution_id" readonly="1" invisible="not contribution_id"/>
             </field>
 
@@ -155,10 +157,6 @@
                         name="filter_pending_signature"
                         domain="[('signature_state', '=', 'pending')]"
                         help="Show subscription requests with pending signatures"/>
-                <filter string="Partially Signed"
-                        name="filter_partially_signed"
-                        domain="[('signature_state', '=', 'partial')]"
-                        help="Show subscription requests with partial signatures"/>
             </filter>
             
             <!-- Añadir campos de búsqueda para firma -->

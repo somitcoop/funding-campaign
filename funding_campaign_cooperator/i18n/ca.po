@@ -477,3 +477,23 @@ msgstr "Tipus de contribució (Moneder)"
 #: model:ir.model.fields,help:funding_campaign_cooperator.field_funding_campaign__contribution_type_wallet_id
 msgid "Contribution type applied to wallet subscriptions of this campaign. Read-only, taken from the campaign share type."
 msgstr "Tipus de contribució aplicat a les subscripcions en moneder d'aquesta campanya. Només lectura, provinent del tipus de participació de la campanya."
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,string:funding_campaign_cooperator.field_subscription_request__has_contribution
+
+msgid "Contribution Created"
+msgstr "Aportació creada"
+
+#. module: funding_campaign_cooperator
+#: model:ir.model.fields,help:funding_campaign_cooperator.field_subscription_request__has_contribution
+
+msgid ""
+"Whether this subscription request already generated its "
+"contribution. It lets the list be filtered by the requests that "
+"already produced a contribution."
+msgstr ""
+"Si aquesta sol·licitud de subscripció ja ha "
+"generat la seva aportació. Permet filtrar la llista "
+"per les sol·licituds que ja han produït una "
+"aportació."
+
