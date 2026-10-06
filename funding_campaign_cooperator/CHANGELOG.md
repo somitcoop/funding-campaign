@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [IMP] Lista de suscripciones: la columna *Remunerated* se muestra por defecto (`optional="show"`) y el usuario puede ocultarla desde el selector de columnas
 - [IMP] Enlace visible con la aportación: la ficha de la suscripción muestra el enlace a la aportación creada (solo si existe) y la lista añade una columna opcional con ella
 
 - [IMP] Cancelling a contribution now cancels its linked `subscription.request`
