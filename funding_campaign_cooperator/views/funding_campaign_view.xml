@@ -23,7 +23,7 @@
                 <button name="action_view_contributions"
                         type="object"
                         class="oe_stat_button"
-                        invisible="has_subscription_source == False"
+                        invisible="1"
                         icon="fa-file-text-o">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_value">

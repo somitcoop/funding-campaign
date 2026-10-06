@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class SubscriptionRequest(models.Model):
     _inherit = "subscription.request"
+    _description = "Subscription Request"
 
     campaign_id = fields.Many2one(
         "funding.campaign",
@@ -27,6 +28,20 @@ class SubscriptionRequest(models.Model):
         copy=False,
         help="Contribution created from this subscription request",
     )
+
+    has_contribution = fields.Boolean(
+        string="Contribution Created",
+        compute="_compute_has_contribution",
+        store=True,
+        help="Whether this subscription request already generated its "
+        "contribution. It lets the list be filtered by the requests that "
+        "already produced a contribution.",
+    )
+
+    @api.depends("contribution_id")
+    def _compute_has_contribution(self):
+        for request in self:
+            request.has_contribution = bool(request.contribution_id)
 
     remunerated = fields.Boolean(
         string="Remunerated",
@@ -116,16 +131,19 @@ class SubscriptionRequest(models.Model):
         for item in self:
             item.sign_request_count = mapped_data.get(item.id, 0)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Normalize remunerated increases and campaign subscriptions.
 
         The legacy ``increase_remunerated`` type is converted to ``increase``
         plus ``remunerated = True``. Campaign subscriptions are always
-        remunerated increases.
+        remunerated increases. Each dict is normalized on its own so the
+        multi-create contract (``load``, imports, batch calls) keeps working.
         """
-        vals = self._normalize_remunerated_vals(vals)
-        subscription_request = super().create(vals)
+        vals_list = [
+            self._normalize_remunerated_vals(vals) for vals in vals_list
+        ]
+        subscription_request = super().create(vals_list)
         # The original module sends a confirmation email here.
         # We call it to preserve the original behavior for non-campaign subscriptions.
         # For campaign subscriptions, this method is overridden to send
@@ -198,7 +216,7 @@ class SubscriptionRequest(models.Model):
         report = self.env.ref(
             "funding_campaign_cooperator.action_report_subscription_agreement"
         )
-        pdf_document, content_type = self.env["ir.actions.report"]._render_qweb_pdf(
+        pdf_document, _content_type = self.env["ir.actions.report"]._render_qweb_pdf(
             report.report_name, self.ids
         )
 
@@ -250,8 +268,6 @@ class SubscriptionRequest(models.Model):
         "signed_contract",
         "partner_signed_date",
         "company_signed_date",
-        "sign_request_count",
-        "sign_request_ids.state",
     )
     def _compute_signature_flags(self):
         for rec in self:
@@ -359,6 +375,10 @@ class SubscriptionRequest(models.Model):
             paid.write({"state": "cancelled"})
         rest = self - paid
         if rest:
+            # Explicit three-argument super() is required here: the base
+            # implementation must run against the non-paid subset only, and
+            # plain super() would apply it to the whole recordset (raising on
+            # the paid requests we have just cancelled above).
             return super(SubscriptionRequest, rest).cancel_subscription_request()
         return True
 
