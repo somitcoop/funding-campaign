@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- [FIX] Dependencia explicita de `cooperator_share_increase_loan`: la vista que oculta la pestana
+  "Loan request" la inyecta ese modulo, y sin la dependencia el xpath no resuelve y la instalacion
+  falla ("Element '<xpath expr=\"//page[@name='loan_request']\">' cannot be located in parent view").
 
 - [FIX] Suscripciones: `create()` pasa a `@api.model_create_multi` — el override anterior recibía un único dict y rompía con `load()`, importaciones y creaciones en lote (`AttributeError: 'list' object has no attribute 'get'`)
 - [FIX] Se elimina `cooperator_subscription_request_filter_extension.xml`: no estaba en el manifest y duplicaba los filtros de firma de `subscription_request.xml` (además de arrastrar el filtro `partial` inexistente)
