@@ -1,6 +1,6 @@
 {
     'name': 'Funding Campaign Cooperator',
-    'version': '17.0.1.1.0',
+    'version': '17.0.1.1.1',
     'summary': 'Link between Funding Campaigns and Cooperator modules',
     'description': """
         This module allows you to create and manage funding campaigns
@@ -13,6 +13,7 @@
     'depends': [
         'funding_campaign',
         'cooperator',
+        'cooperator_share_increase_loan',
         'carsharing_contributions',
         'swagger_docs',
         'sign_oca',
