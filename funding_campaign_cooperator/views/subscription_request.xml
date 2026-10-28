@@ -16,6 +16,9 @@
             </xpath>
             <field name="source" position="after">
                 <field name="campaign_id"/>
+                <field name="remunerated" optional="show"/>
+                <field name="has_contribution" optional="show"/>
+                <field name="contribution_id" optional="hide"/>
             </field>
         </field>
     </record>
@@ -29,22 +32,35 @@
                 <field name="campaign_id"
                        options="{'no_create': True}"
                        readonly="state != 'draft'"/>
+                <field name="remunerated"
+                       invisible="not campaign_id"
+                       readonly="state != 'draft'"/>
                 <field name="signature_state" string="Signature" widget="badge" readonly="1"/>
+                <field name="has_contribution" readonly="1"/>
+                <field name="contribution_id" readonly="1" invisible="not contribution_id"/>
             </field>
-            
+
             <!-- Añadir botón de firma digital después de los botones existentes -->
             <xpath expr="//header/button[@name='cancel_subscription_request']" position="after">
                 <button name="action_send_for_signature"
                         string="Send for Signature"
                         type="object"
                         class="btn-primary"
-                        invisible="state in ['draft', 'cancel'] or type != 'increase_remunerated'"
+                        invisible="state in ['draft', 'cancel'] or not campaign_id"
                         groups="cooperator.cooperator_group_manager"/>
                 <button name="action_send_campaign_confirmation_email"
                         string="Send Campaign Confirmation"
                         type="object"
                         class="btn-secondary"
-                        invisible="not campaign_id or type != 'increase_remunerated'"/>
+                        invisible="not campaign_id"/>
+            </xpath>
+
+            <!-- Banner de guía rápida -->
+            <xpath expr="//sheet" position="inside">
+                <div class="alert alert-info" role="alert" style="margin-bottom: 12px;">
+                    <strong><i class="fa fa-info-circle"/> Quick guide:</strong>
+                    <span>This subscription belongs to a <strong>funding campaign</strong>. When it is validated and paid, the corresponding <strong>contribution</strong> is created automatically (no loan). Send the contract with <strong>Send for Signature</strong> and, when the member signs it, it will be linked. See the <strong>User Guide</strong> tab.</span>
+                </div>
             </xpath>
             
             <!-- Añadir notebook con información de firma -->
@@ -75,10 +91,52 @@
                         </group>
                     </group>
                 </page>
+                <page string="User Guide" name="usage_guide">
+                    <div class="alert alert-success" role="alert">
+                        <strong><i class="fa fa-lightbulb-o"/> How does a campaign subscription work?</strong>
+                        <p>The member makes a subscription to a funding campaign. When it is validated and paid, the system creates the corresponding contribution automatically (no loan). The contract is sent for signature and linked to the contribution.</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <h5>1. Create the subscription</h5>
+                            <p>Indicate the <strong>campaign</strong>, the member, the number of shares and the remuneration type (cash or wallet).</p>
+                        </div>
+                        <div class="col-6">
+                            <h5>2. Send the contract</h5>
+                            <p>Use <strong>Send for Signature</strong> to send the subscription contract with digital signature. When the member signs it, it is saved automatically.</p>
+                        </div>
+                        <div class="col-6">
+                            <h5>3. Validation and payment</h5>
+                            <p>Validating the subscription generates the invoice. If automatic payment is enabled on the company, it is paid automatically; otherwise, the payment must be registered manually.</p>
+                        </div>
+                        <div class="col-6">
+                            <h5>4. Automatic contribution</h5>
+                            <p>When the subscription changes to <strong>paid</strong>, the contribution is created automatically in the contributions module with the same amounts, the signed contract and the linked campaign.</p>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <strong><i class="fa fa-exclamation-triangle"/> Important:</strong>
+                        <span>Campaign subscriptions <strong>do not generate loans</strong> (loans only for subscriptions without a campaign, for backward compatibility).</span>
+                    </div>
+                </page>
             </xpath>
         </field>
     </record>
     
+    <!-- 2026: el flujo de préstamos queda obsoleto — las suscripciones de campaña generan
+         aportación (carsharing.contribution) directamente, sin loan. Se oculta la pestaña
+         "Loan request" inyectada por cooperator_share_increase_loan. -->
+    <record id="funding_hide_loan_request_page" model="ir.ui.view">
+        <field name="name">funding.subscription.request.form.hide.loan</field>
+        <field name="model">subscription.request</field>
+        <field name="inherit_id" ref="cooperator.subscription_request_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='loan_request']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="funding_view_subscription_request_filter_inherit" model="ir.ui.view">
         <field name="name">funding.subscription.request.search.inherit</field>
         <field name="model">subscription.request</field>
@@ -99,10 +157,6 @@
                         name="filter_pending_signature"
                         domain="[('signature_state', '=', 'pending')]"
                         help="Show subscription requests with pending signatures"/>
-                <filter string="Partially Signed"
-                        name="filter_partially_signed"
-                        domain="[('signature_state', '=', 'partial')]"
-                        help="Show subscription requests with partial signatures"/>
             </filter>
             
             <!-- Añadir campos de búsqueda para firma -->

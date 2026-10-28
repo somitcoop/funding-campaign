@@ -1,0 +1,6 @@
+PROVIDER="opencode:opencode-go/deepseek-v4-flash"
+FILE_PATTERNS="*.py,*.xml,*.csv,*.js,*.json,*.md,*.yaml,*.yml,*.sh,*.toml,*.rst,*.txt"
+EXCLUDE_PATTERNS="*.pyc,*.po,*.pot,*.mo,*.egg-info,__pycache__/*,node_modules/*"
+RULES_FILE="/c/Users/nicol/hermes/AGENTS-SOMIT.md"
+STRICT_MODE="true"
+TIMEOUT="300"
