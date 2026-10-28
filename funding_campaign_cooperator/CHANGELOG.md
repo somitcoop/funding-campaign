@@ -28,3 +28,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the remuneration mode, without silent fallback
 - [IMP] Migration `17.0.1.1.0`: `increase_remunerated` becomes `increase`
   plus `remunerated = True`
+- #3594 Actualitzar contracte a Aportacions al Capital Social amb versió wallet/cash
+- #3594 Fix valor participació: 10€ (no 100€)
