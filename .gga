@@ -1,4 +1,4 @@
-PROVIDER="opencode:opencode-go/deepseek-v4-flash"
+PROVIDER="opencode:opencode-go/deepseek-v4.1-flash"
 FILE_PATTERNS="*.py,*.xml,*.csv,*.js,*.json,*.md,*.yaml,*.yml,*.sh,*.toml,*.rst,*.txt"
 EXCLUDE_PATTERNS="*.pyc,*.po,*.pot,*.mo,*.egg-info,__pycache__/*,node_modules/*"
 RULES_FILE="/c/Users/nicol/hermes/AGENTS-SOMIT.md"
