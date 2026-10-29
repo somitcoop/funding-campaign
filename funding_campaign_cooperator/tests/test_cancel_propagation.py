@@ -59,7 +59,7 @@ class TestCancelPropagation(TransactionCase):
             'zip_code': '08001',
             'city': 'Barcelona',
             'country_id': self.env.ref('base.es').id,
-            'lang': 'es_ES',
+            'lang': 'en_US',
             'source': 'website',
             'skip_iban_control': True,
         })
