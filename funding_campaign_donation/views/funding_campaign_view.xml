@@ -71,12 +71,17 @@
         <field name="inherit_id" ref="funding_campaign.view_funding_campaign_tree"/>
         <field name="arch" type="xml">
             <field name="progress" position="after">
-                <field name="has_donation_source" column_invisible="True"/>
+                <!-- NOTE: no dynamic column_invisible here. In top-level
+                     lists Odoo evaluates column modifiers against the action
+                     context (no record values), so any field reference
+                     crashes the optional-columns dropdown with
+                     "has_donation_source is not defined" (only works in
+                     x2many lists inside forms). optional="hide" keeps the
+                     column available without showing it by default. -->
                 <field name="donation_count" optional="hide"/>
                 <field name="donation_raised_amount"
                        widget="monetary"
-                       optional="hide"
-                       column_invisible="has_donation_source == False"/>
+                       optional="hide"/>
             </field>
         </field>
     </record>
