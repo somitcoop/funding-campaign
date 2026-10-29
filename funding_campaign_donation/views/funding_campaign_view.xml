@@ -71,7 +71,12 @@
         <field name="inherit_id" ref="funding_campaign.view_funding_campaign_tree"/>
         <field name="arch" type="xml">
             <field name="progress" position="after">
-                <field name="has_donation_source" column_invisible="True"/>
+                <!-- NOTE: the trigger field must use invisible (not
+                     column_invisible) so it is always fetched: the optional
+                     columns dropdown evaluates every optional column's
+                     invisible modifier and crashes with
+                     "has_donation_source is not defined" otherwise. -->
+                <field name="has_donation_source" invisible="1"/>
                 <field name="donation_count" optional="hide"/>
                 <field name="donation_raised_amount"
                        widget="monetary"
