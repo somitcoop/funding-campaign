@@ -259,6 +259,11 @@
 
     <!-- Contingut -->
     <div style="padding: 40px;">
+        <t t-if="object.company_id.logo">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img t-att-src="'data:image/png;base64,%s' % object.company_id.logo.decode()" alt="logo" style="max-height: 64px;"/>
+            </div>
+        </t>
         <p style="font-size: 16px; color: #333333; margin: 0 0 20px 0; line-height: 1.6;">
             Benvolgut/da 
             <strong>
