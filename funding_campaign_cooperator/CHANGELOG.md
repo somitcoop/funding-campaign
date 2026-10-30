@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 - [FIX] Solo un correo de confirmacion por solicitud (OP #4537): el create() base de `cooperator` ya lo envia una vez; se elimina el segundo envio.
 - [FIX] Reconocimiento del soci por NIF con independencia del email y del formato (OP #4535): busqueda con variantes con/sin prefijo ES, sin espacios ni puntos; se guarda el NIF normalizado.
-- [FIX] Plantilla de confirmacion (OP #4536): cabecera con logo de la cooperativa; migracion que reimporta las plantillas para actualizar las BD existentes (bloque noupdate).
+- [FIX] Plantilla de confirmacion (OP #4536): cabecera con logo de la cooperativa; migracion que reescribe las plantillas desde el fichero de datos en BDs existentes (bloque noupdate; convert_xml_import no basta porque el flag del propio XML prevalece).
 - [FIX] Dependencia explicita de `cooperator_share_increase_loan`: la vista que oculta la pestana
   "Loan request" la inyecta ese modulo, y sin la dependencia el xpath no resuelve y la instalacion
   falla ("Element '<xpath expr=\"//page[@name='loan_request']\">' cannot be located in parent view").
