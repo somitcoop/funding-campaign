@@ -33,6 +33,34 @@ except ImportError:
 _logger = logging.getLogger(__name__)
 
 
+def _clean_vat(value):
+    """Normalize a VAT/NIF for comparison (OP #4535).
+
+    Uppercase, no spaces/dots/dashes. Returns the cleaned value.
+    """
+    if not value:
+        return ""
+    return (
+        value.replace(" ", "").replace(".", "").replace("-", "").upper()
+    )
+
+
+def _vat_candidates(value):
+    """Candidate VAT spellings to match stored records (OP #4535).
+
+    The database mixes spellings with and without the ES country prefix
+    (e.g. ``ESF66835125`` vs ``45828441K``), so an exact search on the
+    raw form value misses existing partners.
+    """
+    clean = _clean_vat(value)
+    candidates = {clean}
+    if clean.startswith("ES"):
+        candidates.add(clean[2:])
+    else:
+        candidates.add("ES" + clean)
+    return [c for c in candidates if c]
+
+
 class CooperatorVoluntaryApi(http.Controller):
     @http.route(
         "/api/campaign/<int:campaign_id>/subscription_request",
@@ -296,10 +324,14 @@ class CooperatorVoluntaryApi(http.Controller):
 
             partner_id = False
             if kw.get("vat"):
+                # OP #4535: match by NIF regardless of email or spelling
+                # (with/without ES prefix, case, spaces).
                 partner = (
                     request.env["res.partner"]
                     .sudo()
-                    .search([("vat", "=", kw["vat"])], limit=1)
+                    .search(
+                        [("vat", "in", _vat_candidates(kw["vat"]))], limit=1
+                    )
                 )
                 if partner:
                     partner_id = partner.id
@@ -347,7 +379,9 @@ class CooperatorVoluntaryApi(http.Controller):
                 }
 
             subscription_data = {
-                "vat": kw.get("vat"),
+                # OP #4535: store the normalized NIF so later searches
+                # always match regardless of the form spelling.
+                "vat": _clean_vat(kw.get("vat")),
                 "campaign_id": campaign_id,
                 "share_product_id": request.env["funding.campaign"]
                 .sudo()
