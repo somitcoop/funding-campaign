@@ -1,6 +1,6 @@
 {
     'name': 'Funding Campaign Cooperator',
-    'version': '17.0.1.1.2',
+    'version': '17.0.1.1.3',
     'summary': 'Link between Funding Campaigns and Cooperator modules',
     'description': """
         This module allows you to create and manage funding campaigns
