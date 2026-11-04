@@ -2,6 +2,8 @@
 # Nicolás Ramos https://github.com/nicolasramos
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+from psycopg2 import IntegrityError
+
 from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase, tagged
@@ -125,3 +127,35 @@ class TestContributionCreation(TransactionCase):
         request.write({'state': 'paid'})
         request.write({'contribution_id': False})
         self.assertFalse(request.has_contribution)
+
+    def test_repaid_does_not_duplicate_contribution(self):
+        """OP #4533: re-writing paid must not duplicate the contribution."""
+        request = self._create_request('cash')
+        request.write({'state': 'paid'})
+        first_id = request.contribution_id.id
+        self.assertTrue(first_id)
+        count_before = self.env['carsharing.contribution'].search_count([])
+        request.write({'state': 'paid'})
+        self.assertEqual(request.contribution_id.id, first_id)
+        self.assertEqual(
+            self.env['carsharing.contribution'].search_count([]),
+            count_before,
+        )
+
+    def test_duplicate_subscription_link_raises(self):
+        """OP #4533: the unique constraint rejects a second contribution
+        for the same subscription request."""
+        request = self._create_request('cash')
+        request.write({'state': 'paid'})
+        self.assertTrue(request.contribution_id)
+        with self.assertRaises(IntegrityError):
+            with self.env.cr.savepoint():
+                self.env['carsharing.contribution'].create(
+                    {
+                        'associated_member': request.partner_id.id,
+                        'initial_import': 100.0,
+                        'initial_day': '2026-01-01',
+                        'contribution_type': self.cash_type.id,
+                        'subscription_request_id': request.id,
+                    }
+                )

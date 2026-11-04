@@ -4,6 +4,8 @@
 import base64
 import logging
 
+from psycopg2 import IntegrityError
+
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -144,11 +146,11 @@ class SubscriptionRequest(models.Model):
             self._normalize_remunerated_vals(vals) for vals in vals_list
         ]
         subscription_request = super().create(vals_list)
-        # The original module sends a confirmation email here.
-        # We call it to preserve the original behavior for non-campaign subscriptions.
-        # For campaign subscriptions, this method is overridden to send
-        # the correct template.
-        subscription_request._send_confirmation_mail()
+        # NOTE: do NOT call _send_confirmation_mail() here: the base
+        # ``cooperator`` create() already sends it once per record, and this
+        # method is overridden below to pick the campaign template when
+        # needed. Calling it again produced a duplicated confirmation
+        # email (OP #4537).
         return subscription_request
 
     def _normalize_remunerated_vals(self, vals):
@@ -359,7 +361,23 @@ class SubscriptionRequest(models.Model):
                     and subscription.campaign_id
                     and not subscription.contribution_id
                 ):
-                    subscription._create_contribution_from_subscription()
+                    try:
+                        with self.env.cr.savepoint():
+                            subscription._create_contribution_from_subscription()
+                    except IntegrityError:
+                        # OP #4533: lost a creation race (double paid-write
+                        # or double form submit). The winner is protected by
+                        # the subscription_request_id_uniq constraint; reload
+                        # and reuse its contribution instead of failing.
+                        subscription.invalidate_recordset(["contribution_id"])
+                        if not subscription.contribution_id:
+                            raise
+                        _logger.info(
+                            "Contribution %s already created for subscription "
+                            "request %s by a concurrent transaction",
+                            subscription.contribution_id.id,
+                            subscription.id,
+                        )
         return res
 
     def cancel_subscription_request(self):
